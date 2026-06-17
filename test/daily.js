@@ -1,4 +1,4 @@
-// Plotlands — daily-reward tests.
+// RUNELANDS — daily-reward tests.
 // Server-authoritative daily: the cooldown is enforced server-side, a return-streak grows the
 // payout (then resets after the grace window), and lastDaily + dailyStreak persist across a
 // restart. Uses short cooldown/grace via env so the streak logic is fast + deterministic.

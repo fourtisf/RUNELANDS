@@ -1,4 +1,4 @@
-// Plotlands — world event (boss) tests.
+// RUNELANDS — world event (boss) tests.
 // Verifies the Warlord boss spawns while people are online, is announced in chat, and is the
 // tanky high-value enemy it should be.
 //   run:  node test/boss.js

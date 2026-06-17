@@ -1,4 +1,4 @@
-// Plotlands — contest tooling tests: admin standings export, raffle tickets + provably-fair draw,
+// RUNELANDS — contest tooling tests: admin standings export, raffle tickets + provably-fair draw,
 // a pinned contest deadline (SEASON_END), and the shared-IP (Sybil) flag.
 //   run:  node test/contest.js
 const fs = require('fs');
@@ -9,7 +9,7 @@ const nacl = require('tweetnacl');
 const bs58 = require('bs58');
 const { findTiles, Bot, ok, passCount, sleep, startServer, killServers, waitHealthy } = require('./harness');
 
-const PREFIX = 'Sign in to Plotlands\nWallet login — nonce: ';
+const PREFIX = 'Sign in to RUNELANDS\nWallet login — nonce: ';
 function signWallet(kp, nonce){ const sig = nacl.sign.detached(new Uint8Array(Buffer.from(PREFIX + nonce, 'utf8')), kp.secretKey); return { pubkey: bs58.encode(kp.publicKey), sig: Array.from(sig) }; }
 function httpGet(port, p){ return new Promise((res, rej)=>{ http.get({ host:'localhost', port, path:p }, r=>{ let d=''; r.on('data',c=>d+=c); r.on('end',()=>res({ status:r.statusCode, body:d })); }).on('error', rej); }); }
 const adminPath = (key, extra='') => '/admin/standings?key=' + encodeURIComponent(key) + extra;
@@ -78,11 +78,11 @@ async function main(){
   ok(pubAce.flags === undefined && pubAce.ipHash === undefined && !/ipHash|sharedIp/.test(apiRes.body), 'public board still hides IPs + anti-cheat flags');
   ok(pub.contest && pub.contest.active===true && pub.contest.prize==='$1000', 'contest framing (title/prize) is exposed');
   const st = Array.isArray(pub.contest.shareText) ? pub.contest.shareText.join(' ') : pub.contest.shareText;
-  ok(Array.isArray(pub.contest.shareText) && pub.contest.shareText.length >= 2 && !/\$1000\s*\$1000/.test(st) && /@plotlandsfun/.test(st), 'public share copy: multiple clean variants tagging @plotlandsfun');
-  ok(pub.contest.shareText.every(v => /#Plotlands/i.test(v)), 'every public share variant includes #Plotlands');
+  ok(Array.isArray(pub.contest.shareText) && pub.contest.shareText.length >= 2 && !/\$1000\s*\$1000/.test(st) && /@runelandsfun/.test(st), 'public share copy: multiple clean variants tagging @runelandsfun');
+  ok(pub.contest.shareText.every(v => /#RUNELANDS/i.test(v)), 'every public share variant includes #RUNELANDS');
   ok(pub.season && pub.season.endsAt===Date.parse(SEASON_END), 'public board carries the season countdown');
   const page = await httpGet(PORT, '/leaderboard');
-  ok(page.status === 200 && /PLOTLANDS/i.test(page.body) && /api\/leaderboard/.test(page.body), '/leaderboard serves the hype page');
+  ok(page.status === 200 && /RUNELANDS/i.test(page.body) && /api\/leaderboard/.test(page.body), '/leaderboard serves the hype page');
   ok(/id="shX"/.test(page.body) && /twitter\.com\/intent|t\.me\/share/.test(page.body), 'page has X / Telegram share buttons');
   ok(/solscan\.io\/account/.test(page.body), 'page links wallets to a chain explorer');
   a.close(); b.close(); await sleep(150);

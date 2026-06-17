@@ -1,4 +1,4 @@
-// Plotlands — social tests: leaderboard ranking + /pay peer transfer.
+// RUNELANDS — social tests: leaderboard ranking + /pay peer transfer.
 //   run:  node test/social.js
 const fs = require('fs');
 const os = require('os');

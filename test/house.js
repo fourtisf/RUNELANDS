@@ -1,4 +1,4 @@
-// Plotlands — house tier / upgrade-gate tests.
+// RUNELANDS — house tier / upgrade-gate tests.
 // Verifies: the server sends a house-tier table, upgrading a claimed plot's house requires BOTH a
 // minimum player level (blocked below it, even with coins) AND the tier's coin cost, and that a
 // house upgrades through the named tiers when both are satisfied.

@@ -21,7 +21,7 @@ const header = (sub) => `
   ${sub ? `<text x="600" y="108" text-anchor="middle" font-size="20" fill="#8fa6c0" font-family="${F}">${sub}</text>` : ''}`;
 const footer = (left) => `
   <text x="60" y="590" font-size="20" font-weight="bold" fill="#f4c742" font-family="${F}">${left || ''}</text>
-  <text x="1140" y="590" text-anchor="end" font-size="20" font-weight="bold" fill="#cfe0f0" font-family="${F}">plotlands.fun</text>`;
+  <text x="1140" y="590" text-anchor="end" font-size="20" font-weight="bold" fill="#cfe0f0" font-family="${F}">runelands.fun</text>`;
 function write(name, body) {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${DEFS}${frame()}${body}</svg>`;
   const png = new Resvg(svg, { fitTo: { mode: 'width', value: 1200 }, font: { loadSystemFonts: true } }).render().asPng();
@@ -70,6 +70,6 @@ write('s3-win.png', step('3', 'WIN CASH', ['Climb the leaderboard.', 'Top 5 win 
     + `<text x="600" y="372" text-anchor="middle" font-size="178" font-weight="bold" fill="url(#gold)" font-family="${F}">$1000</text>`
     + `<text x="600" y="420" text-anchor="middle" font-size="29" fill="#9fb6cf" font-family="${F}">free to play   ·   7-day season   ·   win real cash</text>`
     + `<g transform="translate(600,508)"><rect x="-258" y="-37" width="516" height="74" rx="37" fill="url(#gold)"/>`
-    + `<text x="0" y="13" text-anchor="middle" font-size="34" font-weight="bold" fill="#1a1206" font-family="${F}">PLAY FREE   ·   plotlands.fun</text></g>`;
+    + `<text x="0" y="13" text-anchor="middle" font-size="34" font-weight="bold" fill="#1a1206" font-family="${F}">PLAY FREE   ·   runelands.fun</text></g>`;
   return write('cta.png', b);
 })();

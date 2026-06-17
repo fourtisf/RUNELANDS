@@ -1,5 +1,5 @@
 // Generates the contest social/OG banner (marketing/contest-og.png, 1200x630):
-// the Plotlands isometric ISLAND from the keyart (cropped so the keyart's own text is off-frame) as a
+// the RUNELANDS isometric ISLAND from the keyart (cropped so the keyart's own text is off-frame) as a
 // cinematic background + a soft dark overlay + the $1000 contest copy.
 // Run after editing: node tools/make-og.js   (server serves it at /banner.png)
 const fs = require('fs');
@@ -51,7 +51,7 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" v
     <g transform="translate(600,550)">
       <rect x="-282" y="-37" width="564" height="74" rx="37" fill="#03060c" fill-opacity="0.4"/>
       <rect x="-280" y="-35" width="560" height="70" rx="35" fill="url(#gold)"/>
-      <text x="0" y="12" font-size="34" font-weight="bold" fill="#221703">PLAY FREE  ·  plotlands.fun</text>
+      <text x="0" y="12" font-size="34" font-weight="bold" fill="#221703">PLAY FREE  ·  runelands.fun</text>
     </g>
 
     ${sh(600, 611, 19, 0, 'Free Solana island MMO · connect your wallet · climb the leaderboard · win real cash', 1, 2)}

@@ -1,4 +1,4 @@
-// Plotlands — land ownership tests.
+// RUNELANDS — land ownership tests.
 // Verifies the "land is useful" feature: claiming requires a deed, owned land is protected
 // from other players, owned plots pay passive rent, and claims persist across restarts.
 //   run:  node test/land.js

@@ -1,4 +1,4 @@
-// Plotlands — new-player survivability tests.
+// RUNELANDS — new-player survivability tests.
 // Verifies the safe hub (no damage at spawn), spawn protection, and out-of-combat HP regen —
 // the fixes that make the game actually playable for a fresh player.
 //   run:  node test/survival.js

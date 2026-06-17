@@ -1,4 +1,4 @@
-// Plotlands — seasonal leaderboard + wallet-bound airdrop tests.
+// RUNELANDS — seasonal leaderboard + wallet-bound airdrop tests.
 // Verifies: season points accrue from activity, the leaderboard exposes a season block + ranking,
 // `self` carries seasonPts/airdrop, and a season rollover pays the airdrop to the top finisher,
 // resets the race (NOT player progress), and announces the result.
@@ -45,7 +45,7 @@ async function main(){
   ok(lb.season.rows[0].name === 'Ana' && lb.season.rows[0].pts > 0, 'Ana leads the season with >0 pts');
   ok(lb.season.you && lb.season.you.pts === a.self.seasonPts, 'season block reports your own pts + airdrop');
   ok(Array.isArray(lb.season.shareMe) && lb.season.shareMe.length >= 2 && /\{name\}/.test(lb.season.shareMe.join(' ')), 'season block carries multiple personalised share templates');
-  ok(lb.season.shareMe.every(v => /#Plotlands/i.test(v)), 'every personalised share variant includes #Plotlands');
+  ok(lb.season.shareMe.every(v => /#RUNELANDS/i.test(v)), 'every personalised share variant includes #RUNELANDS');
   ok('active' in lb.season && typeof lb.season.title === 'string' && typeof lb.season.racers === 'number', 'season block carries contest-banner fields (active/title/racers)');
 
   a.close(); b.close(); await sleep(150); srv1.kill(); await sleep(200);

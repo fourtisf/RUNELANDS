@@ -1,7 +1,7 @@
 {
-  "name": "plotlands-server",
+  "name": "runelands-server",
   "version": "0.1.0",
-  "description": "Plotlands — authoritative WebSocket game server: shared island world, real-time players, build/fight/trade, land ownership.",
+  "description": "RUNELANDS — authoritative WebSocket game server: shared fantasy realm, real-time players, build/fight/trade, land ownership.",
   "main": "server.js",
   "type": "commonjs",
   "scripts": {

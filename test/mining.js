@@ -1,4 +1,4 @@
-// Plotlands — mining tests.
+// RUNELANDS — mining tests.
 // ⛏️ Mining gives the big map a purpose + a second resource: mine rock for stone, the
 // depleted tile can't be re-mined until it regrows, stone sells at the merchant, and the
 // stone balance persists across a restart.

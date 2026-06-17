@@ -1,4 +1,4 @@
-// Plotlands — anti-grief tests.
+// RUNELANDS — anti-grief tests.
 // Two protections so nobody can spam structures or wall off / land-grab the spawn:
 //   (1) a per-player building cap, and
 //   (2) a protected no-build ring around spawn (NOBUILD_TILES) — build/claim refused inside it.

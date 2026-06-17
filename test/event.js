@@ -1,4 +1,4 @@
-// Plotlands — scheduled world-event (Horde) test.
+// RUNELANDS — scheduled world-event (Horde) test.
 // On a timer (while players are online) the server spawns a coordinated surge of tougher
 // monsters and announces it in chat. Deterministic: it's a timer + broadcast, not combat.
 //   run:  node test/event.js

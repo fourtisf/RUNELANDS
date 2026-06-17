@@ -1,4 +1,4 @@
-// Plotlands — crafting tests.
+// RUNELANDS — crafting tests.
 // The wood/stone sink: refine wood→planks, then spend planks+stone on a Reinforced Pick,
 // which is the ONLY way to raise mining yield. Outputs persist across a restart.
 //   run:  node test/crafting.js

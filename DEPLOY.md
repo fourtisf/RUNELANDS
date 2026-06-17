@@ -1,4 +1,4 @@
-# Plotlands — Multiplayer Deploy Guide
+# RUNELANDS — Multiplayer Deploy Guide
 
 Two parts: the **server** (authoritative, owns the shared world) and the **client**
 (`isle_online.html`, what players open).

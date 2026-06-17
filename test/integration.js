@@ -1,4 +1,4 @@
-// Plotlands — economy + combat integration tests (anti-cheat).
+// RUNELANDS — economy + combat integration tests (anti-cheat).
 // Boots a real server child and drives ws bots to prove the SERVER is authoritative:
 // resources, progression, and HP/combat live server-side and validate every action.
 //   run:  node test/integration.js     (or: npm test)

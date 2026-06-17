@@ -1,4 +1,4 @@
-// Plotlands — persistence tests.
+// RUNELANDS — persistence tests.
 // Proves that world edits and per-guest progress survive a full server restart
 // (file backend), that returning players are restored, and that guests are isolated.
 //   run:  node test/persistence.js

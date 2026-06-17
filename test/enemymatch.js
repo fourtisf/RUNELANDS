@@ -1,4 +1,4 @@
-// Plotlands — enemy-table parity check (a critical convention).
+// RUNELANDS — enemy-table parity check (a critical convention).
 // The ENEMY gameplay numbers MUST be identical in server.js and isle_online.html, or online
 // players would see enemies behave differently from what the server simulates. This is a fast,
 // deterministic static check (no server needed).

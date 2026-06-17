@@ -1,4 +1,4 @@
-// Plotlands — load test (the "simulate 50+ bots before launch" the docs insist on).
+// RUNELANDS — load test (the "simulate 50+ bots before launch" the docs insist on).
 // Spins up a real server, connects N bot clients that move around like players, and measures
 // the things that decide whether one process is enough: broadcast rate, latency, bandwidth, RSS.
 //

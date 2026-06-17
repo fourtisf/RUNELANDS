@@ -1,4 +1,4 @@
-# Plotlands — Developer Handoff (for Michael)
+# RUNELANDS — Developer Handoff (for Michael)
 
 A working **multiplayer browser MMO prototype** (top-down tile world, Build · Fight · Trade),
 in the style of islands.games. **No blockchain yet** — that's a later layer by design.

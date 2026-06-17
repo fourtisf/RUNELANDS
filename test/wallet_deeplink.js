@@ -1,4 +1,4 @@
-// Plotlands — Phantom MOBILE deeplink login. The phone leaves the page (to the Phantom app) and returns
+// RUNELANDS — Phantom MOBILE deeplink login. The phone leaves the page (to the Phantom app) and returns
 // via a reload, so the signature is produced on one socket and submitted on another. The server must
 // therefore accept a recently-issued login nonce (one-time), while still rejecting unknown/used ones.
 //   run:  node test/wallet_deeplink.js
@@ -10,7 +10,7 @@ const nacl = require('tweetnacl');
 const bs58 = require('bs58');
 const { Bot, ok, passCount, sleep, startServer, killServers, waitHealthy } = require('./harness');
 
-const PREFIX = 'Sign in to Plotlands\nWallet login — nonce: ';
+const PREFIX = 'Sign in to RUNELANDS\nWallet login — nonce: ';
 function sign(kp, nonce){ const sig = nacl.sign.detached(new Uint8Array(Buffer.from(PREFIX + nonce, 'utf8')), kp.secretKey); return { pubkey: bs58.encode(kp.publicKey), sig: Array.from(sig) }; }
 function httpGet(port, p){ return new Promise(res=>{ http.get({host:'localhost',port,path:p}, r=>{ let d=''; r.on('data',c=>d+=c); r.on('end',()=>res({status:r.statusCode, ct:r.headers['content-type']||'', len:d.length})); }).on('error',()=>res({status:0})); }); }
 

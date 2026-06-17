@@ -1,4 +1,4 @@
-# Plotlands — X / Twitter launch copy (copy-paste)
+# RUNELANDS — X / Twitter launch copy (copy-paste)
 
 Art (in this folder): `keyart.png` (premium 16:9 hero key art, 1920×1080),
 `tweet-banner.png` (first-tweet image, 16:9), `x-header.png` (profile header, 1500×500),
@@ -10,7 +10,7 @@ Regenerate everything with `node marketing/build.js`.
 
 ## First tweet (launch) — attach `tweet-banner.png`
 
-⛰ Introducing Plotlands — a free browser MMO island.
+⛰ Introducing RUNELANDS — a free browser MMO island.
 
 Build · Fight · Trade · Own Land 🏝️
 
@@ -20,27 +20,27 @@ Build · Fight · Trade · Own Land 🏝️
 🏆 Climb the leaderboard & trade with players
 
 No download, no wallet to start.
-👉 Play free: plotlands.fun
+👉 Play free: runelands.fun
 
 ---
 
 ## Shorter alt (if you want it punchier)
 
-⛰ Plotlands is live — a free browser MMO where you build, fight, and OWN land. 🏝️
+⛰ RUNELANDS is live — a free browser MMO where you build, fight, and OWN land. 🏝️
 
 Claim plots that pay you rent, hunt the Warlord boss, top the leaderboard.
 
-No download 👉 plotlands.fun
+No download 👉 runelands.fun
 
 ---
 
 ## X bio (≤160 chars)
 
-⛰ Free browser MMO island — Build · Fight · Trade · Own Land. Claim plots that pay rent, hunt the Warlord, top the leaderboard. Play 👉 plotlands.fun
+⛰ Free browser MMO island — Build · Fight · Trade · Own Land. Claim plots that pay rent, hunt the Warlord, top the leaderboard. Play 👉 runelands.fun
 
 ## Bio alt (shortest)
 
-⛰ Build · Fight · Trade · Own Land. A free browser MMO island. Play 👉 plotlands.fun
+⛰ Build · Fight · Trade · Own Land. A free browser MMO island. Play 👉 runelands.fun
 
 ---
 
@@ -56,7 +56,7 @@ Spend a Land Deed to claim a plot. It's protected — nobody else can build on i
 Every few minutes a Warlord boss roams the island. Huge HP, huge loot. Rally other players and take it down together. *(image: `thread-3-warlord.png`)*
 
 4/ 🪙 YOUR LAND, ON-CHAIN
-Plotlands is an own-land economy. On-chain land (Solana/USDC) is on the roadmap — your in-game plots become the real thing. Play free now, no wallet needed 👉 plotlands.fun *(image: `thread-4-economy.png`)*
+RUNELANDS is an own-land economy. On-chain land (Solana/USDC) is on the roadmap — your in-game plots become the real thing. Play free now, no wallet needed 👉 runelands.fun *(image: `thread-4-economy.png`)*
 
 ---
 
@@ -68,5 +68,5 @@ Plotlands is an own-land economy. On-chain land (Solana/USDC) is on the roadmap 
 
 ## Pinned-profile blurb / link text
 
-🎮 Play free: plotlands.fun
+🎮 Play free: runelands.fun
 A browser MMO island — build, fight, trade, and own land that pays you rent.

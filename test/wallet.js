@@ -1,4 +1,4 @@
-// Plotlands — Solana wallet-login tests (server-authoritative gate).
+// RUNELANDS — Solana wallet-login tests (server-authoritative gate).
 // Proves: a spectator cannot move/act until they connect a wallet; a real ed25519 signature
 // over the server's nonce unlocks play; a forged signature is rejected; the wallet is linked to
 // the account (returns auto-verified); and the same wallet on a new device adopts the account —
@@ -12,7 +12,7 @@ const bs58 = require('bs58');
 const { Bot, ok, passCount, sleep, startServer, waitHealthy } = require('./harness');
 
 const PORT = 2613, URL = 'ws://localhost:' + PORT;
-const PREFIX = 'Sign in to Plotlands\nWallet login — nonce: ';
+const PREFIX = 'Sign in to RUNELANDS\nWallet login — nonce: ';
 
 function signWallet(kp, nonce){
   const sig = nacl.sign.detached(new Uint8Array(Buffer.from(PREFIX + nonce, 'utf8')), kp.secretKey);

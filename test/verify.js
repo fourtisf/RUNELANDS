@@ -1,4 +1,4 @@
-// Plotlands — "verify to compete" tests (VERIFY_REQUIRED).
+// RUNELANDS — "verify to compete" tests (VERIFY_REQUIRED).
 // Proves: points still accrue while unverified but DON'T count toward the contest (excluded from the
 // in-game board, the public board, and raffle eligibility); sharing on X (→ verify) makes them count.
 //   run:  node test/verify.js

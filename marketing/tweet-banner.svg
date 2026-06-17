@@ -70,8 +70,8 @@
   <path d="M-10 -22 L-3 -6 L-18 -6 Z" fill="#fff" opacity=".9"/>
   <path d="M20 -14 L26 -4 L13 -4 Z" fill="#fff" opacity=".75"/></g>
   <text x="223.12" y="280" font-family="'DejaVu Sans','Liberation Sans',sans-serif" font-weight="bold" font-size="116" letter-spacing="0.58">
-    <tspan fill="#0c1118">PLOTLANDS</tspan></text>
-  <text x="221.38" y="276.52" font-family="'DejaVu Sans','Liberation Sans',sans-serif" font-weight="bold" font-size="116" letter-spacing="0.58" fill="#f4cf57">PLOTLANDS</text>
+    <tspan fill="#0c1118">RUNELANDS</tspan></text>
+  <text x="221.38" y="276.52" font-family="'DejaVu Sans','Liberation Sans',sans-serif" font-weight="bold" font-size="116" letter-spacing="0.58" fill="#f4cf57">RUNELANDS</text>
   <text x="74" y="368" font-family="'DejaVu Sans','Liberation Sans',sans-serif" font-weight="bold" font-size="44" fill="#f3f7fb">Build · Fight · Trade · <tspan fill="#f4cf57">Own Land</tspan></text>
   <g transform="translate(78 426)"><circle cx="9" cy="-6" r="7" fill="#7fd99a"/><path d="M5 -6 l3 3 l6 -7" stroke="#15202b" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
     <text x="34" y="0" font-family="'DejaVu Sans','Liberation Sans',sans-serif" font-size="28" fill="#f3f7fb">Chop wood, mine stone and fish the coast</text></g><g transform="translate(78 476)"><circle cx="9" cy="-6" r="7" fill="#7fd99a"/><path d="M5 -6 l3 3 l6 -7" stroke="#15202b" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
@@ -92,6 +92,6 @@
   <text x="622.26" y="718.56" text-anchor="middle" font-family="'DejaVu Sans','Liberation Sans',sans-serif" font-weight="bold" font-size="22" fill="#f4cf57" letter-spacing="1">TRADE</text></g>
   <g>
   <rect x="78" y="754" width="540" height="76" rx="38" fill="#f4cf57" filter="url(#sh)"/>
-  <text x="348" y="804.16" text-anchor="middle" font-family="'DejaVu Sans','Liberation Sans',sans-serif" font-weight="bold" font-size="34" fill="#15202b">PLAY FREE  →  plotlands.fun</text></g>
+  <text x="348" y="804.16" text-anchor="middle" font-family="'DejaVu Sans','Liberation Sans',sans-serif" font-weight="bold" font-size="34" fill="#15202b">PLAY FREE  →  runelands.fun</text></g>
   <text x="80" y="872" font-family="'DejaVu Sans','Liberation Sans',sans-serif" font-size="22" fill="#aebfce">Claim your plot of the island — a build · fight · trade MMO with an own-land economy.</text>
 </svg>

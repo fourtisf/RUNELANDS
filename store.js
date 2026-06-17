@@ -1,4 +1,4 @@
-// Plotlands — persistence layer.
+// RUNELANDS — persistence layer.
 //
 // Two interchangeable backends behind one interface so server.js stays storage-agnostic:
 //   • FileStore  (default, zero-config): atomic JSON snapshot under DATA_DIR. Runs anywhere,

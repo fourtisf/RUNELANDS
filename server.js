@@ -1,4 +1,4 @@
-// Plotlands — authoritative multiplayer server (prototype tier)
+// RUNELANDS — authoritative multiplayer server (prototype tier)
 // Node + ws. Owns: players, shared world edits, slimes, AND the economy + combat.
 // 15 Hz tick. Deploy anywhere that runs Node (Railway / Render / Fly.io / a VPS).
 //
@@ -130,7 +130,7 @@ function raffleTickets(pts){ return pts>=RAFFLE_MIN_PTS ? Math.min(RAFFLE_MAX_TI
 // Admin export (final standings → payout). Disabled unless ADMIN_KEY is set; the /admin/* routes
 // require ?key=ADMIN_KEY (any other request 404s, so the endpoint is invisible without the key).
 const ADMIN_KEY = process.env.ADMIN_KEY || '';
-const IP_SALT = process.env.IP_SALT || ADMIN_KEY || 'plotlands';   // salts the stored IP hash (privacy)
+const IP_SALT = process.env.IP_SALT || ADMIN_KEY || 'runelands';   // salts the stored IP hash (privacy)
 function hashIp(ip){ return ip ? crypto.createHash('sha256').update(ip+'|'+IP_SALT).digest('hex').slice(0,16) : null; }
 function clientIp(req){ if(!req) return '';
   return (req.headers['cf-connecting-ip'] || req.headers['x-real-ip'] || (req.headers['x-forwarded-for']||'').split(',')[0].trim() || (req.socket&&req.socket.remoteAddress) || ''); }
@@ -147,19 +147,19 @@ const CONTEST = {
 // Title already carries the prize ("$1000 Season Showdown") so we don't prepend it. Override via
 // CONTEST_SHARE (variants separated by "|||").
 const SHARE_DEFAULT = [
-  '🏆 ' + CONTEST.title + ' is LIVE on @plotlandsfun!\n\nA free Solana island MMO — build your island, hunt monsters, fish & farm your way up the leaderboard. Top players win real cash 💰\n\n🎮 Free to play — just connect your Solana wallet & climb 👇\n\n#Plotlands #plotlandsfun #plotlandscontest',
-  '💰 Win real cash in the ' + CONTEST.title + ' on @plotlandsfun! Climb the leaderboard in a free Solana island MMO — build, fight, fish & trade. Connect your wallet & start earning 👇\n\n#Plotlands #plotlandsfun #plotlandscontest',
-  '⚔️ The ' + CONTEST.title + ' is ON @plotlandsfun! Free to play on Solana — grind monsters, claim land & race to the top for the prize pool 💰 Connect your wallet & play 👇\n\n#Plotlands #plotlandsfun #plotlandscontest',
+  '🏆 ' + CONTEST.title + ' is LIVE on @runelandsfun!\n\nA free Solana fantasy MMO — build your realm, hunt monsters, fish & farm your way up the leaderboard. Top players win real cash 💰\n\n🎮 Free to play — just connect your Solana wallet & climb 👇\n\n#RUNELANDS #runelandsfun #runelandscontest',
+  '💰 Win real cash in the ' + CONTEST.title + ' on @runelandsfun! Climb the leaderboard in a free Solana fantasy MMO — build, fight, fish & trade. Connect your wallet & start earning 👇\n\n#RUNELANDS #runelandsfun #runelandscontest',
+  '⚔️ The ' + CONTEST.title + ' is ON @runelandsfun! Free to play on Solana — grind monsters, claim land & race to the top for the prize pool 💰 Connect your wallet & play 👇\n\n#RUNELANDS #runelandsfun #runelandscontest',
 ];
 CONTEST.shareText = (process.env.CONTEST_SHARE ? process.env.CONTEST_SHARE.split('|||') : SHARE_DEFAULT).map(s=>s.trim()).filter(Boolean);
 // Personalised "share my rank" copy for the in-game button — a list of variants the client picks
 // from at random (so repeat shares vary). Tokens {name} {pts} {rank} {title} are filled client-side
 // (only the game knows who you are). Override via CONTEST_SHARE_ME (templates separated by "|||").
 const SHARE_ME_DEFAULT = [
-  '🏆 {name} is climbing the {title} on @plotlandsfun — {pts} pts{rank}! Think you can beat me? 👇 Free to play. #Plotlands #plotlandsfun #plotlandscontest',
-  '⚔️ Just hit {pts} pts{rank} in the {title} on @plotlandsfun! Build, fight & climb on Solana — catch me if you can 👇 #Plotlands #plotlandsfun #plotlandscontest',
-  '💰 {name} is grinding the {title} prize pool on @plotlandsfun ({pts} pts{rank}). Connect your wallet & race me 👇 #Plotlands #plotlandsfun #plotlandscontest',
-  "🏝️ {name} here — {pts} pts{rank} on the @plotlandsfun leaderboard! Free Solana MMO, real cash up top. Bet you can't beat me 👇 #Plotlands #plotlandsfun #plotlandscontest",
+  '🏆 {name} is climbing the {title} on @runelandsfun — {pts} pts{rank}! Think you can beat me? 👇 Free to play. #RUNELANDS #runelandsfun #runelandscontest',
+  '⚔️ Just hit {pts} pts{rank} in the {title} on @runelandsfun! Build, fight & climb on Solana — catch me if you can 👇 #RUNELANDS #runelandsfun #runelandscontest',
+  '💰 {name} is grinding the {title} prize pool on @runelandsfun ({pts} pts{rank}). Connect your wallet & race me 👇 #RUNELANDS #runelandsfun #runelandscontest',
+  "🏰 {name} here — {pts} pts{rank} on the @runelandsfun leaderboard! Free Solana MMO, real cash up top. Bet you can't beat me 👇 #RUNELANDS #runelandsfun #runelandscontest",
 ];
 CONTEST.shareMe = (process.env.CONTEST_SHARE_ME ? process.env.CONTEST_SHARE_ME.split('|||') : SHARE_ME_DEFAULT).map(s=>s.trim()).filter(Boolean);
 const LEADERBOARD_CACHE_MS = +process.env.LEADERBOARD_CACHE_MS || 10000;   // serve a cached public board under viral load
@@ -176,7 +176,7 @@ const contestEligible = r => !VERIFY_REQUIRED || !!r.verified;
 // nonce) and linked to the account so progress is saved and recoverable across devices.
 // Set WALLET_REQUIRED=0 to disable the gate (e.g. local dev).
 const WALLET_REQUIRED = process.env.WALLET_REQUIRED !== '0';
-const LOGIN_PREFIX = 'Sign in to Plotlands\nWallet login — nonce: ';
+const LOGIN_PREFIX = 'Sign in to RUNELANDS\nWallet login — nonce: ';
 // Login nonces are normally tied to the live socket. The Phantom mobile deeplink flow, however, reloads
 // the page (new socket → new nonce) between signing and submitting the signature, so we also accept any
 // nonce we issued in the last few minutes. Nonces are one-time (deleted on use) → no replay window.
@@ -388,7 +388,7 @@ const STATIC = { '/favicon.png':'marketing/favicon.png', '/apple-touch-icon.png'
   '/nacl.min.js':'vendor/nacl.min.js' };  // tweetnacl (box) for the Phantom mobile deeplink flow
 const server=http.createServer((req,res)=>{
   const url=(req.url||'/').split('?')[0];
-  if(url==='/health'){ res.writeHead(200,{'content-type':'text/plain'}); res.end('Plotlands server OK — players: '+players.size); return; }
+  if(url==='/health'){ res.writeHead(200,{'content-type':'text/plain'}); res.end('RUNELANDS server OK — players: '+players.size); return; }
   if(url==='/admin/standings'){
     const params=new URL(req.url,'http://x').searchParams;
     if(!ADMIN_KEY || params.get('key')!==ADMIN_KEY){ res.writeHead(404,{'content-type':'text/plain'}); res.end('Not found'); return; } // invisible without the key
@@ -1061,5 +1061,5 @@ process.on('SIGINT',shutdown); process.on('SIGTERM',shutdown);
     console.log('[season] active:',season.no,'ends',new Date(season.end).toISOString());
     recomputeRacers();
   }catch(e){ console.error('[store init]',e.message); }
-  server.listen(PORT,()=>console.log('Plotlands server listening on :'+PORT));
+  server.listen(PORT,()=>console.log('RUNELANDS server listening on :'+PORT));
 })();

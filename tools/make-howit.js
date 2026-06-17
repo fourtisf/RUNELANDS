@@ -46,7 +46,7 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" 
     <text x="600" y="524" font-size="22" font-weight="bold" fill="#ffe79a">1st $300  ·  2nd $175  ·  3rd $100  ·  4th $75  ·  5th $50    +    $300 Raffle</text>
     <g transform="translate(600,576)">
       <rect x="-242" y="-30" width="484" height="60" rx="30" fill="url(#gold)"/>
-      <text x="0" y="11" font-size="29" font-weight="bold" fill="#1a1206">PLAY FREE   ·   plotlands.fun</text>
+      <text x="0" y="11" font-size="29" font-weight="bold" fill="#1a1206">PLAY FREE   ·   runelands.fun</text>
     </g>
   </g>
 </svg>`;

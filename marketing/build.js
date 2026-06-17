@@ -1,4 +1,4 @@
-// Plotlands — launch art generator. Produces on-brand SVGs + PNGs.
+// RUNELANDS — launch art generator. Produces on-brand SVGs + PNGs.
 //   node marketing/build.js   →  keyart / tweet-banner / x-header / logo  (.svg + .png)
 //   keyart = premium 16:9 hero key art (isometric diorama) — the master-prompt look, rendered.
 const fs = require('fs');
@@ -67,12 +67,12 @@ const defs = `<defs>
   <filter id="sh" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#000" flood-opacity=".45"/></filter>
 </defs>`;
 
-// wordmark: gold "PLOTLANDS" with a dark shadow + the peak mark
+// wordmark: gold "RUNELANDS" with a dark shadow + the peak mark
 const wordmark = (x,y,size) => `
   ${peak(x+size*0.5, y-size*0.05, size/58)}
   <text x="${x+size*1.32}" y="${y}" font-family=${JSON.stringify(F)} font-weight="bold" font-size="${size}" letter-spacing="${size*0.005}">
-    <tspan fill="#0c1118">PLOTLANDS</tspan></text>
-  <text x="${x+size*1.305}" y="${y-size*0.03}" font-family=${JSON.stringify(F)} font-weight="bold" font-size="${size}" letter-spacing="${size*0.005}" fill="${C.gold}">PLOTLANDS</text>`;
+    <tspan fill="#0c1118">RUNELANDS</tspan></text>
+  <text x="${x+size*1.305}" y="${y-size*0.03}" font-family=${JSON.stringify(F)} font-weight="bold" font-size="${size}" letter-spacing="${size*0.005}" fill="${C.gold}">RUNELANDS</text>`;
 
 const pill = (x,y,w,h,text,fs) => `<g>
   <rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${h/2}" fill="${C.gold}" filter="url(#sh)"/>
@@ -96,7 +96,7 @@ const banner = `<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900
     .map((t,i)=>`<g transform="translate(78 ${426+i*50})"><circle cx="9" cy="-6" r="7" fill="${C.ok}"/><path d="M5 -6 l3 3 l6 -7" stroke="#15202b" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
     <text x="34" y="0" font-family=${JSON.stringify(F)} font-size="28" fill="${C.txt}">${t}</text></g>`).join('')}
   ${chipRow(78, 690, 42, 22, ['MINE','FISH','CRAFT','CLAIM LAND','TRADE'])}
-  ${pill(78, 754, 540, 76, 'PLAY FREE  →  plotlands.fun', 34)}
+  ${pill(78, 754, 540, 76, 'PLAY FREE  →  runelands.fun', 34)}
   <text x="80" y="872" font-family=${JSON.stringify(F)} font-size="22" fill="${C.dim}">Claim your plot of the island — a build · fight · trade MMO with an own-land economy.</text>
 </svg>`;
 
@@ -214,10 +214,10 @@ const crest=(cx,cy,r)=>`<g filter="url(#ds)">
   <circle cx="${cx}" cy="${cy}" r="${r*0.7}" fill="#16323f"/>
   ${peak(cx, cy+4, r/68)}</g>`;
 const wordmark3d=(cx,y,size)=>{
-  let depth=''; for(let i=9;i>=1;i--) depth+=`<text x="${cx+i*0.9}" y="${y+i}" text-anchor="middle" font-family=${JSON.stringify(F)} font-weight="bold" font-size="${size}" letter-spacing="${size*0.01}" fill="#6e4f12">PLOTLANDS</text>`;
+  let depth=''; for(let i=9;i>=1;i--) depth+=`<text x="${cx+i*0.9}" y="${y+i}" text-anchor="middle" font-family=${JSON.stringify(F)} font-weight="bold" font-size="${size}" letter-spacing="${size*0.01}" fill="#6e4f12">RUNELANDS</text>`;
   return `${depth}
-    <text x="${cx}" y="${y}" text-anchor="middle" font-family=${JSON.stringify(F)} font-weight="bold" font-size="${size}" letter-spacing="${size*0.01}" fill="url(#goldG)">PLOTLANDS</text>
-    <text x="${cx-1}" y="${y-size*0.045}" text-anchor="middle" font-family=${JSON.stringify(F)} font-weight="bold" font-size="${size}" letter-spacing="${size*0.01}" fill="#fff7d6" opacity=".28">PLOTLANDS</text>`;
+    <text x="${cx}" y="${y}" text-anchor="middle" font-family=${JSON.stringify(F)} font-weight="bold" font-size="${size}" letter-spacing="${size*0.01}" fill="url(#goldG)">RUNELANDS</text>
+    <text x="${cx-1}" y="${y-size*0.045}" text-anchor="middle" font-family=${JSON.stringify(F)} font-weight="bold" font-size="${size}" letter-spacing="${size*0.01}" fill="#fff7d6" opacity=".28">RUNELANDS</text>`;
 };
 const ctaBtn=(cx,y,w,h,label)=>{const x=cx-w/2;return `<g filter="url(#ds)">
   <rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${h/2}" fill="url(#ctaG)" stroke="#fff3c4" stroke-width="2"/>
@@ -281,7 +281,7 @@ const keyart = `<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="108
   ${crest(960,138,44)}
   ${wordmark3d(960,272,120)}
   <text x="960" y="330" text-anchor="middle" font-family=${JSON.stringify(F)} font-weight="bold" font-size="40" fill="${C.txt}" filter="url(#ds)">Build · Fight · Trade · <tspan fill="${C.gold}">Own Land</tspan></text>
-  ${ctaBtn(960,978,560,80,'PLAY FREE — plotlands.fun')}
+  ${ctaBtn(960,978,560,80,'PLAY FREE — runelands.fun')}
   <rect x="22" y="22" width="1876" height="1036" rx="26" fill="none" stroke="url(#goldG)" stroke-width="2.5" opacity=".5"/>
 </svg>`;
 
@@ -324,8 +324,8 @@ const xdefs=`<defs>
 </defs>`;
 
 const lockup=(x,y)=>`${crest(x+22,y-10,22)}
-  <text x="${x+52}" y="${y}" font-family=${JSON.stringify(F)} font-weight="bold" font-size="34" fill="url(#goldG)">PLOTLANDS</text>
-  <text x="${x+54}" y="${y+25}" font-family=${JSON.stringify(F)} font-size="21" fill="#bcd0df">plotlands.fun · free browser MMO</text>`;
+  <text x="${x+52}" y="${y}" font-family=${JSON.stringify(F)} font-weight="bold" font-size="34" fill="url(#goldG)">RUNELANDS</text>
+  <text x="${x+54}" y="${y+25}" font-family=${JSON.stringify(F)} font-size="21" fill="#bcd0df">runelands.fun · free browser MMO</text>`;
 
 function threadBanner(o){
   const tY=246, lh=88;
@@ -409,7 +409,7 @@ const header = `<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="500
   ${crest(150,150,54)}
   ${wordmark3d(480,256,92)}
   <text x="480" y="320" text-anchor="middle" font-family=${JSON.stringify(F)} font-weight="bold" font-size="34" fill="${C.txt}">Build · Fight · Trade · <tspan fill="${C.gold}">Own Land</tspan></text>
-  <text x="480" y="360" text-anchor="middle" font-family=${JSON.stringify(F)} font-size="23" fill="#bcd0df">A free browser MMO island — play free, no download · plotlands.fun</text>
+  <text x="480" y="360" text-anchor="middle" font-family=${JSON.stringify(F)} font-size="23" fill="#bcd0df">A free browser MMO island — play free, no download · runelands.fun</text>
 </svg>`;
 
 // ===================== PREMIUM LOGO / APP ICON (1:1) =====================

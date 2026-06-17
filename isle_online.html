@@ -3,20 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>Plotlands — Online</title>
-<meta name="description" content="Plotlands — a free browser MMO island. Build · Fight · Trade · Own Land. Claim plots that pay rent, hunt the Warlord, top the leaderboard. Play free, no download.">
+<title>RUNELANDS — Online</title>
+<meta name="description" content="RUNELANDS — a free browser fantasy MMO. Build · Fight · Trade · Own Land. Claim plots that pay rent, hunt the Warlord, top the leaderboard. Play free, no download.">
 <link rel="icon" type="image/png" href="/favicon.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta name="theme-color" content="#15323f">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://plotlands.fun">
-<meta property="og:title" content="Plotlands — free browser MMO island">
+<meta property="og:url" content="https://runelands.fun">
+<meta property="og:title" content="RUNELANDS — free browser fantasy MMO">
 <meta property="og:description" content="Build · Fight · Trade · Own Land. Claim plots that pay rent, hunt the Warlord, top the leaderboard. Play free — no download.">
-<meta property="og:image" content="https://plotlands.fun/og.png">
+<meta property="og:image" content="https://runelands.fun/og.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Plotlands — free browser MMO island">
+<meta name="twitter:title" content="RUNELANDS — free browser fantasy MMO">
 <meta name="twitter:description" content="Build · Fight · Trade · Own Land. Play free in your browser — no download.">
-<meta name="twitter:image" content="https://plotlands.fun/og.png">
+<meta name="twitter:image" content="https://runelands.fun/og.png">
 <style>
   :root{--ui-bg:#2b3a4a;--ui-bg2:#1f2a36;--ui-line:#5a7187;--gold:#f0c64a;--gold-d:#b8902a;
     --txt:#eef3f7;--txt-dim:#9fb2c4;--hp:#e25c5c;--xp:#5fb0e8;--wood:#c08a4f;--coin:#f0c64a;--ok:#6fd08a;}
@@ -258,7 +258,7 @@
 <body>
 <canvas id="game"></canvas>
 <div id="topbar" class="panel">
-  <span class="isle">⛰ Plotlands</span>
+  <span class="isle">🏰 RUNELANDS</span>
   <span class="stat" id="walletStat" style="display:none"><span class="dot" style="background:#c9a0ff"></span><b id="walletChip"></b></span>
   <span class="stat"><span class="dot" style="background:var(--ok)"></span>Online <b id="sPlayers">1</b></span>
   <span class="stat"><span class="dot" style="background:var(--gold)"></span>Total Users <b id="sTotal">—</b></span>
@@ -309,8 +309,8 @@
 </div>
 <button id="fishBtn">🎣 Fish</button>
 <div id="start">
-  <h1>⛰ PLOTLANDS</h1>
-  <div class="sub">A Solana island MMO — Build · Fight · Trade · Own Land</div>
+  <h1>🏰 RUNELANDS</h1>
+  <div class="sub">A Solana fantasy MMO — Build · Fight · Trade · Own Land</div>
   <div class="card">
     <div class="counts">
       <span class="pc">🟢 Online <b id="sOnline2">—</b></span>
@@ -325,8 +325,8 @@
     <div class="chain">Powered by <b>Solana</b> · Phantom wallet</div>
     <div class="ca" id="caChip" title="Click to copy contract address">CA: <span id="caText">Coming soon</span> <span style="opacity:.55">📋</span></div>
     <div class="social">
-      <a class="soc" href="https://x.com/plotlandsfun" target="_blank" rel="noopener">𝕏 Twitter</a>
-      <a class="soc" href="https://t.me/plotlands" target="_blank" rel="noopener">✈️ Telegram</a>
+      <a class="soc" href="https://x.com/runelandsfun" target="_blank" rel="noopener">𝕏 Twitter</a>
+      <a class="soc" href="https://t.me/runelands" target="_blank" rel="noopener">✈️ Telegram</a>
     </div>
   </div>
 </div>
@@ -369,7 +369,7 @@
   <div class="body" id="leadBody"></div>
   <div id="leadShare">
     <button id="leadShareBtn" title="Brag about your rank on X">𝕏 Share my rank</button>
-    <a id="leadOpenPublic" href="https://plotlands.fun/leaderboard" target="_blank" rel="noopener" title="Open the public leaderboard">🔗 Full board</a>
+    <a id="leadOpenPublic" href="https://runelands.fun/leaderboard" target="_blank" rel="noopener" title="Open the public leaderboard">🔗 Full board</a>
   </div>
 </div>
 <div id="tools" class="panel">
@@ -575,8 +575,8 @@ let ws=null,myId=null,online=false,connecting=true;
 // Spectators can watch; moving/acting requires a connected + signed Solana wallet. The signature
 // is verified server-side; the wallet is then linked to the account so progress is saved.
 let walletOk=false, walletRequired=false, walletPubkey=null, walletNonce=null, _walletBusy=false;
-const WALLET_PREFIX='Sign in to Plotlands\nWallet login — nonce: ';
-const CONTRACT_ADDRESS='E2ccc6bnFwXaeVmToQ7nuyaQfMZvNbE2toBJcCNKpump'; // Solana token CA ($LANDS)
+const WALLET_PREFIX='Sign in to RUNELANDS\nWallet login — nonce: ';
+const CONTRACT_ADDRESS=''; // Solana token CA ($RUNE) — set when the token launches (UI shows "Coming soon" until then)
 function canPlay(){ return !walletRequired || walletOk; }
 function getProvider(){ return (window.phantom&&window.phantom.solana) || (window.solana&&window.solana.isPhantom?window.solana:null); }
 function isMobileUA(){ return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile/i.test(navigator.userAgent||''); }
@@ -609,7 +609,7 @@ function startPhantomDeeplink(){
     lsSet('ph_sec', b58enc(kp.secretKey));
     lsSet('ph_nonce', walletNonce);     // login nonce to sign (kept across the app-switch + reload)
     const p=new URLSearchParams({ dapp_encryption_public_key:b58enc(kp.publicKey), cluster:'mainnet-beta',
-      app_url:'https://plotlands.fun', redirect_link:dappReturn()+'?pcb=connect' });
+      app_url:'https://runelands.fun', redirect_link:dappReturn()+'?pcb=connect' });
     setWalletBusy(true); toast('Opening Phantom…');
     location.href='https://phantom.app/ul/v1/connect?'+p.toString();
   }catch(e){ setWalletBusy(false); toast('Could not open Phantom'); }
@@ -711,7 +711,7 @@ function scheduleReconnect(){ if(reconnects++>=5){setStatus('Disconnected ✕','
 function send(o){if(online&&ws&&ws.readyState===1)ws.send(JSON.stringify(o));}
 function handleMsg(m){
   if(m.t==='init'){
-    myId=m.id;online=true;connecting=false;reconnects=0;setStatus('Connected ●','on');sys('Welcome to Plotlands!');
+    myId=m.id;online=true;connecting=false;reconnects=0;setStatus('Connected ●','on');sys('Welcome to RUNELANDS!');
     if(m.total!=null){$('sTotal').textContent=m.total;const t2=$('sTotal2');if(t2)t2.textContent=m.total;}
     {const o2=$('sOnline2');if(o2)o2.textContent=(m.players?m.players.length:0)+1;}
     walletRequired=!!m.walletRequired; walletOk=!!m.walletOk; walletPubkey=m.wallet||null; if(m.nonce)walletNonce=m.nonce;
@@ -1033,11 +1033,11 @@ function closeLeaderboard(){leadOpen=false;document.getElementById('leaderboard'
 function shareMyRank(){
   const s=(lastLeader&&lastLeader.season)||{}, rank=(s.you&&s.you.rank)||0;
   const vars = (Array.isArray(s.shareMe)&&s.shareMe.length) ? s.shareMe
-    : ['🏆 {name} is climbing the leaderboard on @plotlandsfun — {pts} pts{rank}! Think you can beat me? 👇 Play free. #Solana #P2E'];
+    : ['🏆 {name} is climbing the leaderboard on @runelandsfun — {pts} pts{rank}! Think you can beat me? 👇 Play free. #Solana #P2E'];
   const txt = vars[Math.floor(Math.random()*vars.length)]
     .replace(/\{name\}/g, myName).replace(/\{pts\}/g, (mySeasonPts||0).toLocaleString())
     .replace(/\{rank\}/g, rank?(' (rank #'+rank+')'):'').replace(/\{title\}/g, s.title||'Season Showdown');
-  window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(txt)+'&url='+encodeURIComponent('https://plotlands.fun/win'),'_blank','noopener');
+  window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(txt)+'&url='+encodeURIComponent('https://runelands.fun/win'),'_blank','noopener');
 }
 // contest banner under the topbar: "Join the $1000 contest — share on X · N playing · ends in Xd".
 // Unverified players are nudged to share (so their points count); verified players see "✓ you're in".

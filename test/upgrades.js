@@ -1,4 +1,4 @@
-// Plotlands — merchant upgrade tests.
+// RUNELANDS — merchant upgrade tests.
 // Verifies upgrades cost coins, escalate, actually change gameplay (sword damage / wood per
 // chop), reject when unaffordable, and persist across restarts.
 //   run:  node test/upgrades.js

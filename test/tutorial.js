@@ -1,4 +1,4 @@
-// Plotlands — onboarding completion-reward tests.
+// RUNELANDS — onboarding completion-reward tests.
 // The tutorial reward is granted SERVER-side exactly once per account: the first
 // {tutdone} pays out, repeats are no-ops (un-farmable), and the "claimed" flag
 // persists across a restart. Guests with progress-saving off get nothing.

@@ -1,4 +1,4 @@
-// Shared test harness for Plotlands: deterministic map gen (to locate tiles),
+// Shared test harness for RUNELANDS: deterministic map gen (to locate tiles),
 // a tiny ws bot client, server process control, and assertion helpers.
 // Used by integration.js (economy/combat) and persistence.js.
 const { spawn } = require('child_process');

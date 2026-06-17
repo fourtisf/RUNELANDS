@@ -3,18 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Plotlands — Leaderboard</title>
-<meta name="description" content="The live Plotlands season leaderboard. Connect a Solana wallet, climb the ranks, win the prize pool.">
-<meta property="og:title" content="Plotlands — $1000 Season Showdown">
-<meta property="og:description" content="Climb the ranks. Win the $1000 prize pool. Play free on Solana at plotlands.fun.">
-<meta property="og:image" content="https://plotlands.fun/banner.png">
+<title>RUNELANDS — Leaderboard</title>
+<meta name="description" content="The live RUNELANDS season leaderboard. Connect a Solana wallet, climb the ranks, win the prize pool.">
+<meta property="og:title" content="RUNELANDS — $1000 Season Showdown">
+<meta property="og:description" content="Climb the ranks. Win the $1000 prize pool. Play free on Solana at runelands.fun.">
+<meta property="og:image" content="https://runelands.fun/banner.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Plotlands — $1000 Season Showdown">
-<meta name="twitter:description" content="Climb the ranks. Win the $1000 prize pool. Play free on Solana at plotlands.fun.">
-<meta name="twitter:image" content="https://plotlands.fun/banner.png">
+<meta name="twitter:title" content="RUNELANDS — $1000 Season Showdown">
+<meta name="twitter:description" content="Climb the ranks. Win the $1000 prize pool. Play free on Solana at runelands.fun.">
+<meta name="twitter:image" content="https://runelands.fun/banner.png">
 <link rel="icon" href="/favicon.png">
 <style>
   :root{ --bg:#0c1420; --bg2:#0a0f18; --gold:#f0c64a; --gold2:#ffe07a; --txt:#e7eef6; --dim:#8da3b8;
@@ -82,13 +82,13 @@
 <body>
 <div class="wrap">
   <header>
-    <div class="brand">⛰ PLOTLANDS</div>
+    <div class="brand">🏰 RUNELANDS</div>
     <h1 id="title">🏆 Leaderboard</h1>
     <div id="prize" class="prize" style="display:none"></div>
     <div id="seasonSub" class="sub"></div>
     <div id="countWrap" class="count"><div class="seg"><div class="n" id="cd">—</div><div class="l">remaining</div></div></div>
     <div id="prizes" class="prizes"></div>
-    <div class="cta"><a id="playCta" class="play" href="https://plotlands.fun">🟣 Connect Wallet &amp; Play Free</a></div>
+    <div class="cta"><a id="playCta" class="play" href="https://runelands.fun">🟣 Connect Wallet &amp; Play Free</a></div>
     <div class="share">
       <span class="shlabel">Share:</span>
       <a id="shX" class="shbtn x" target="_blank" rel="noopener">𝕏 Post</a>
@@ -105,7 +105,7 @@
     <tbody id="board"><tr><td colspan="4" class="empty">Loading…</td></tr></tbody>
   </table>
 
-  <footer><span class="live"></span><span id="updated">live</span> · refreshes automatically · <a href="https://plotlands.fun">plotlands.fun</a></footer>
+  <footer><span class="live"></span><span id="updated">live</span> · refreshes automatically · <a href="https://runelands.fun">runelands.fun</a></footer>
 </div>
 <div id="toast"></div>
 
@@ -120,9 +120,9 @@ function toast(msg){ const t=$('toast'); if(!t)return; t.textContent=msg; t.clas
 let _contest=null;
 function buildShare(c){ if(c) _contest=c; }   // store the latest contest copy; a fresh variant is picked per click
 function pickShare(){ const a=_contest&&_contest.shareText;
-  const v = Array.isArray(a)&&a.length ? a : (typeof a==='string'&&a ? [a] : ['🏆 Play Plotlands — a free Solana island MMO! Build, fight & climb the leaderboard to win 🏆']);
+  const v = Array.isArray(a)&&a.length ? a : (typeof a==='string'&&a ? [a] : ['🏆 Play RUNELANDS — a free Solana fantasy MMO! Build, fight & climb the leaderboard to win 🏆']);
   return v[Math.floor(Math.random()*v.length)]; }
-function shareNow(kind){ const url='https://plotlands.fun/win', text=pickShare();
+function shareNow(kind){ const url='https://runelands.fun/win', text=pickShare();
   const t=encodeURIComponent(text), u=encodeURIComponent(url);
   const href = kind==='x'  ? 'https://twitter.com/intent/tweet?text='+t+'&url='+u
              : kind==='tg' ? 'https://t.me/share/url?url='+u+'&text='+t

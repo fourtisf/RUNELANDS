@@ -1,4 +1,4 @@
-// Plotlands — player land-market tests.
+// RUNELANDS — player land-market tests.
 // Owners list a plot for coins (/sell); a buyer standing on it pays (/buy) and ownership +
 // the deed transfer. Crucially the seller is credited even when OFFLINE. State persists.
 //   run:  node test/market.js

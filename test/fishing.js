@@ -1,4 +1,4 @@
-// Plotlands — fishing tests.
+// RUNELANDS — fishing tests.
 // 🎣 Fishing is a slower, water-side resource: cast at adjacent water for fish, gated by a
 // per-player rod cooldown, only at water tiles, sellable at the merchant, and persisted.
 //   run:  node test/fishing.js
