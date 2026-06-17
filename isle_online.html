@@ -7,7 +7,7 @@
 <meta name="description" content="RUNELANDS — a free browser fantasy MMO. Build · Fight · Trade · Own Land. Claim plots that pay rent, hunt the Warlord, top the leaderboard. Play free, no download.">
 <link rel="icon" type="image/png" href="/favicon.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<meta name="theme-color" content="#15323f">
+<meta name="theme-color" content="#2d2342">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://runelands.fun">
 <meta property="og:title" content="RUNELANDS — free browser fantasy MMO">
@@ -18,10 +18,10 @@
 <meta name="twitter:description" content="Build · Fight · Trade · Own Land. Play free in your browser — no download.">
 <meta name="twitter:image" content="https://runelands.fun/og.png">
 <style>
-  :root{--ui-bg:#2b3a4a;--ui-bg2:#1f2a36;--ui-line:#5a7187;--gold:#f0c64a;--gold-d:#b8902a;
-    --txt:#eef3f7;--txt-dim:#9fb2c4;--hp:#e25c5c;--xp:#5fb0e8;--wood:#c08a4f;--coin:#f0c64a;--ok:#6fd08a;}
+  :root{--ui-bg:#2d2342;--ui-bg2:#1e1830;--ui-line:#6a5a8c;--gold:#f0c64a;--gold-d:#b8902a;
+    --txt:#f1ecf8;--txt-dim:#b1a4c6;--hp:#e25c5c;--xp:#6f9be8;--wood:#c08a4f;--coin:#f0c64a;--ok:#6fd08a;}
   *{box-sizing:border-box;margin:0;padding:0}
-  html,body{height:100%;overflow:hidden;background:#16202b;font-family:'Segoe UI',system-ui,sans-serif;
+  html,body{height:100%;overflow:hidden;background:#15111f;font-family:'Segoe UI',system-ui,sans-serif;
     -webkit-user-select:none;user-select:none;touch-action:none}
   #game{display:block;width:100vw;height:100vh;image-rendering:pixelated;cursor:crosshair}
   .panel{position:absolute;background:linear-gradient(180deg,var(--ui-bg),var(--ui-bg2));border:2px solid var(--ui-line);
@@ -184,7 +184,7 @@
   #start{position:fixed;inset:0;z-index:50;background:rgba(11,16,22,.94);display:flex;flex-direction:column;
     align-items:center;justify-content:center;text-align:center;color:var(--txt);cursor:pointer;padding:20px}
   #start.hidden{display:none}
-  #start h1{color:var(--gold);font-size:32px;text-shadow:0 2px 0 #000;margin-bottom:4px}
+  #start h1{font-size:42px;font-weight:900;letter-spacing:2.5px;margin-bottom:4px;background:linear-gradient(180deg,#ffe9a8,#f0c64a 55%,#b8902a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;filter:drop-shadow(0 2px 0 rgba(0,0,0,.55)) drop-shadow(0 0 14px rgba(240,198,74,.28))}
   #start .sub{color:var(--txt-dim);font-size:13px;margin-bottom:16px}
   #start .card{background:linear-gradient(180deg,var(--ui-bg),var(--ui-bg2));border:2px solid var(--ui-line);
     border-radius:12px;padding:16px 20px;max-width:460px;box-shadow:0 6px 0 rgba(0,0,0,.35)}
@@ -419,10 +419,10 @@ const SOLID=new Set([T.WATER,T.SHALLOW,T.STONE]);
 
 // Enemy roster — gameplay numbers MUST match server.js ENEMY; col/name are client-only visuals.
 const ENEMY={
-  slime: {hp:30,accel:60,fric:0.86,dmg:11,coin:5, xp:20,wood:2, stone:0, r:10,aggro:4.2,col:'#5fcf6a',eye:'#16202b',name:'Slime'},
+  slime: {hp:30,accel:60,fric:0.86,dmg:11,coin:5, xp:20,wood:2, stone:0, r:10,aggro:4.2,col:'#74b83a',eye:'#16202b',name:'Goblin'},
   sprite:{hp:18,accel:98,fric:0.82,dmg:8, coin:7, xp:16,wood:1, stone:0, r:8, aggro:6.0,col:'#6fd0e8',eye:'#14323a',name:'Sprite'},
   wisp:  {hp:12,accel:140,fric:0.80,dmg:6,coin:9, xp:18,wood:0, stone:0, r:7, aggro:7.0,col:'#bfe8f5',eye:'#2a4a55',name:'Wisp'},
-  brute: {hp:60,accel:38,fric:0.90,dmg:20,coin:12,xp:40,wood:5, stone:2, r:14,aggro:3.4,col:'#b06ad0',eye:'#2a163a',name:'Brute'},
+  brute: {hp:60,accel:38,fric:0.90,dmg:20,coin:12,xp:40,wood:5, stone:2, r:14,aggro:3.4,col:'#b06ad0',eye:'#2a163a',name:'Ogre'},
   golem: {hp:120,accel:26,fric:0.93,dmg:24,coin:20,xp:60,wood:8, stone:6, r:16,aggro:3.0,col:'#8a8f98',eye:'#20262c',name:'Golem'},
   boss:  {hp:360,accel:34,fric:0.91,dmg:18,coin:90,xp:160,wood:40,stone:20,r:22,aggro:5.0,col:'#c0392b',eye:'#2a0d0d',name:'Warlord'},
 };
@@ -1356,8 +1356,8 @@ const isTouch=('ontouchstart'in window)||navigator.maxTouchPoints>0;
 const JOY={x:80,y:300,r:46};   // FIXED on-screen joystick anchor (never relocates)
 function resize(){cvs.width=innerWidth;cvs.height=innerHeight;ctx.imageSmoothingEnabled=false;JOY.x=Math.round(Math.max(72,innerWidth*0.15));JOY.y=Math.round(innerHeight-135);}
 addEventListener('resize',resize);resize();
-const COL={[T.WATER]:['#2b86a6','#2f8fae'],[T.SHALLOW]:['#46a6c2','#52b1cd'],[T.SAND]:['#e3d29a','#ecdcaa'],
-  [T.GRASS]:['#57a256','#62ad5f','#6fba69','#4f9b4d'],[T.FLOWER]:['#57a256','#62ad5f','#6fba69','#4f9b4d'],[T.STONE]:['#8d9aa4','#9aa7b1'],[T.FOREST]:['#56a055','#62ad60']};
+const COL={[T.WATER]:['#1f6f90','#257a9c'],[T.SHALLOW]:['#3c9cc0','#49a9cc'],[T.SAND]:['#d8c590','#e4d3a3'],
+  [T.GRASS]:['#4d9c53','#57a95d','#63b669','#459152'],[T.FLOWER]:['#4d9c53','#57a95d','#63b669','#459152'],[T.STONE]:['#8c94a9','#9aa2b5'],[T.FOREST]:['#3f8b48','#4a9754']};
 let anim=0;
 function drawTile(t,sx,sy,tx,ty){const base=(t===T.FOREST||t===T.FLOWER)?T.GRASS:t,c=COL[base],v=seed(tx,ty),dz=zoom>=0.6;
   if(base===T.GRASS){
@@ -1393,9 +1393,9 @@ function drawTree(sx,sy,tx,ty){const v=seed(tx|0,ty|0),v2=seed((tx|0)+7,(ty|0)+3
   ctx.fillStyle=v>0.5?'#2f6b34':'#2b6a38';circle(cx,cy,TILE*0.36*s);
   ctx.fillStyle=v>0.5?'#3a7d40':'#42884a';circle(cx-4*s,cy-5*s,TILE*0.26*s);
   ctx.fillStyle='rgba(255,255,255,.10)';circle(cx-6*s,cy-8*s,TILE*0.12*s);}
-function drawFlower(sx,sy){const cl=['#e86a8a','#f0c64a','#ffffff'];for(let i=0;i<3;i++){ctx.fillStyle=cl[i];circle(sx+TILE*0.3+i*9,sy+TILE*0.55+(i%2)*6,3);}}
+function drawFlower(sx,sy){const cl=['#b06ad0','#f0c64a','#e86a8a'];for(let i=0;i<3;i++){ctx.fillStyle=cl[i];circle(sx+TILE*0.3+i*9,sy+TILE*0.55+(i%2)*6,3);}}
 function drawStump(sx,sy){ctx.fillStyle='#6b4a2a';circle(sx+TILE/2,sy+TILE/2,7);ctx.fillStyle='#8a6440';circle(sx+TILE/2,sy+TILE/2,4);}
-function drawBuilding(b,sx,sy){if(b.type==='house'){ctx.fillStyle='#c9a06a';ctx.fillRect(sx+5,sy+TILE*0.45,TILE-10,TILE*0.5);ctx.fillStyle='#a8472e';ctx.beginPath();ctx.moveTo(sx+2,sy+TILE*0.5);ctx.lineTo(sx+TILE/2,sy+5);ctx.lineTo(sx+TILE-2,sy+TILE*0.5);ctx.closePath();ctx.fill();ctx.fillStyle='#5a3a22';ctx.fillRect(sx+TILE/2-4,sy+TILE*0.62,8,TILE*0.33);ctx.fillStyle='#7fd0e8';ctx.fillRect(sx+9,sy+TILE*0.55,7,7);}else if(b.type==='fence'){ctx.fillStyle='#8a5a30';ctx.fillRect(sx+4,sy+TILE*0.4,TILE-8,5);ctx.fillRect(sx+TILE*0.2,sy+TILE*0.35,5,TILE*0.45);ctx.fillRect(sx+TILE*0.65,sy+TILE*0.35,5,TILE*0.45);}}
+function drawBuilding(b,sx,sy){if(b.type==='house'){ctx.fillStyle='#bcae90';ctx.fillRect(sx+5,sy+TILE*0.45,TILE-10,TILE*0.5);ctx.fillStyle='#8c3b34';ctx.beginPath();ctx.moveTo(sx+2,sy+TILE*0.5);ctx.lineTo(sx+TILE/2,sy+5);ctx.lineTo(sx+TILE-2,sy+TILE*0.5);ctx.closePath();ctx.fill();ctx.fillStyle='#4a3320';ctx.fillRect(sx+TILE/2-4,sy+TILE*0.62,8,TILE*0.33);ctx.fillStyle='#ffd98a';ctx.fillRect(sx+9,sy+TILE*0.55,7,7);}else if(b.type==='fence'){ctx.fillStyle='#8a5a30';ctx.fillRect(sx+4,sy+TILE*0.4,TILE-8,5);ctx.fillRect(sx+TILE*0.2,sy+TILE*0.35,5,TILE*0.45);ctx.fillRect(sx+TILE*0.65,sy+TILE*0.35,5,TILE*0.45);}}
 function drawFarm(f,sx,sy){ctx.fillStyle='#7a5230';ctx.fillRect(sx+5,sy+5,TILE-10,TILE-10);ctx.fillStyle='#5f3f24';for(let i=0;i<3;i++)ctx.fillRect(sx+8,sy+9+i*((TILE-18)/3),TILE-16,2);const g=f.g,h=4+g*(TILE*0.4);for(let i=0;i<3;i++){const px=sx+TILE*0.3+i*TILE*0.2;ctx.fillStyle=g>=1?'#f0c64a':'#7fc24a';ctx.fillRect(px,sy+TILE-9-h,3,h);if(g>=1){ctx.fillStyle='#f0c64a';circle(px+1.5,sy+TILE-9-h,3);}}}
 function drawMerch(){const sx=merch.x-cam.x,sy=merch.y-cam.y;ctx.fillStyle='rgba(0,0,0,.2)';ctx.beginPath();ctx.ellipse(sx,sy+14,16,6,0,0,7);ctx.fill();ctx.fillStyle='#7a4a2a';ctx.fillRect(sx-15,sy-4,30,18);ctx.fillStyle='#c0392b';ctx.fillRect(sx-18,sy-20,36,10);ctx.fillStyle='#e8e8e8';for(let i=0;i<4;i++)ctx.fillRect(sx-18+i*9,sy-20,4,10);ctx.fillStyle='#5a3a22';ctx.fillRect(sx-16,sy-20,3,30);ctx.fillRect(sx+13,sy-20,3,30);ctx.fillStyle='#f0c89a';circle(sx,sy-6,5);ctx.font='bold 11px Segoe UI';ctx.textAlign='center';ctx.fillStyle='#000';ctx.fillText('Merchant',sx+1,sy-27);ctx.fillStyle='#f0c64a';ctx.fillText('Merchant',sx,sy-28);const d=Math.hypot(merch.x-P.x,merch.y-P.y);if(d<TILE*2.4&&!shopOpen){ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(sx-14,sy-44,28,14);ctx.fillStyle='#fff';ctx.font='bold 10px Segoe UI';ctx.fillText('[E]',sx,sy-34);}}
 function drawSlime(s){const E=ENEMY[s.type]||ENEMY.slime;const sx=s.rx-cam.x,sy=s.ry-cam.y,r=E.r,rh=r*0.85,bob=Math.sin((s.t||0)+anim*4)*2;
@@ -1525,7 +1525,7 @@ function render(){ctx.setTransform(1,0,0,1,0,0);ctx.fillStyle='#1f6f8c';ctx.fill
     ctx.globalAlpha=act?.4:.22;ctx.fillStyle='#000';circle(JOY.x,JOY.y,JOY.r);
     ctx.globalAlpha=act?.9:.5;ctx.fillStyle='#f0c64a';circle(JOY.x+(act?Math.cos(a)*l:0),JOY.y+(act?Math.sin(a)*l:0),20);ctx.globalAlpha=1;}
   renderMini();}
-const MC={[T.WATER]:'#2b86a6',[T.SHALLOW]:'#46a6c2',[T.SAND]:'#e3d29a',[T.GRASS]:'#5fa85b',[T.FLOWER]:'#6cb566',[T.STONE]:'#9aa7b1',[T.FOREST]:'#3a7d40'};
+const MC={[T.WATER]:'#1f6f90',[T.SHALLOW]:'#3c9cc0',[T.SAND]:'#d8c590',[T.GRASS]:'#57a95d',[T.FLOWER]:'#63b669',[T.STONE]:'#9aa2b5',[T.FOREST]:'#3f8b48'};
 // terrain + buildings are static → render once to an offscreen buffer, refresh occasionally;
 // each frame we just blit it and draw the moving dots (keeps the bigger map smooth)
 const miniBuf=document.createElement('canvas');miniBuf.width=mini.width;miniBuf.height=mini.height;const mbx=miniBuf.getContext('2d');
