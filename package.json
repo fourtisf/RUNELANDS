@@ -1,0 +1,27 @@
+{
+  "name": "plotlands-server",
+  "version": "0.1.0",
+  "description": "Plotlands — authoritative WebSocket game server: shared island world, real-time players, build/fight/trade, land ownership.",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test/enemymatch.js && node test/integration.js && node test/persistence.js && node test/survival.js && node test/land.js && node test/house.js && node test/upgrades.js && node test/boss.js && node test/social.js && node test/season.js && node test/contest.js && node test/verify.js && node test/tutorial.js && node test/daily.js && node test/mining.js && node test/fishing.js && node test/crafting.js && node test/antigrief.js && node test/event.js && node test/market.js && node test/wallet.js && node test/wallet_deeplink.js",
+    "loadtest": "node test/loadtest.js",
+    "check:client": "node test/_compile_client.js"
+  },
+  "dependencies": {
+    "bs58": "^5.0.0",
+    "tweetnacl": "^1.0.3",
+    "ws": "^8.21.0"
+  },
+  "optionalDependencies": {
+    "pg": "^8.13.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2"
+  }
+}

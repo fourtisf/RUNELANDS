@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# Persistence (file-backend saves)
+data/
+*.tmp
+
+# Solana / Anchor build artifacts
+solana/target/
+solana/.anchor/
+solana/test-ledger/
+solana/node_modules/
+**/*.rs.bk
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment / secrets
+.env
+.env.*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/

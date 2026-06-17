@@ -1,0 +1,1644 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Plotlands — Online</title>
+<meta name="description" content="Plotlands — a free browser MMO island. Build · Fight · Trade · Own Land. Claim plots that pay rent, hunt the Warlord, top the leaderboard. Play free, no download.">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#15323f">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://plotlands.fun">
+<meta property="og:title" content="Plotlands — free browser MMO island">
+<meta property="og:description" content="Build · Fight · Trade · Own Land. Claim plots that pay rent, hunt the Warlord, top the leaderboard. Play free — no download.">
+<meta property="og:image" content="https://plotlands.fun/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Plotlands — free browser MMO island">
+<meta name="twitter:description" content="Build · Fight · Trade · Own Land. Play free in your browser — no download.">
+<meta name="twitter:image" content="https://plotlands.fun/og.png">
+<style>
+  :root{--ui-bg:#2b3a4a;--ui-bg2:#1f2a36;--ui-line:#5a7187;--gold:#f0c64a;--gold-d:#b8902a;
+    --txt:#eef3f7;--txt-dim:#9fb2c4;--hp:#e25c5c;--xp:#5fb0e8;--wood:#c08a4f;--coin:#f0c64a;--ok:#6fd08a;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;overflow:hidden;background:#16202b;font-family:'Segoe UI',system-ui,sans-serif;
+    -webkit-user-select:none;user-select:none;touch-action:none}
+  #game{display:block;width:100vw;height:100vh;image-rendering:pixelated;cursor:crosshair}
+  .panel{position:absolute;background:linear-gradient(180deg,var(--ui-bg),var(--ui-bg2));border:2px solid var(--ui-line);
+    border-radius:10px;box-shadow:0 4px 0 rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.08);color:var(--txt);padding:8px 12px}
+  #topbar{top:12px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:14px;font-weight:700;padding:8px 18px;white-space:nowrap}
+  #topbar .isle{color:var(--gold);text-shadow:0 1px 0 #000}
+  #topbar .stat{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--txt-dim)}
+  #topbar .stat b{color:var(--txt)}
+  .dot{width:13px;height:13px;border-radius:3px;display:inline-block}
+  #mini{top:12px;right:12px;width:148px;height:148px;padding:6px}
+  #miniCanvas{width:100%;height:100%;image-rendering:pixelated;border-radius:5px;display:block}
+  #status{top:170px;right:12px;width:148px;padding:6px 10px;font-size:11px;text-align:center;font-weight:700}
+  #status .on{color:var(--ok)} #status .off{color:var(--hp)}
+  #hotbar{bottom:14px;left:50%;transform:translateX(-50%);display:flex;gap:8px;padding:8px}
+  .slot{width:58px;height:58px;border:2px solid var(--ui-line);border-radius:8px;background:rgba(0,0,0,.25);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;cursor:pointer;transition:transform .08s}
+  .slot:hover{transform:translateY(-3px)}
+  .slot.active{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold-d) inset,0 0 12px rgba(240,198,74,.4)}
+  .slot .ic{font-size:24px;line-height:1}
+  .slot .lbl{font-size:9px;color:var(--txt-dim);margin-top:2px;font-weight:700}
+  .slot .cost{position:absolute;bottom:1px;right:3px;font-size:9px;color:var(--wood);font-weight:800}
+  .slot .key{position:absolute;top:1px;left:3px;font-size:9px;color:var(--txt-dim);font-weight:800}
+  #vitals{bottom:14px;right:12px;width:172px;padding:8px 10px}
+  #vitals .row{display:flex;align-items:center;gap:6px;margin:3px 0;font-size:11px;font-weight:700;color:var(--txt-dim)}
+  .bar{flex:1;height:12px;background:#10171f;border-radius:6px;overflow:hidden;border:1px solid #000}
+  .bar>i{display:block;height:100%;border-radius:6px;transition:width .2s}
+  #vitals .lv{color:var(--gold);font-weight:800}
+  #chat{left:12px;bottom:14px;width:280px;padding:8px 10px;display:flex;flex-direction:column;gap:6px}
+  #chat.hidden{display:none}
+  #chatLog{height:120px;overflow-y:auto;font-size:12px;line-height:1.5;display:flex;flex-direction:column;justify-content:flex-end}
+  #chatLog .m{color:var(--txt)} #chatLog .m b{color:var(--gold)} #chatLog .sys{color:var(--txt-dim);font-style:italic}
+  #chatIn{width:100%;background:#10171f;border:1px solid var(--ui-line);border-radius:6px;color:var(--txt);
+    padding:6px 8px;font-family:inherit;font-size:12px;outline:none}
+  #chatIn:focus{border-color:var(--gold)}
+  #chat .hintkeys{font-size:10px;color:var(--txt-dim)}
+  #toast{top:74px;left:50%;transform:translateX(-50%);background:rgba(16,23,31,.92);border:1px solid var(--gold-d);
+    color:var(--gold);font-weight:700;font-size:13px;padding:8px 16px;border-radius:8px;opacity:0;
+    transition:opacity .3s,transform .3s;pointer-events:none;max-width:80vw;text-align:center}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(4px)}
+  #shop{left:50%;top:50%;transform:translate(-50%,-50%);width:320px;padding:0;display:none;overflow:hidden;z-index:20}
+  #shop.open{display:block}
+  #shop .head{background:linear-gradient(180deg,#3a4d60,#2b3a4a);padding:12px 16px;font-weight:800;color:var(--gold);
+    display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid var(--ui-line)}
+  #shop .head .x{cursor:pointer;color:var(--txt-dim);font-size:18px}
+  #shop .body{padding:12px 16px;max-height:72vh;overflow-y:auto}
+  #shop .item{display:flex;align-items:center;gap:10px;padding:9px 8px;border-radius:8px;margin:5px 0;background:rgba(0,0,0,.2);cursor:pointer}
+  #shop .item:hover{background:rgba(240,198,74,.12)}
+  #shop .item .ic{font-size:22px}#shop .item .info{flex:1}#shop .item .info b{display:block;font-size:13px}
+  #shop .item .info small{color:var(--txt-dim);font-size:10px}#shop .item .price{font-weight:800;color:var(--gold);font-size:13px}
+  #shop .item.lock{opacity:.42;cursor:not-allowed}#shop .item.lock:hover{background:rgba(0,0,0,.2)}
+  #shop .item.aff{outline:1px solid var(--gold-d)}
+  #shop .item.earn{outline:1px solid var(--ok);background:rgba(111,208,138,.10)}
+  #shop .item .price.no{color:var(--hp)}
+  #shop .note{font-size:10px;color:var(--txt-dim);text-align:center;margin-top:6px}
+  kbd{background:#10171f;border:1px solid var(--ui-line);border-bottom-width:2px;border-radius:4px;padding:0 5px;font-size:10px;color:var(--txt);font-family:inherit}
+  /* centered modal panels (inventory + settings) reuse the shop look */
+  #inv,#settings,#leaderboard{left:50%;top:50%;transform:translate(-50%,-50%);width:300px;padding:0;display:none;overflow:hidden;z-index:21}
+  #inv.open,#settings.open,#leaderboard.open{display:block}
+  #inv .head,#settings .head,#leaderboard .head{background:linear-gradient(180deg,#3a4d60,#2b3a4a);padding:12px 16px;font-weight:800;color:var(--gold);
+    display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid var(--ui-line)}
+  #inv .head .x,#settings .head .x,#leaderboard .head .x{cursor:pointer;color:var(--txt-dim);font-size:18px}
+  #inv .body,#settings .body,#leaderboard .body{padding:12px 16px}
+  #leaderboard .lr{display:flex;align-items:center;gap:8px;padding:6px 4px;font-size:13px;border-bottom:1px solid rgba(255,255,255,.05)}
+  #leaderboard .lr .rk{width:22px;color:var(--gold);font-weight:800;text-align:center}
+  #leaderboard .lr .nm{flex:1;color:var(--txt);font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  #leaderboard .lr .sc{color:var(--gold);font-weight:800}
+  #leaderboard .lr small{color:var(--txt-dim);font-weight:600}
+  #leaderboard .lr.me{background:rgba(240,198,74,.12);border-radius:6px}
+  #leaderboard .lseason{padding:8px 4px 2px;font-size:13px;color:var(--txt);font-weight:800}
+  #leaderboard .lseason b{color:var(--gold)}
+  #leaderboard .lrew{padding:2px 4px 8px;font-size:11px;color:var(--txt-dim);border-bottom:1px solid rgba(255,255,255,.08)}
+  #leaderboard .lyou{padding:8px 4px;margin-top:4px;font-size:12px;color:var(--gold);font-weight:700;border-top:1px solid rgba(255,255,255,.08)}
+  #leaderboard .lhist{padding:4px;font-size:11px;color:var(--txt-dim)}
+  #leaderboard .ldiv{padding:9px 4px 3px;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--txt-dim);font-weight:800}
+  #leadShare{padding:0 16px 14px;display:none;gap:8px}
+  #leadShare button,#leadShare a{flex:1;text-align:center;background:#0b0b0d;border:1px solid var(--ui-line);color:var(--txt);font-weight:800;font-size:13px;padding:11px 8px;border-radius:9px;cursor:pointer;text-decoration:none;font-family:inherit}
+  #leadShare button:hover,#leadShare a:hover{border-color:var(--gold);color:var(--gold)}
+  #verifyBar{position:fixed;top:54px;left:50%;transform:translateX(-50%);z-index:30;display:none;align-items:center;gap:10px;
+    max-width:94vw;background:linear-gradient(180deg,#3a2f12,#2a230d);border:1px solid var(--gold-d);border-radius:11px;
+    padding:8px 10px 8px 14px;box-shadow:0 6px 22px rgba(0,0,0,.4)}
+  #verifyBar.show{display:flex}
+  #verifyBar .vt{font-size:12.5px;color:var(--txt)} #verifyBar .vt b{color:var(--gold)}
+  #verifyBtn{flex:none;background:linear-gradient(180deg,#ffd75e,#e0a92e);border:none;border-radius:8px;color:#241a05;font-weight:900;
+    font-size:13px;padding:9px 13px;cursor:pointer;font-family:inherit}
+  #verifyBtn:hover{filter:brightness(1.06)}
+  @media(max-width:560px){ #verifyBar{flex-direction:column;gap:6px;text-align:center;top:48px} }
+  #inv .irow{display:flex;justify-content:space-between;align-items:center;padding:6px 4px;font-size:13px;border-bottom:1px solid rgba(255,255,255,.05)}
+  #inv .irow b{color:var(--txt)} #inv .irow .v{color:var(--gold);font-weight:800}
+  #inv .bar{flex:1;height:10px;margin:0 8px;background:#10171f;border-radius:6px;overflow:hidden;border:1px solid #000}
+  #inv .bar>i{display:block;height:100%;border-radius:6px}
+  #inv .sec{font-size:10px;color:var(--txt-dim);text-transform:uppercase;letter-spacing:.5px;margin:10px 0 4px}
+  #settings label{display:block;font-size:11px;color:var(--txt-dim);margin:10px 0 4px;font-weight:700}
+  #settings input[type=text]{width:100%;background:#10171f;border:1px solid var(--ui-line);border-radius:6px;color:var(--txt);padding:7px 9px;font-family:inherit;font-size:12px;outline:none}
+  #settings input[type=text]:focus{border-color:var(--gold)}
+  #setCode{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;color:var(--gold)}
+  #settings .srow{display:flex;gap:8px;align-items:center;margin-top:8px}
+  #settings button{background:linear-gradient(180deg,#4a7d5a,#3a6048);border:1px solid var(--ui-line);border-radius:6px;color:#fff;
+    font-weight:800;font-size:12px;padding:7px 14px;cursor:pointer;font-family:inherit}
+  #settings button:hover{filter:brightness(1.12)}
+  #settings .chk{display:flex;align-items:center;gap:8px;margin-top:14px;font-size:12px;color:var(--txt);cursor:pointer;font-weight:700}
+  #settings .chk input{width:16px;height:16px;accent-color:var(--gold)}
+  #settings .hint{font-size:10px;color:var(--txt-dim);margin-top:10px;line-height:1.4}
+  #gear{position:absolute;top:170px;right:166px;width:34px;height:34px;border-radius:8px;background:linear-gradient(180deg,var(--ui-bg),var(--ui-bg2));
+    border:2px solid var(--ui-line);color:var(--gold);font-size:17px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10;user-select:none}
+  #gear:hover{filter:brightness(1.15)}
+  /* mobile tool picker: a toolbox button (in #utils, shows the current tool) + a slide-up tool sheet */
+  #ibTools{display:none;border-color:var(--gold);box-shadow:0 0 0 2px var(--gold-d) inset,0 3px 0 rgba(0,0,0,.3)}
+  #tools{left:50%;bottom:0;transform:translateX(-50%);width:min(440px,96vw);padding:0;display:none;overflow:hidden;z-index:22;border-radius:12px 12px 0 0}
+  #tools.open{display:block}
+  #tools .head{background:linear-gradient(180deg,#3a4d60,#2b3a4a);padding:11px 16px;font-weight:800;color:var(--gold);display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid var(--ui-line)}
+  #tools .head .x{cursor:pointer;color:var(--txt-dim);font-size:18px}
+  #tools .body{padding:12px}
+  #tools .tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  #tools .tool{display:flex;flex-direction:column;align-items:center;gap:3px;padding:11px 6px;border:2px solid var(--ui-line);border-radius:10px;background:rgba(0,0,0,.22);cursor:pointer;text-align:center}
+  #tools .tool:hover{background:rgba(240,198,74,.12)}
+  #tools .tool.sel{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold-d) inset;background:rgba(240,198,74,.10)}
+  #tools .tool .ic{font-size:26px;line-height:1}
+  #tools .tool .nm{font-size:11px;font-weight:800;color:var(--txt)}
+  #tools .tool .ct{font-size:10px;color:var(--txt-dim);font-weight:700;line-height:1.15}
+  #tools .tool.sel .ct{color:var(--gold)}
+  /* onboarding coach card (top-center, first session only) */
+  #coach{position:absolute;top:112px;left:50%;transform:translateX(-50%);display:none;align-items:center;gap:10px;
+    max-width:min(470px,92vw);background:linear-gradient(180deg,#2b3a4a,#1f2a36);border:2px solid var(--gold-d);
+    border-radius:10px;padding:8px 12px;z-index:18;box-shadow:0 4px 0 rgba(0,0,0,.35)}
+  #coach.show{display:flex}
+  #coach .cic{font-size:23px;line-height:1}
+  #coach .cmid{flex:1;min-width:0}
+  #coach .cstep{font-size:9px;color:var(--gold);text-transform:uppercase;letter-spacing:.6px;font-weight:800}
+  #coach .ctxt{font-size:12.5px;color:var(--txt);line-height:1.3;font-weight:600}
+  #coach .cskip{font-size:10px;color:var(--txt-dim);font-weight:800;cursor:pointer;white-space:nowrap;align-self:flex-start}
+  #coach .cskip:hover{color:var(--hp)}
+  /* daily reward banner (top-center; shows when a daily is claimable, tap to claim) */
+  #daily{position:absolute;top:112px;left:50%;transform:translateX(-50%);display:none;align-items:center;gap:10px;
+    max-width:min(470px,92vw);background:linear-gradient(180deg,#2f4a3a,#1f2f26);border:2px solid var(--ok);
+    border-radius:10px;padding:9px 14px;z-index:19;box-shadow:0 4px 0 rgba(0,0,0,.35);cursor:pointer}
+  #daily.show{display:flex;animation:dailyPulse 1.9s ease-in-out infinite}
+  #daily .dic{font-size:23px;line-height:1}
+  #daily .dmid{flex:1;min-width:0}
+  #daily .dt{font-size:9px;color:var(--ok);text-transform:uppercase;letter-spacing:.6px;font-weight:800}
+  #daily .dtxt{font-size:12.5px;color:var(--txt);font-weight:700}
+  #daily .dgo{font-size:11px;color:#0b1016;background:var(--ok);border-radius:6px;padding:4px 11px;font-weight:800;white-space:nowrap}
+  @keyframes dailyPulse{0%,100%{box-shadow:0 4px 0 rgba(0,0,0,.35),0 0 0 0 rgba(111,208,138,0)}50%{box-shadow:0 4px 0 rgba(0,0,0,.35),0 0 15px 2px rgba(111,208,138,.45)}}
+  /* goals / objectives tracker (top-left) */
+  #goals{top:12px;left:12px;width:208px;padding:8px 11px}
+  #goals h3{font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:.6px;margin-bottom:7px;cursor:pointer;user-select:none}
+  #goals.min #goalsList{display:none} #goals.min h3{margin-bottom:0}
+  #goals.min h3::after{content:' ▸';opacity:.7} #goals:not(.min) h3::after{content:' ▾';opacity:.55}
+  #goals .g{display:flex;align-items:center;gap:7px;margin:5px 0;font-size:12px;color:var(--txt-dim)}
+  #goals .g.done{color:var(--ok)}
+  #goals .g .ic{width:16px;text-align:center}
+  #goals .g .t{flex:1}
+  #goals .g .p{font-weight:800;color:var(--txt)}
+  #goals .g.done .p{color:var(--ok)}
+  /* quick-action icon bar (mouse/touch friendly) */
+  #utils{position:absolute;bottom:92px;right:12px;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px;max-width:64vw;z-index:10}
+  #utils .ib{width:46px;height:46px;border:2px solid var(--ui-line);border-radius:10px;background:linear-gradient(180deg,var(--ui-bg),var(--ui-bg2));
+    display:flex;align-items:center;justify-content:center;font-size:21px;cursor:pointer;transition:transform .08s;box-shadow:0 3px 0 rgba(0,0,0,.3)}
+  #utils .ib:hover{transform:translateY(-2px);border-color:var(--gold)}
+  /* start / how-to-play overlay */
+  #start{position:fixed;inset:0;z-index:50;background:rgba(11,16,22,.94);display:flex;flex-direction:column;
+    align-items:center;justify-content:center;text-align:center;color:var(--txt);cursor:pointer;padding:20px}
+  #start.hidden{display:none}
+  #start h1{color:var(--gold);font-size:32px;text-shadow:0 2px 0 #000;margin-bottom:4px}
+  #start .sub{color:var(--txt-dim);font-size:13px;margin-bottom:16px}
+  #start .card{background:linear-gradient(180deg,var(--ui-bg),var(--ui-bg2));border:2px solid var(--ui-line);
+    border-radius:12px;padding:16px 20px;max-width:460px;box-shadow:0 6px 0 rgba(0,0,0,.35)}
+  #start .keys{display:flex;flex-wrap:wrap;gap:6px 8px;justify-content:center;margin-bottom:12px}
+  #start .tip{font-size:13px;color:var(--txt);line-height:1.7;margin-bottom:16px}
+  #start .play{background:linear-gradient(180deg,#5fd08a,#3aa86a);border:none;border-radius:10px;color:#0b1016;
+    font-weight:800;font-size:16px;padding:11px 30px;cursor:pointer;box-shadow:0 3px 0 #2a7d4e}
+  #start .play:hover{filter:brightness(1.08)}
+  /* ===== Solana wallet landing + spectate gate ===== */
+  #start .counts{display:flex;gap:10px;justify-content:center;margin:2px 0 14px;flex-wrap:wrap}
+  #start .counts .pc{background:rgba(0,0,0,.3);border:1px solid var(--ui-line);border-radius:20px;padding:5px 13px;font-size:12px;font-weight:700;color:var(--txt-dim)}
+  #start .counts .pc b{color:var(--ok)}
+  #start .btns{display:flex;flex-direction:column;gap:9px;align-items:center}
+  .wbtn{display:inline-flex;align-items:center;gap:8px;justify-content:center;background:linear-gradient(180deg,#ab7bff,#7a3df0);border:none;border-radius:10px;
+    color:#fff;font-weight:800;font-size:16px;padding:12px 28px;cursor:pointer;box-shadow:0 3px 0 #5a28b0;min-width:248px}
+  .wbtn:hover{filter:brightness(1.08)} .wbtn.busy{opacity:.65;pointer-events:none}
+  #start .ghost{background:transparent;border:1px solid var(--ui-line);color:var(--txt-dim);border-radius:10px;font-weight:700;font-size:13px;padding:9px 22px;cursor:pointer}
+  #start .ghost:hover{color:var(--txt);border-color:var(--gold)}
+  #start .chain{margin-top:14px;font-size:11px;color:var(--txt-dim)} #start .chain b{color:#c9a0ff}
+  .eatbtn{background:linear-gradient(180deg,#4a8a5a,#3a6a48);border:none;border-radius:5px;color:#fff;font-weight:800;font-size:10px;padding:2px 8px;cursor:pointer;vertical-align:middle}
+  .eatbtn:hover{filter:brightness(1.15)}
+  #fishBtn{position:absolute;bottom:158px;left:50%;transform:translateX(-50%);z-index:14;display:none;align-items:center;gap:6px;
+    background:linear-gradient(180deg,#3fb6d8,#2a8fb0);border:2px solid #7fe0ff;border-radius:12px;color:#fff;font-weight:800;font-size:16px;
+    padding:11px 26px;cursor:pointer;box-shadow:0 4px 0 #1d6e8a,0 0 16px rgba(127,224,255,.5);animation:fishpulse 1.1s ease-in-out infinite}
+  #fishBtn.show{display:inline-flex} #fishBtn:hover{filter:brightness(1.1)} #fishBtn:active{transform:translateX(-50%) translateY(2px)}
+  @keyframes fishpulse{50%{box-shadow:0 4px 0 #1d6e8a,0 0 26px rgba(127,224,255,.85)}}
+  @media (max-width:760px){ #fishBtn{bottom:185px;left:50%;font-size:15px;padding:12px 28px} }
+  #start .ca{margin-top:11px;display:inline-flex;align-items:center;gap:6px;background:rgba(0,0,0,.32);border:1px solid var(--ui-line);
+    border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;color:var(--txt-dim);cursor:pointer;font-family:'Consolas',monospace}
+  #start .ca:hover{border-color:var(--gold);color:var(--txt)} #start .ca #caText{color:#c9a0ff}
+  #start .social{margin-top:10px;display:flex;gap:10px;justify-content:center}
+  #start .social .soc{display:inline-flex;align-items:center;gap:5px;background:rgba(0,0,0,.32);border:1px solid var(--ui-line);
+    border-radius:8px;padding:7px 14px;font-size:13px;font-weight:800;color:var(--txt);text-decoration:none}
+  #start .social .soc:hover{border-color:var(--gold);filter:brightness(1.12)}
+  #walletStat{cursor:pointer} #walletStat:hover b{text-decoration:underline}
+  #walletMenu{position:absolute;top:56px;left:50%;transform:translateX(-50%);z-index:40;display:none;flex-direction:column;gap:8px;padding:11px 12px;min-width:210px}
+  #walletMenu.show{display:flex}
+  #walletMenu .wm-lbl{font-size:10px;color:var(--txt-dim);text-transform:uppercase;letter-spacing:.5px;text-align:center}
+  #walletMenu .wm-addr{font-family:'Consolas',monospace;font-size:11px;color:#c9a0ff;background:rgba(0,0,0,.3);border:1px solid var(--ui-line);
+    border-radius:6px;padding:7px 8px;cursor:pointer;word-break:break-all;text-align:center}
+  #walletMenu .wm-addr:hover{border-color:var(--gold);color:var(--txt)}
+  #walletMenu .wm-btn{background:linear-gradient(180deg,#e25c5c,#b83c3c);border:none;border-radius:7px;color:#fff;font-weight:800;font-size:12px;padding:9px 12px;cursor:pointer}
+  #walletMenu .wm-btn:hover{filter:brightness(1.1)}
+  #specbar{position:absolute;top:62px;left:50%;transform:translateX(-50%);z-index:30;display:none;align-items:center;gap:10px;
+    background:linear-gradient(180deg,#2b3a4a,#1f2a36);border:2px solid var(--gold-d);border-radius:10px;padding:7px 11px;box-shadow:0 4px 0 rgba(0,0,0,.35)}
+  #specbar.show{display:flex}
+  #specbar.pulse{animation:specpulse .45s ease 2}
+  @keyframes specpulse{50%{transform:translateX(-50%) scale(1.06)}}
+  #specbar .t{font-size:12px;color:var(--txt);font-weight:700}
+  #specbar .cwbtn{background:linear-gradient(180deg,#ab7bff,#7a3df0);border:none;border-radius:8px;color:#fff;font-weight:800;font-size:12px;padding:6px 12px;cursor:pointer}
+  #specbar .cwbtn:hover{filter:brightness(1.08)} #specbar .cwbtn.busy{opacity:.65;pointer-events:none}
+  @media (max-width:760px){ #specbar{top:54px;padding:6px 8px} #specbar .t{font-size:11px} .wbtn{font-size:15px;min-width:220px} }
+  /* ===== mobile / small screens ===== */
+  @media (max-width:760px){
+    #topbar{gap:6px;padding:5px 8px;font-size:10px;font-weight:700} #topbar .isle{display:none} #sTime{display:none} #topbar .dot{display:none}
+    #topbar .isle{font-size:12px} #topbar .stat{font-size:11px} #topbar .stat .dot{width:9px;height:9px}
+    #mini{width:92px;height:92px;top:46px;right:8px} #status{display:none} #gear{display:none}
+    #goals{width:auto;max-width:160px;top:46px;left:8px;padding:6px 8px} #goals h3{font-size:10px;margin-bottom:4px} #goals .g{font-size:11px;margin:3px 0}
+    #vitals{width:128px;right:8px;bottom:8px;padding:6px 8px} #vitals .row{font-size:10px}
+    #chat{width:172px;left:8px;bottom:8px;padding:6px 8px} #chatLog{height:66px;font-size:11px} #chat .hintkeys{display:none}
+    .slot{width:46px;height:46px} .slot .ic{font-size:19px} .slot .lbl{display:none} .slot .key{display:none}
+    #hotbar{display:none}                              /* phones use the toolbox button + tool sheet instead */
+    #utils{bottom:86px;right:8px;gap:6px} #utils .ib{width:40px;height:40px;font-size:18px} #ibTools{display:flex}
+    #inv,#settings,#leaderboard,#shop{width:88vw;max-width:340px}
+    #coach{top:104px;padding:7px 10px;gap:8px} #coach .ctxt{font-size:11.5px} #coach .cic{font-size:20px}
+    #daily{top:104px;padding:7px 11px;gap:8px} #daily .dtxt{font-size:11.5px} #daily .dic{font-size:20px}
+    #start h1{font-size:26px} #start .tip{font-size:12px} #start .keys{font-size:11px}
+  }
+</style>
+</head>
+<body>
+<canvas id="game"></canvas>
+<div id="topbar" class="panel">
+  <span class="isle">⛰ Plotlands</span>
+  <span class="stat" id="walletStat" style="display:none"><span class="dot" style="background:#c9a0ff"></span><b id="walletChip"></b></span>
+  <span class="stat"><span class="dot" style="background:var(--ok)"></span>Online <b id="sPlayers">1</b></span>
+  <span class="stat"><span class="dot" style="background:var(--gold)"></span>Total Users <b id="sTotal">—</b></span>
+  <span class="stat"><span class="dot" style="background:var(--wood)"></span>Wood <b id="sWood">0</b></span>
+  <span class="stat"><span class="dot" style="background:var(--coin)"></span>Coin <b id="sCoin">0</b></span>
+  <span class="stat"><span class="dot" style="background:#7fd0e8"></span>Fish <b id="sFish">0</b></span>
+  <span class="stat" id="sPtsWrap" style="display:none" title="Your contest points this season (your leaderboard score)."><span class="dot" style="background:#f0c64a"></span>🏆 <b id="sPts">0</b> pts</span>
+  <span class="stat" id="sAirWrap" style="display:none" title="Airdrop points — earned by topping the seasonal leaderboard. Permanent, tied to your wallet."><span class="dot" style="background:#ffd75e"></span>🎖 <b id="sAir">0</b></span>
+  <span class="stat" id="sTime" title="Time of day">☀️</span>
+</div>
+<div id="walletMenu" class="panel">
+  <div class="wm-lbl">Connected wallet</div>
+  <div class="wm-addr" id="wmAddr" title="Click to copy address"></div>
+  <button class="wm-btn" id="wmDisconnect">🔌 Disconnect Wallet</button>
+</div>
+<div id="mini" class="panel"><canvas id="miniCanvas" width="148" height="148"></canvas></div>
+<div id="goals" class="panel"><h3 id="goalsHead">🎯 Goals</h3><div id="goalsList"></div></div>
+<div id="status" class="panel">Connecting…</div>
+<div id="vitals" class="panel">
+  <div class="row"><span class="lv">Lv <span id="sLv">1</span></span><span style="flex:1"></span><span id="sName">You</span></div>
+  <div class="row">HP <div class="bar"><i id="hpBar" style="width:100%;background:var(--hp)"></i></div></div>
+  <div class="row">XP <div class="bar"><i id="xpBar" style="width:0%;background:var(--xp)"></i></div></div>
+</div>
+<div id="hotbar"></div>
+<div id="utils">
+  <div class="ib" id="ibTools" title="Tools — pick what to build/use">🪓</div>
+  <div class="ib" id="ibZoomOut" title="Zoom out (−)">➖</div>
+  <div class="ib" id="ibZoomIn" title="Zoom in (+)">➕</div>
+  <div class="ib" id="ibAttack" title="Attack nearest monster (F)">⚔️</div>
+  <div class="ib" id="ibClaim" title="Place / upgrade your house here (C)">🏠</div>
+  <div class="ib" id="ibUnstuck" title="Unstuck (U)">🆘</div>
+  <div class="ib" id="ibAudio" title="Sound on/off">🔊</div>
+  <div class="ib" id="ibBag" title="Bag (I)">🎒</div>
+  <div class="ib" id="ibLead" title="Leaderboard (L)">🏆</div>
+  <div class="ib" id="ibChat" title="Chat (Enter)">💬</div>
+  <div class="ib" id="ibSet" title="Settings (O)">⚙️</div>
+</div>
+<div id="chat" class="panel">
+  <div id="chatLog"></div>
+  <input id="chatIn" maxlength="120" placeholder="Press Enter to chat…">
+  <div class="hintkeys"><kbd>Click</kbd> move · click to act · <kbd>1-8</kbd> tools · <kbd>Enter</kbd> chat · <kbd>/buy</kbd> <kbd>/sell</kbd> land</div>
+</div>
+<div id="verifyBar"><span class="vt" id="contestTxt"></span><button id="verifyBtn">𝕏 Share</button></div>
+<div id="toast"></div>
+<div id="specbar">
+  <span class="t">👁 Spectating — connect a Solana wallet to play</span>
+  <button class="cwbtn" id="specConnect">🔗 Connect Wallet</button>
+</div>
+<button id="fishBtn">🎣 Fish</button>
+<div id="start">
+  <h1>⛰ PLOTLANDS</h1>
+  <div class="sub">A Solana island MMO — Build · Fight · Trade · Own Land</div>
+  <div class="card">
+    <div class="counts">
+      <span class="pc">🟢 Online <b id="sOnline2">—</b></span>
+      <span class="pc">👤 Players <b id="sTotal2">—</b></span>
+    </div>
+    <div class="tip">👁 Anyone can watch for free. <b>Connect a Solana wallet</b> (Phantom) to move,
+      build, and <b>save your progress</b> to your wallet — play from any device.</div>
+    <div class="btns">
+      <button class="wbtn" id="connectPlayBtn">🔗 Connect Wallet &amp; Play</button>
+      <button class="ghost" id="spectateBtn">👁 Spectate first</button>
+    </div>
+    <div class="chain">Powered by <b>Solana</b> · Phantom wallet</div>
+    <div class="ca" id="caChip" title="Click to copy contract address">CA: <span id="caText">Coming soon</span> <span style="opacity:.55">📋</span></div>
+    <div class="social">
+      <a class="soc" href="https://x.com/plotlandsfun" target="_blank" rel="noopener">𝕏 Twitter</a>
+      <a class="soc" href="https://t.me/plotlands" target="_blank" rel="noopener">✈️ Telegram</a>
+    </div>
+  </div>
+</div>
+<div id="gear" title="Settings (O)">⚙</div>
+<div id="shop" class="panel">
+  <div class="head"><span>💰 Wandering Merchant</span><span class="x" id="shopX">✕</span></div>
+  <div class="body" id="shopBody"></div>
+</div>
+<div id="inv" class="panel">
+  <div class="head"><span>🎒 Character</span><span class="x" id="invX">✕</span></div>
+  <div class="body" id="invBody"></div>
+</div>
+<div id="settings" class="panel">
+  <div class="head"><span>⚙ Settings</span><span class="x" id="setX">✕</span></div>
+  <div class="body">
+    <label for="setName">Your name</label>
+    <input type="text" id="setName" maxlength="14" placeholder="Your name…" spellcheck="false" autocomplete="off">
+    <div class="srow"><button id="setApply">Confirm</button><span class="hint" id="setHint"></span></div>
+    <label class="chk"><input type="checkbox" id="setSound"> 🔊 Sound effects</label>
+    <div id="setWallet" style="display:none">
+      <label>🔗 Your wallet (account)</label>
+      <input type="text" id="setWalletAddr" readonly spellcheck="false" autocomplete="off">
+      <div class="srow"><button id="setWalletCopy">Copy</button><button id="setWalletDisc" style="background:linear-gradient(180deg,#e25c5c,#b83c3c)">🔌 Disconnect</button></div>
+      <div class="hint">Your progress is tied to this wallet. Connect it on any device to play the same account — no code needed.</div>
+    </div>
+    <div id="guestRecovery">
+      <div class="hint">Your guest progress is saved on the server and tied to this browser.</div>
+      <label for="setCode">🔑 Recovery code</label>
+      <input type="text" id="setCode" readonly spellcheck="false" autocomplete="off">
+      <div class="srow"><button id="setCopy">Copy</button><span class="hint">Save this to restore progress on another device or after clearing storage.</span></div>
+      <label for="setImport">Restore from a code</label>
+      <input type="text" id="setImport" placeholder="Paste a recovery code…" spellcheck="false" autocomplete="off">
+      <div class="srow"><button id="setRestore">Restore</button><span class="hint" id="setImpHint"></span></div>
+      <div class="hint">⚠️ Restoring replaces this browser's progress with the code's account. Keep it private.</div>
+    </div>
+  </div>
+</div>
+<div id="leaderboard" class="panel">
+  <div class="head"><span>🏆 Leaderboard</span><span class="x" id="leadX">✕</span></div>
+  <div class="body" id="leadBody"></div>
+  <div id="leadShare">
+    <button id="leadShareBtn" title="Brag about your rank on X">𝕏 Share my rank</button>
+    <a id="leadOpenPublic" href="https://plotlands.fun/leaderboard" target="_blank" rel="noopener" title="Open the public leaderboard">🔗 Full board</a>
+  </div>
+</div>
+<div id="tools" class="panel">
+  <div class="head"><span>🧰 Tools</span><span class="x" id="toolsX">✕</span></div>
+  <div class="body"><div class="tgrid" id="toolsGrid"></div></div>
+</div>
+<div id="coach">
+  <span class="cic">🕹️</span>
+  <div class="cmid"><div class="cstep">Step 1</div><div class="ctxt">…</div></div>
+  <span class="cskip" id="coachSkip">Skip ✕</span>
+</div>
+<div id="daily" title="Claim your daily reward">
+  <span class="dic">🎁</span>
+  <div class="dmid"><div class="dt">Daily reward</div><div class="dtxt">…</div></div>
+  <span class="dgo">Claim</span>
+</div>
+
+<script src="/nacl.min.js"></script>
+<script>
+(()=>{
+"use strict";
+// ===== config =====
+const params=new URLSearchParams(location.search);
+function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+const DEFAULT_SERVER=""; // <-- optional hard-coded "wss://your-server" override
+// When the page is *served by the game server* (http/https), default to talking WebSocket
+// back to that same host:port — so one URL just works. file:// falls back to localhost/offline.
+function originServer(){
+  if(location.protocol==='file:') return location.hostname==='localhost'?'ws://localhost:2567':'';
+  return (location.protocol==='https:'?'wss://':'ws://')+location.host;
+}
+// Server URL precedence: ?server= → saved Settings value → DEFAULT_SERVER → same-origin.
+const savedServer=lsGet('isle_server');
+const SERVER=params.get('server')??(savedServer??(DEFAULT_SERVER||originServer()));
+// Stable guest identity so a returning player keeps their server-side progress.
+let myGuest=(()=>{let g=lsGet('isle_guest');if(!g){g='g_'+Math.random().toString(36).slice(2)+Date.now().toString(36);lsSet('isle_guest',g);}return g;})();
+let myName=(()=>{let n=params.get('name');if(n){n=n.slice(0,14);lsSet('isle_name',n);return n;}
+  n=lsGet('isle_name');if(!n){n='Guest'+Math.floor(Math.random()*9000+1000);lsSet('isle_name',n);}return n;})();
+
+const TILE=40,W=128,H=96;
+const cvs=document.getElementById('game'),ctx=cvs.getContext('2d');
+const mini=document.getElementById('miniCanvas'),mctx=mini.getContext('2d');
+
+const T={WATER:0,SHALLOW:1,SAND:2,GRASS:3,FOREST:4,STONE:5,FLOWER:6};
+const SOLID=new Set([T.WATER,T.SHALLOW,T.STONE]);
+
+// Enemy roster — gameplay numbers MUST match server.js ENEMY; col/name are client-only visuals.
+const ENEMY={
+  slime: {hp:30,accel:60,fric:0.86,dmg:11,coin:5, xp:20,wood:2, stone:0, r:10,aggro:4.2,col:'#5fcf6a',eye:'#16202b',name:'Slime'},
+  sprite:{hp:18,accel:98,fric:0.82,dmg:8, coin:7, xp:16,wood:1, stone:0, r:8, aggro:6.0,col:'#6fd0e8',eye:'#14323a',name:'Sprite'},
+  wisp:  {hp:12,accel:140,fric:0.80,dmg:6,coin:9, xp:18,wood:0, stone:0, r:7, aggro:7.0,col:'#bfe8f5',eye:'#2a4a55',name:'Wisp'},
+  brute: {hp:60,accel:38,fric:0.90,dmg:20,coin:12,xp:40,wood:5, stone:2, r:14,aggro:3.4,col:'#b06ad0',eye:'#2a163a',name:'Brute'},
+  golem: {hp:120,accel:26,fric:0.93,dmg:24,coin:20,xp:60,wood:8, stone:6, r:16,aggro:3.0,col:'#8a8f98',eye:'#20262c',name:'Golem'},
+  boss:  {hp:360,accel:34,fric:0.91,dmg:18,coin:90,xp:160,wood:40,stone:20,r:22,aggro:5.0,col:'#c0392b',eye:'#2a0d0d',name:'Warlord'},
+};
+const ENEMY_KEYS=Object.keys(ENEMY);
+const SAFE_TILES=6; // safe hub radius around map center (must match server)
+const HUBX=(Math.floor(W/2)+0.5)*TILE, HUBY=(Math.floor(H/2)+0.5)*TILE;          // spawn hub centre (px)
+let nobuildTiles=SAFE_TILES; // protected build/claim radius — the server sends its real NOBUILD_TILES in `init` (0 disables)
+function inHub(tx,ty){return nobuildTiles>0 && Math.hypot((tx+0.5)*TILE-HUBX,(ty+0.5)*TILE-HUBY)<nobuildTiles*TILE;}
+
+// ===== sound (WebAudio, synthesized — no asset files) =====
+const SFX=(()=>{
+  let actx=null; let on=lsGet('isle_sound')!=='0'; // default on
+  function ac(){ if(!actx){ try{ actx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } return actx; }
+  // one soft blip — a tiny attack ramp kills the harsh click; gentle waveforms = pleasant, not beepy
+  function tone(freq,dur,type,vol,when){ if(!on)return; const a=ac(); if(!a)return;
+    const o=a.createOscillator(),g=a.createGain(),t=a.currentTime+(when||0);
+    o.type=type||'sine'; o.frequency.setValueAtTime(freq,t);
+    g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol||0.04,t+0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t+dur+0.03); }
+  // short filtered-noise burst → a woody/impact "thock" for chopping & hits
+  function noiseBurst(dur,vol,cutoff){ if(!on)return; const a=ac(); if(!a)return;
+    const n=Math.max(1,Math.floor(a.sampleRate*dur)),buf=a.createBuffer(1,n,a.sampleRate),d=buf.getChannelData(0);
+    for(let i=0;i<n;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/n,2);
+    const s=a.createBufferSource();s.buffer=buf;const f=a.createBiquadFilter();f.type='lowpass';f.frequency.value=cutoff||1000;
+    const g=a.createGain();g.gain.value=vol||0.1;s.connect(f);f.connect(g);g.connect(a.destination);s.start(); }
+  // calm generative ambient: soft sine notes from a pentatonic scale → always harmonious, never annoying
+  // upbeat chiptune loop — bouncy major-key melody + simple bass (fun & cheerful, not eerie)
+  const MELODY=[523,659,784,1047,784,659,784,0, 880,698,523,698,784,659,523,0];
+  const BASS  =[131,0,0,0,196,0,0,0,175,0,0,0,196,0,0,0];
+  let musicT=null,mi=0;
+  function startMusic(){ if(musicT||!on)return; mi=0;
+    musicT=setInterval(()=>{ if(!on)return;
+      const f=MELODY[mi%MELODY.length]; if(f) tone(f,0.18,'triangle',0.045);
+      const b=BASS[mi%BASS.length];     if(b) tone(b,0.30,'sine',0.038);
+      mi++; }, 200); }
+  function stopMusic(){ if(musicT){ clearInterval(musicT); musicT=null; } }
+  return {
+    resume(){ const a=ac(); if(a&&a.state==='suspended') a.resume(); startMusic(); },
+    setEnabled(v){ on=!!v; if(on) startMusic(); else stopMusic(); }, isEnabled(){ return on; },
+    chop(){ tone(150,0.07,'triangle',0.045); noiseBurst(0.12,0.09,900); }, // woody thock
+    mine(){ tone(95,0.09,'square',0.04); noiseBurst(0.14,0.10,520); },     // heavier stony tonk
+    fish(){ tone(660,0.06,'sine',0.04); tone(440,0.10,'sine',0.035,0.05); noiseBurst(0.08,0.05,2600); }, // light "plip"
+    build(){ tone(392,0.10,'sine',0.045); tone(523,0.12,'sine',0.04,0.08); },
+    plant(){ tone(523,0.12,'sine',0.045); },
+    hit(){ noiseBurst(0.08,0.10,1700); tone(170,0.06,'square',0.04); }, // punchy hit
+    kill(){ tone(523,0.09,'sine',0.05); tone(784,0.13,'sine',0.045,0.07); },
+    coin(){ tone(880,0.07,'sine',0.045); tone(1175,0.10,'sine',0.04,0.05); },
+    hurt(){ tone(140,0.16,'triangle',0.06); },
+    level(){ tone(523,0.12,'sine',0.05); tone(659,0.12,'sine',0.05,0.11); tone(784,0.18,'sine',0.05,0.22); },
+  };
+})();
+
+const map=[];
+function seed(x,y){let n=x*374761393+y*668265263;n=(n^(n>>>13))>>>0;n=Math.imul(n,1274126177)>>>0;n=(n^(n>>>16))>>>0;return n/4294967296;}
+function noise(x,y,s){return seed(Math.floor(x*s),Math.floor(y*s));}
+(function gen(){const cx=W/2,cy=H/2;
+  function pondAt(x,y){const P=[[50,38,5],[80,40,5],[80,58,5],[48,60,5],[64,68,4],[64,30,4]]; // several big inland fishing ponds
+    for(let i=0;i<P.length;i++){const d=Math.hypot(x-P[i][0],y-P[i][1]);if(d<P[i][2]-0.7)return 2;if(d<P[i][2]+0.5)return 1;if(d<P[i][2]+5)return 3;}return 0;}
+  for(let y=0;y<H;y++){map[y]=[];for(let x=0;x<W;x++){
+    const dx=(x-cx)/(W*0.44),dy=(y-cy)/(H*0.44),d=Math.sqrt(dx*dx+dy*dy);
+    const n=noise(x,y,0.18)*0.30+noise(x,y,0.5)*0.16+noise(x,y,0.9)*0.07;const land=d-n-0.10;let t;
+    if(land>0.62)t=T.WATER;else if(land>0.50)t=T.SHALLOW;else if(land>0.40)t=T.SAND;
+    else{t=T.GRASS;const ff=seed(x,y)*0.45+noise(x,y,0.30)*0.55,sf=noise(x,y,0.16);
+      if(sf>0.86)t=T.STONE;else if(ff>0.62)t=T.FOREST;else if(seed(x+31,y+11)>0.90)t=T.FLOWER;}
+    const pv=pondAt(x,y);if(pv===2)t=T.WATER;else if(pv===1&&t!==T.WATER)t=T.SHALLOW;else if(pv===3&&(t===T.FOREST||t===T.STONE||t===T.FLOWER))t=T.GRASS; // clear the pond shore (no trees/rocks)
+    map[y][x]=t;}}
+  for(let y=cy-2;y<=cy+2;y++)for(let x=cx-2;x<=cx+2;x++)if(map[y][x]===T.FOREST||map[y][x]===T.STONE)map[y][x]=T.GRASS;
+})();
+const buildings={}, farms={}, chopped={}, mined={}, claims={}; // claims["x,y"]={owner,name,level} (owned land); mined["x,y"]=true (rock mined out)
+// House tiers (the server sends the real table in `init`; this default mirrors server.js for offline play).
+// A claim's `level` is its tier index (1-based); upgrading needs the tier's coin cost + player level.
+let HOUSE_TIERS=[{name:'House',cost:0,reqLv:1},{name:'Cottage',cost:200,reqLv:8},{name:'Villa',cost:600,reqLv:16},{name:'Manor',cost:1800,reqLv:26},{name:'Mansion',cost:5000,reqLv:38},{name:'Hotel',cost:15000,reqLv:55}];
+const houseTierName=lv=>(HOUSE_TIERS[Math.min(Math.max(lv|0,1),HOUSE_TIERS.length)-1]||{name:'House'}).name;
+function houseUpgradeHint(c){const lv=c.level||1,max=HOUSE_TIERS.length;
+  if(lv>=max)return '🏨 '+houseTierName(lv)+' · top tier!';
+  const nx=HOUSE_TIERS[lv]||{name:'House',cost:0,reqLv:1};
+  return '🏠 '+houseTierName(lv)+' → tap 🏠 for '+nx.name+' (Lv'+nx.reqLv+' · '+nx.cost+'🪙)';}
+// ===== decorative pond life (visual only): fish swimming + an angler at each pond =====
+const PONDS=[[50,38,5],[80,40,5],[80,58,5],[48,60,5],[64,68,4],[64,30,4]];   // MUST match the map gen pondAt list
+function nearPond(tx,ty){for(const p of PONDS)if(Math.hypot(tx-p[0],ty-p[1])<p[2]+5)return true;return false;} // pond shore is build-protected
+const POND_FISH=[];
+for(let pi=0;pi<PONDS.length;pi++){const r=PONDS[pi][2],n=Math.min(20,r*2+7);   // LOTS of fish per pond
+  for(let i=0;i<n;i++){const big=seed(i*3+pi,7)>0.76;                            // ~24% are big golden fish
+    POND_FISH.push({pi,ph:seed(pi*9+i,3)*6.28,sp:(big?0.14:0.28)+seed(i,pi)*0.4,rad:(0.18+seed(i+5,pi)*0.6)*r,
+      sz:big?1.8+seed(i,pi+2)*0.8:0.8+seed(i+1,pi)*0.45, col:big?'#f0c64a':['#e8a04a','#e2683c','#7fd0e8','#d98cf0','#9fe07a'][i%5]});}}
+const ANGLERS=[];
+(function placeAnglers(){const names=['Old Angler','Finn','Marina','Gil','Coral','Reed'];
+  const land=(x,y)=>{const t=tileAt(x,y);return t===T.GRASS||t===T.SAND||t===T.FOREST||t===T.FLOWER;};
+  for(let pi=0;pi<PONDS.length;pi++){const[px,py,r]=PONDS[pi];let best=null;
+    for(let k=0;k<24&&!best;k++){const a=k/24*6.28,tx=Math.round(px+Math.cos(a)*(r+1)),ty=Math.round(py+Math.sin(a)*(r+1));
+      if(land(tx,ty)){for(const[dx,dy]of[[1,0],[-1,0],[0,1],[0,-1]]){const t=tileAt(tx+dx,ty+dy);if(t===T.WATER||t===T.SHALLOW){best={tx,ty,wx:tx+dx,wy:ty+dy};break;}}}}
+    if(best)ANGLERS.push({x:(best.tx+0.5)*TILE,y:(best.ty+0.5)*TILE,wx:(best.wx+0.5)*TILE,wy:(best.wy+0.5)*TILE,name:names[pi%names.length]});}
+})();
+function drawPondFish(){if(zoom<0.55)return;
+  for(const f of POND_FISH){const p=PONDS[f.pi];
+    const cx=(p[0]+0.5)*TILE+Math.cos(anim*f.sp+f.ph)*f.rad*TILE, cy=(p[1]+0.5)*TILE+Math.sin(anim*f.sp*0.85+f.ph)*f.rad*TILE*0.8;
+    const t=tileAt(Math.floor(cx/TILE),Math.floor(cy/TILE)); if(t!==T.WATER&&t!==T.SHALLOW)continue;   // stay in the water
+    const sx=cx-cam.x,sy=cy-cam.y,dir=Math.cos(anim*f.sp+f.ph)>=0?1:-1,z=f.sz;
+    ctx.fillStyle=f.col;ctx.beginPath();ctx.ellipse(sx,sy,3.2*z,2*z,0,0,7);ctx.fill();                              // body (scaled by size)
+    ctx.beginPath();ctx.moveTo(sx-dir*3*z,sy);ctx.lineTo(sx-dir*5.5*z,sy-2*z);ctx.lineTo(sx-dir*5.5*z,sy+2*z);ctx.closePath();ctx.fill(); // tail
+    if(z>1.4){ctx.fillStyle='rgba(255,255,255,.22)';ctx.beginPath();ctx.ellipse(sx-dir*1,sy-z,1.6*z,0.8*z,0,0,7);ctx.fill();} // shine on big fish
+    ctx.fillStyle='rgba(255,255,255,.6)';circle(sx+dir*1.4*z,sy-0.6*z,0.7*z);}}                                     // eye glint
+function drawAngler(a){const sx=a.x-cam.x,sy=a.y-cam.y,wx=a.wx-cam.x,wy=a.wy-cam.y+Math.sin(anim*2+a.x)*1.5;
+  ctx.fillStyle='rgba(0,0,0,.2)';ctx.beginPath();ctx.ellipse(sx,sy+10,11,4,0,0,7);ctx.fill();
+  ctx.fillStyle='#4a8a6a';ctx.fillRect(sx-6,sy-4,12,12);
+  ctx.fillStyle='#f0c89a';circle(sx,sy-9,4.5);
+  ctx.fillStyle='#caa15a';ctx.beginPath();ctx.ellipse(sx,sy-12,8,2.6,0,0,7);ctx.fill();ctx.beginPath();ctx.ellipse(sx,sy-14,4,3,0,0,7);ctx.fill();
+  ctx.strokeStyle='#7a5230';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(sx+4,sy-2);ctx.lineTo(sx+15,sy-13);ctx.stroke();
+  ctx.strokeStyle='rgba(240,240,255,.7)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(sx+15,sy-13);ctx.lineTo(wx,wy);ctx.stroke();
+  ctx.fillStyle='#e2483c';circle(wx,wy,2.2);ctx.fillStyle='#fff';circle(wx,wy-0.6,0.9);
+  ctx.strokeStyle='rgba(255,255,255,.25)';ctx.lineWidth=1;ctx.beginPath();ctx.arc(wx,wy,4+Math.sin(anim*3+a.x)*1.5,0,7);ctx.stroke();
+  ctx.font='bold 10px Segoe UI';ctx.textAlign='center';ctx.fillStyle='#000';ctx.fillText(a.name,sx+1,sy-19);ctx.fillStyle='#9fe0c0';ctx.fillText(a.name,sx,sy-20);ctx.textAlign='left';}
+let merch=null;
+function key(x,y){return x+','+y;}
+function tileAt(x,y){if(x<0||y<0||x>=W||y>=H)return T.WATER;
+  const k=key(x,y); if(chopped[k]&&map[y][x]===T.FOREST)return T.GRASS; return map[y][x];}
+function isSolid(x,y){const k=key(x,y);if(buildings[k])return true;if(merch&&merch.tx===x&&merch.ty===y)return true;return SOLID.has(tileAt(x,y));}
+
+const BASE_SPD=165;
+const P={x:0,y:0,r:11,spd:BASE_SPD,dir:0,hp:100,hpMax:100,xp:0,xpMax:100,lv:1,wood:0,stone:0,fish:0,plank:0,coin:0,deeds:0,up:{sword:0,axe:0,vit:0,boots:0,pick:0},swing:0,hurt:0,lastFish:0,name:myName};
+(function spawn(){const cx=Math.floor(W/2),cy=Math.floor(H/2);
+  for(let r=0;r<12;r++)for(let dy=-r;dy<=r;dy++)for(let dx=-r;dx<=r;dx++){
+    const tx=cx+dx,ty=cy+dy;if(tileAt(tx,ty)===T.GRASS&&!isSolid(tx,ty)){P.x=(tx+0.5)*TILE;P.y=(ty+0.5)*TILE;return;}}
+  P.x=cx*TILE;P.y=cy*TILE;})();
+(function placeMerch(){const cx=Math.floor(W/2),cy=Math.floor(H/2),px=Math.floor(P.x/TILE),py=Math.floor(P.y/TILE);
+  for(let r=2;r<14;r++)for(let dy=-r;dy<=r;dy++)for(let dx=-r;dx<=r;dx++){
+    const tx=cx+dx,ty=cy+dy;if(tileAt(tx,ty)===T.GRASS&&!(tx===px&&ty===py)){merch={tx,ty,x:(tx+0.5)*TILE,y:(ty+0.5)*TILE};return;}}})();
+
+const FISH_CD=2500; // client mirror of the server rod cooldown
+const TOOLS=[{id:'axe',ic:'🪓',lbl:'Axe',cost:null,hint:'Chop wood'},{id:'pick',ic:'⛏️',lbl:'Pick',cost:null,hint:'Mine stone'},
+  {id:'rod',ic:'🎣',lbl:'Rod',cost:null,hint:'Fish water'},
+  {id:'house',ic:'🏠',lbl:'House',cost:8,solid:true},
+  {id:'fence',ic:'🚧',lbl:'Fence',cost:2,solid:true},{id:'farm',ic:'🌱',lbl:'Farm',cost:3,solid:false},{id:'sword',ic:'⚔️',lbl:'Sword',cost:null,hint:'Fight'},
+  {id:'deed',ic:'🏠',lbl:'House',cost:null,hint:'Place / upgrade'}];
+function myPlots(){let n=0;for(const k in claims)if(claims[k].owner===myGuest)n++;return n;}
+function myRent(){let r=0;for(const k in claims)if(claims[k].owner===myGuest)r+=(claims[k].level||1)*2;return r;}
+function world_claimedByOther(k){return !!(claims[k]&&claims[k].owner!==myGuest);}
+let tool=0;const hb=document.getElementById('hotbar');
+TOOLS.forEach((t,i)=>{const d=document.createElement('div');d.className='slot'+(i===0?' active':'');
+  d.innerHTML='<span class="key">'+(i+1)+'</span><span class="ic">'+t.ic+'</span><span class="lbl">'+t.lbl+'</span>'+(t.cost!=null?'<span class="cost">'+t.cost+'🪵</span>':'');
+  d.onclick=()=>selTool(i);hb.appendChild(d);});
+function selTool(i){if(i<0||i>=TOOLS.length)return;tool=i;[...hb.children].forEach((c,j)=>c.classList.toggle('active',j===i));
+  const tb=document.getElementById('ibTools');if(tb)tb.textContent=TOOLS[i].ic;   // toolbox button mirrors the current tool
+  if(typeof toolsOpen!=='undefined'&&toolsOpen)renderTools();}                     // keep the open sheet's highlight in sync
+
+// ===== networking =====
+let ws=null,myId=null,online=false,connecting=true;
+// ===== Solana wallet login (Phantom) =====
+// Spectators can watch; moving/acting requires a connected + signed Solana wallet. The signature
+// is verified server-side; the wallet is then linked to the account so progress is saved.
+let walletOk=false, walletRequired=false, walletPubkey=null, walletNonce=null, _walletBusy=false;
+const WALLET_PREFIX='Sign in to Plotlands\nWallet login — nonce: ';
+const CONTRACT_ADDRESS='E2ccc6bnFwXaeVmToQ7nuyaQfMZvNbE2toBJcCNKpump'; // Solana token CA ($LANDS)
+function canPlay(){ return !walletRequired || walletOk; }
+function getProvider(){ return (window.phantom&&window.phantom.solana) || (window.solana&&window.solana.isPhantom?window.solana:null); }
+function isMobileUA(){ return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile/i.test(navigator.userAgent||''); }
+function inPhantomApp(){ return /Phantom/i.test(navigator.userAgent||''); }
+// ---- Phantom MOBILE deeplink: open the app → approve → sign → return ----
+// Phones have no wallet extension, and iOS ignores universal links fired from JS, so the reliable path is
+// Phantom's encrypted deeplink protocol. We do connect → signMessage; each hop opens the Phantom app and
+// RELOADS this page on return, so flow state lives in sessionStorage. We sign the login nonce issued BEFORE
+// the first hop (the server accepts a recently-issued nonce for a few minutes — see handleWallet).
+const _B58='123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+const _B58MAP=(()=>{const m={};for(let i=0;i<_B58.length;i++)m[_B58[i]]=i;return m;})();
+function b58enc(src){ src=Uint8Array.from(src); if(!src.length) return '';
+  const d=[0]; for(let i=0;i<src.length;i++){ let c=src[i];
+    for(let j=0;j<d.length;j++){ c+=d[j]*256; d[j]=c%58; c=(c/58)|0; } while(c>0){ d.push(c%58); c=(c/58)|0; } }
+  let s=''; for(let k=0;k<src.length-1&&src[k]===0;k++) s+='1';
+  for(let q=d.length-1;q>=0;q--) s+=_B58[d[q]]; return s; }
+function b58dec(str){ if(!str||!str.length) return new Uint8Array(0);
+  const b=[0]; for(let i=0;i<str.length;i++){ const v=_B58MAP[str[i]]; if(v===undefined) throw new Error('b58');
+    let c=v; for(let j=0;j<b.length;j++){ c+=b[j]*58; b[j]=c&0xff; c>>=8; } while(c>0){ b.push(c&0xff); c>>=8; } }
+  for(let k=0;k<str.length-1&&str[k]==='1';k++) b.push(0); return new Uint8Array(b.reverse()); }
+function deeplinkReady(){ return typeof nacl!=='undefined' && nacl.box && !!(window.crypto&&window.crypto.getRandomValues); }
+function dappReturn(){ return location.origin + location.pathname; }   // where Phantom redirects back
+let _phNeedSign=false, _phSubmit=null;
+function phClear(){ ['ph_sec','ph_nonce','ph_shared','ph_session','ph_pubkey'].forEach(k=>{ try{localStorage.removeItem(k);}catch(e){} }); }
+function startPhantomDeeplink(){
+  if(!deeplinkReady()){ toast('Install Phantom to play'); try{window.open('https://phantom.app/download','_blank');}catch(e){} return; }
+  if(!online||!walletNonce){ toast('Connecting to server…'); return; }
+  try{
+    const kp=nacl.box.keyPair();
+    lsSet('ph_sec', b58enc(kp.secretKey));
+    lsSet('ph_nonce', walletNonce);     // login nonce to sign (kept across the app-switch + reload)
+    const p=new URLSearchParams({ dapp_encryption_public_key:b58enc(kp.publicKey), cluster:'mainnet-beta',
+      app_url:'https://plotlands.fun', redirect_link:dappReturn()+'?pcb=connect' });
+    setWalletBusy(true); toast('Opening Phantom…');
+    location.href='https://phantom.app/ul/v1/connect?'+p.toString();
+  }catch(e){ setWalletBusy(false); toast('Could not open Phantom'); }
+}
+function phSign(){
+  try{
+    const shared=b58dec(lsGet('ph_shared'));
+    const session=lsGet('ph_session');
+    const loginNonce=lsGet('ph_nonce')||walletNonce;
+    const kp=nacl.box.keyPair.fromSecretKey(b58dec(lsGet('ph_sec')));
+    const payload={ message:b58enc(new TextEncoder().encode(WALLET_PREFIX+loginNonce)), session, display:'utf8' };
+    const non=nacl.randomBytes(24);
+    const box=nacl.box.after(new TextEncoder().encode(JSON.stringify(payload)), non, shared);
+    const p=new URLSearchParams({ dapp_encryption_public_key:b58enc(kp.publicKey), nonce:b58enc(non),
+      redirect_link:dappReturn()+'?pcb=sign', payload:b58enc(box) });
+    toast('Approve the signature in Phantom…');
+    location.href='https://phantom.app/ul/v1/signMessage?'+p.toString();
+  }catch(e){ setWalletBusy(false); phClear(); toast('Wallet sign failed — try again'); }
+}
+function cleanPhantomUrl(){ try{ history.replaceState(null,'',dappReturn()); }catch(e){} }
+function handlePhantomCallback(){
+  let q; try{ q=new URLSearchParams(location.search); }catch(e){ return; }
+  const pcb=q.get('pcb'); if(!pcb) return;
+  if(q.get('errorCode')){ toast('Phantom: '+(q.get('errorMessage')||'cancelled')); phClear(); cleanPhantomUrl(); return; }
+  if(!deeplinkReady()){ cleanPhantomUrl(); return; }
+  try{
+    if(pcb==='connect'){
+      const shared=nacl.box.before(b58dec(q.get('phantom_encryption_public_key')), b58dec(lsGet('ph_sec')));
+      const data=nacl.box.open.after(b58dec(q.get('data')), b58dec(q.get('nonce')), shared);
+      if(!data) throw new Error('decrypt');
+      const obj=JSON.parse(new TextDecoder().decode(data));   // { public_key, session }
+      lsSet('ph_shared', b58enc(shared));
+      lsSet('ph_session', obj.session);
+      lsSet('ph_pubkey', obj.public_key);
+      cleanPhantomUrl(); _phNeedSign=true; setWalletBusy(true); maybePhantomSign();
+    } else if(pcb==='sign'){
+      const shared=b58dec(lsGet('ph_shared'));
+      const data=nacl.box.open.after(b58dec(q.get('data')), b58dec(q.get('nonce')), shared);
+      if(!data) throw new Error('decrypt');
+      const obj=JSON.parse(new TextDecoder().decode(data));   // { signature }
+      _phSubmit={ pubkey:lsGet('ph_pubkey'), sig:Array.from(b58dec(obj.signature)), nonce:lsGet('ph_nonce') };
+      cleanPhantomUrl(); setWalletBusy(true); toast('Verifying wallet…'); maybePhantomSubmit();
+    }
+  }catch(e){ setWalletBusy(false); phClear(); toast('Wallet connect failed — try again'); cleanPhantomUrl(); }
+}
+function maybePhantomSign(){ if(_phNeedSign && online){ _phNeedSign=false; phSign(); } }
+function maybePhantomSubmit(){ if(_phSubmit && online && ws && ws.readyState===1){ send({t:'wallet',pubkey:_phSubmit.pubkey,sig:_phSubmit.sig,nonce:_phSubmit.nonce}); _phSubmit=null; phClear(); } }
+function setWalletBusy(b){ _walletBusy=b;
+  const a=$('connectPlayBtn'); if(a){a.classList.toggle('busy',b); a.textContent=b?'⏳ Verifying…':'🔗 Connect Wallet & Play';}
+  const c=$('specConnect'); if(c){c.classList.toggle('busy',b); c.textContent=b?'⏳ Verifying…':'🔗 Connect Wallet';} }
+async function connectWallet(){
+  if(_walletBusy||walletPubkey) return;   // skip only if a connect is in flight or a wallet is already linked
+  const prov=getProvider();
+  if(!prov){
+    // Mobile web has no extension. Use Phantom's deeplink (open app → approve → sign → return) unless
+    // we're already inside Phantom's in-app browser, where the provider IS injected.
+    if(isMobileUA() && !inPhantomApp()){ startPhantomDeeplink(); return; }
+    toast('Install Phantom to play'); try{window.open('https://phantom.app/download','_blank');}catch(e){} return;
+  }
+  if(!online||!walletNonce){ toast('Connecting to server…'); return; }
+  setWalletBusy(true);
+  try{
+    const resp=await prov.connect();
+    const pk=(resp&&resp.publicKey)||prov.publicKey; const pubkey=pk.toString();
+    const enc=new TextEncoder().encode(WALLET_PREFIX+walletNonce);
+    const signed=await prov.signMessage(enc,'utf8');
+    const sig=Array.from(signed.signature||signed);
+    send({t:'wallet',pubkey,sig}); toast('Verifying wallet…');
+  }catch(e){ setWalletBusy(false); toast('Wallet connection cancelled'); }
+}
+function promptWallet(){ if(canPlay())return; const sb=$('specbar');
+  if(sb){sb.classList.add('show');sb.classList.remove('pulse');void sb.offsetWidth;sb.classList.add('pulse');}
+  toast('🔗 Connect your wallet to play'); }
+function updateWalletUI(){ const sb=$('specbar');
+  if(sb) sb.classList.toggle('show', !!(online&&walletRequired&&!walletOk));
+  const ws_=$('walletStat'); if(ws_) ws_.style.display=walletPubkey?'flex':'none';
+  if(walletPubkey){ const c=$('walletChip'); if(c)c.textContent=walletPubkey.slice(0,4)+'…'+walletPubkey.slice(-4); }
+  const cb=$('connectPlayBtn'); if(cb&&!_walletBusy) cb.textContent=walletPubkey?'▶ Play':'🔗 Connect Wallet & Play'; }
+// Disconnect: forget the wallet (Phantom) and return as a fresh spectator. The wallet still owns
+// your saved account — reconnect the same wallet to recover all progress.
+function disconnectWallet(){
+  try{ const p=getProvider(); if(p&&p.disconnect) Promise.resolve(p.disconnect()).catch(()=>{}); }catch(e){}
+  lsSet('isle_guest','g_'+Math.random().toString(36).slice(2)+Date.now().toString(36));
+  toast('Wallet disconnected'); setTimeout(()=>location.reload(),300); }
+const remote=new Map();  // id -> {name,lv,x,y,dir,hp,rx,ry}
+const slimes=new Map();  // id -> {x,y,hp,rx,ry,t,vx,vy}  (online: from server; offline: local sim)
+function setStatus(txt,cls){const s=document.getElementById('status');s.innerHTML='<span class="'+(cls||'')+'">'+txt+'</span>';}
+function connect(){
+  if(!SERVER){startOffline('No server set — Offline solo');return;}
+  try{ws=new WebSocket(SERVER);}catch(e){startOffline('Bad server URL — Offline solo');return;}
+  const failTimer=setTimeout(()=>{if(!online){try{ws.close();}catch(e){} startOffline('Server unreachable — Offline solo');}},2500);
+  ws.onopen=()=>{ws.send(JSON.stringify({t:'join',name:myName,guest:myGuest}));};
+  ws.onmessage=e=>{clearTimeout(failTimer);handleMsg(JSON.parse(e.data));};
+  ws.onclose=()=>{if(online){online=false;setStatus('Reconnecting…','off');sys('Lost connection — reconnecting…');scheduleReconnect();}};
+  ws.onerror=()=>{};
+}
+let reconnects=0;
+function scheduleReconnect(){ if(reconnects++>=5){setStatus('Disconnected ✕','off');sys('Could not reconnect. Reload to retry.');return;} setTimeout(connect,3000); }
+function send(o){if(online&&ws&&ws.readyState===1)ws.send(JSON.stringify(o));}
+function handleMsg(m){
+  if(m.t==='init'){
+    myId=m.id;online=true;connecting=false;reconnects=0;setStatus('Connected ●','on');sys('Welcome to Plotlands!');
+    if(m.total!=null){$('sTotal').textContent=m.total;const t2=$('sTotal2');if(t2)t2.textContent=m.total;}
+    {const o2=$('sOnline2');if(o2)o2.textContent=(m.players?m.players.length:0)+1;}
+    walletRequired=!!m.walletRequired; walletOk=!!m.walletOk; walletPubkey=m.wallet||null; if(m.nonce)walletNonce=m.nonce;
+    updateWalletUI();
+    if(typeof m.nobuild==='number')nobuildTiles=m.nobuild;   // honor the server's configured no-build radius
+    if(m.self)applySelf(m.self,true);   // server owns balances/HP/level online
+    if(m.daily)applyDaily(m.daily);     // daily-reward status (ready? streak? amount?)
+    if(m.season){seasonNo=m.season.no;seasonEndsAt=m.season.endsAt;seasonRewards=m.season.rewards||[];lastLeader={season:m.season};} // current season meta
+    if(Array.isArray(m.houseTiers)&&m.houseTiers.length)HOUSE_TIERS=m.houseTiers; // server-authoritative house-tier table
+    verifyRequired=!!m.verifyRequired;   // "verify (share on X) to count your contest points"
+    updateVerifyBar();                   // show the contest banner under the topbar
+    maybePhantomSign(); maybePhantomSubmit();  // resume a Phantom mobile deeplink flow after the reload
+    for(const k in m.buildings)buildings[k]=m.buildings[k];
+    (m.chopped||[]).forEach(k=>chopped[k]=true);
+    (m.mined||[]).forEach(k=>mined[k]=true);
+    for(const k in m.farms)farms[k]={g:Math.min(1,(Date.now()-m.farms[k].plantedAt)/20000)};
+    for(const k in (m.claims||{}))claims[k]=m.claims[k];
+    m.players.forEach(p=>{if(p.id!==myId)addRemote(p);});
+    slimes.clear();m.slimes.forEach(s=>slimes.set(s.id,{type:s.type||'slime',x:s.x,y:s.y,hp:s.hp,hpMax:s.hpMax,rx:s.x,ry:s.y,t:Math.random()*6}));
+  }
+  else if(m.t==='joined'){if(m.player.id!==myId){addRemote(m.player);sys(m.player.name+' joined.');}}
+  else if(m.t==='total'){if(m.n!=null){$('sTotal').textContent=m.n;const t2=$('sTotal2');if(t2)t2.textContent=m.n;}}
+  else if(m.t==='walletok'){
+    if(m.guest&&m.guest!==myGuest){ myGuest=m.guest; lsSet('isle_guest',m.guest); } // adopt the wallet's account (no reload needed)
+    walletOk=true; walletPubkey=m.pubkey||walletPubkey; _walletBusy=false; setWalletBusy(false);
+    dismissStart(); updateWalletUI(); toast('Wallet connected ✓'); SFX.coin&&SFX.coin();
+  }
+  else if(m.t==='walletfail'){ _walletBusy=false; setWalletBusy(false); toast('Wallet verify failed — try again'); }
+  else if(m.t==='left'){const r=remote.get(m.id);if(r)sys(r.name+' left.');remote.delete(m.id);}
+  else if(m.t==='rename'){if(m.id===myId){myName=m.name;P.name=m.name;lsSet('isle_name',m.name);setHintEl.textContent='Saved ✓';toast('Name set: '+m.name);closeSettings();}else{const rr=remote.get(m.id);if(rr){sys(rr.name+' is now '+m.name);rr.name=m.name;}}}
+  else if(m.t==='nametaken'){setHintEl.textContent='"'+(m.name||'')+'" is already taken';toast('Username already taken ✕');}
+  else if(m.t==='state'){
+    m.players.forEach(p=>{if(p.id===myId)return;let r=remote.get(p.id);if(!r){addRemote(p);r=remote.get(p.id);}r.x=p.x;r.y=p.y;r.dir=p.dir;r.lv=p.lv;r.hp=p.hp;});
+    const seen=new Set();m.slimes.forEach(s=>{seen.add(s.id);let o=slimes.get(s.id);if(!o){o={type:s.type||'slime',x:s.x,y:s.y,hp:s.hp,hpMax:s.hpMax,rx:s.x,ry:s.y,t:Math.random()*6};slimes.set(s.id,o);}else{o.x=s.x;o.y=s.y;if(typeof o.hp==='number'&&s.hp<o.hp){o.flash=0.2;spawnParts(o.rx,o.ry,'#ffffff',5,20);}o.hp=s.hp;}});
+    for(const id of [...slimes.keys()])if(!seen.has(id))slimes.delete(id);
+  }
+  else if(m.t==='edit')applyEdit(m,true);
+  else if(m.t==='claim'){const ck=key(m.x,m.y),had=claims[ck];claims[ck]={owner:m.owner,name:m.name,level:m.level||1,price:m.price||0};if(m.owner===myGuest&&!had)SFX.coin();}
+  else if(m.t==='slimeDead'){const o=slimes.get(m.id);if(o)spawnParts(o.rx,o.ry,(ENEMY[o.type]||ENEMY.slime).col,12,30);slimes.delete(m.id);if(m.by===myId){SFX.kill();if(o&&o.type==='boss')slewWarlord=true;}} // coin/xp award arrives via `self`
+  else if(m.t==='self'){applySelf(m);}
+  else if(m.t==='leaderboard'){lastLeader=m;if(m.season){seasonNo=m.season.no;seasonEndsAt=m.season.endsAt;seasonRewards=m.season.rewards||seasonRewards;}if(leadOpen)renderLeaderboard(m);}
+  else if(m.t==='season'){ seasonNo=m.no; seasonEndsAt=m.endsAt; seasonRewards=m.rewards||seasonRewards;
+    if(lastLeader)lastLeader.season=Object.assign(lastLeader.season||{},{no:m.no,endsAt:m.endsAt,rewards:m.rewards,last:m.last,title:m.title,prize:m.prize,active:m.active,racers:m.racers}); else lastLeader={season:m};
+    updateVerifyBar();
+    if(m.last&&m.last.winners&&m.last.winners.length){const w=m.last.winners[0];sys('🏆 Season '+m.last.no+' ended! Champion: '+w.name+' (+'+w.airdrop+' 🎖). Season '+m.no+' begins now!');toast('🏆 Season '+m.no+' — new race!');}
+    else{sys('🏆 Season '+m.no+' has begun — race for the airdrop 🎖!');}
+    if(leadOpen&&lastLeader)renderLeaderboard(lastLeader); }
+  else if(m.t==='daily'){applyDaily(m);}
+  else if(m.t==='chat'){addChat(m.name,m.msg);}
+  else if(m.t==='full'){online=false;try{ws.close();}catch(e){} startOffline('Server full — Offline solo');}
+}
+// Apply a server-authoritative snapshot of my own balances/HP/level.
+// `initial`=true on the join handshake (suppresses level-up celebration + sound).
+function applySelf(s,initial){
+  const hpDown=typeof s.hp==='number'&&s.hp<P.hp, coinUp=typeof s.coin==='number'&&s.coin>P.coin;
+  if(hpDown)P.hurt=Math.max(P.hurt,0.6);          // flash red on damage
+  const leveled=!initial&&typeof s.lv==='number'&&s.lv>P.lv;
+  if('wood'in s)P.wood=s.wood; if('stone'in s)P.stone=s.stone; if('fish'in s)P.fish=s.fish; if('plank'in s)P.plank=s.plank; if('coin'in s)P.coin=s.coin; if('deeds'in s)P.deeds=s.deeds;
+  if('xp'in s)P.xp=s.xp; if('xpMax'in s)P.xpMax=s.xpMax; if('lv'in s)P.lv=s.lv;
+  if('hp'in s)P.hp=s.hp; if('hpMax'in s)P.hpMax=s.hpMax;
+  if('seasonPts'in s)mySeasonPts=s.seasonPts; if('airdrop'in s)myAirdrop=s.airdrop; if('verified'in s)myVerified=s.verified;
+  updateVerifyBar();
+  if(s.up){P.up=s.up;P.spd=BASE_SPD+(s.up.boots||0)*18;}   // upgrades (speed applied here)
+  if(s.tp){P.x=s.tp.x;P.y=s.tp.y;}                 // forced move (respawn)
+  if(s.fx)fx(s.fx.x,s.fx.y,s.fx.txt,s.fx.col||'#fff');
+  if(!initial){ if(hpDown)SFX.hurt(); if(coinUp)SFX.coin(); }
+  if(leveled){SFX.level();fx(P.x,P.y-26,'LEVEL '+P.lv+'!','#5fb0e8');toast('⬆ Level '+P.lv);}
+  if(shopOpen)renderShop();
+  syncHUD();
+}
+function addRemote(p){remote.set(p.id,{name:p.name,lv:p.lv||1,x:p.x,y:p.y,dir:p.dir||0,hp:p.hp||100,rx:p.x,ry:p.y});}
+function applyEdit(m,fromNet){const k=key(m.x,m.y);
+  if(m.kind==='build'){buildings[k]={type:m.bt,solid:m.bt!=='farm'};}
+  else if(m.kind==='chop'){chopped[k]=true;}
+  else if(m.kind==='regrow'){delete chopped[k];}
+  else if(m.kind==='mine'){mined[k]=true;}
+  else if(m.kind==='mineregrow'){delete mined[k];}
+  else if(m.kind==='farm'){farms[k]={g:0};}
+  else if(m.kind==='harvest'){delete farms[k];}
+}
+
+// ===== offline fallback =====
+function startOffline(msg){online=false;connecting=false;setStatus((msg||'Offline')+' ◌','off');sys(msg||'Playing offline (solo).');
+  for(let i=0;i<7;i++)spawnLocalSlime();}
+let _sid=1e6;
+function pickEnemyType(){const r=Math.random()*126;return r<60?'slime':r<85?'sprite':r<100?'brute':r<118?'wisp':'golem';} // ~match server weights
+function spawnLocalSlime(){for(let i=0;i<60;i++){const tx=2+Math.floor(Math.random()*(W-4)),ty=2+Math.floor(Math.random()*(H-4));
+  if(tileAt(tx,ty)===T.GRASS||tileAt(tx,ty)===T.FLOWER){const d=Math.hypot((tx+0.5)*TILE-P.x,(ty+0.5)*TILE-P.y);
+    if(d>TILE*7){const type=pickEnemyType(),E=ENEMY[type],x=(tx+0.5)*TILE,y=(ty+0.5)*TILE;
+      slimes.set(_sid++,{type,x,y,r:E.r,hp:E.hp,hpMax:E.hp,rx:x,ry:y,t:Math.random()*6,vx:0,vy:0});return;}}}}
+
+// ===== input =====
+const keys={};let typing=false;
+const chatIn=document.getElementById('chatIn');
+chatIn.addEventListener('focus',()=>typing=true);
+chatIn.addEventListener('blur',()=>typing=false);
+const typingNow=()=>{const a=document.activeElement;return !!a&&(a.tagName==='INPUT'||a.tagName==='TEXTAREA');}; // ANY focused text field → ignore game keys (name/server/chat)
+addEventListener('keydown',e=>{
+  SFX.resume(); // unlock WebAudio on first key — the landing closes ONLY via its buttons (so a screenshot keypress won't skip it)
+  if(e.key==='Enter'){const ae=document.activeElement;if(ae===chatIn){const v=chatIn.value.trim();if(v){if(online){send({t:'chat',msg:v});}else{addChat(myName,v);} }chatIn.value='';chatIn.blur();}else if(!typingNow()){chatIn.focus();}return;}
+  if(k_escape(e))return;          // Esc closes panels / leaves chat even if a field is focused
+  // a movement key while the chat box is focused-but-empty → leave chat and move (don't type "w")
+  if(typingNow()&&chatIn.value===''&&['w','a','s','d','arrowup','arrowdown','arrowleft','arrowright'].includes(e.key.toLowerCase())){chatIn.blur();}
+  if(typingNow())return;
+  const k=e.key.toLowerCase();keys[k]=true;
+  if(k==='arrowup'||k==='arrowdown'||k==='arrowleft'||k==='arrowright')e.preventDefault(); // don't scroll the page
+  if(k==='i'){toggleInv();return;} if(k==='o'){toggleSettings();return;} if(k==='l'){toggleLeaderboard();return;}
+  if(uiBlocking())return;         // a modal is open — ignore game keys
+  if(!canPlay()){const mv=['w','a','s','d','arrowup','arrowdown','arrowleft','arrowright'].includes(k);
+    if(mv||e.code==='Space'||['e','u','c','f','g'].includes(k)){promptWallet();return;}}  // gate move/act keys for spectators
+  if(e.key>='1'&&e.key<='9')selTool(+e.key-1);
+  if(e.code==='Space'){e.preventDefault();act(false);}
+  if(k==='e')tryMerchant();
+  if(k==='u')unstuck();
+  if(k==='c')claimHere();
+  if(k==='f')attackNearest();
+  if(k==='g')eatFish();
+  if(k==='-'||k==='_')zoomBy(1/1.15); if(k==='='||k==='+')zoomBy(1.15);
+});
+// start / how-to-play overlay
+const startEl=document.getElementById('start');
+function dismissStart(){ if(startEl && !startEl.classList.contains('hidden')){ startEl.classList.add('hidden'); SFX.resume(); } }
+// landing + spectate-bar buttons (use getElementById: `$` is declared later in the file)
+document.getElementById('connectPlayBtn').onclick=()=>{ SFX.resume(); if(walletPubkey){dismissStart();} else {connectWallet();} };
+document.getElementById('spectateBtn').onclick=()=>{ SFX.resume(); dismissStart(); };
+document.getElementById('specConnect').onclick=()=>{ SFX.resume(); connectWallet(); };
+// contract address: show + copy (placeholder until the token launches)
+{const ct=document.getElementById('caText'); if(ct&&CONTRACT_ADDRESS) ct.textContent=CONTRACT_ADDRESS;}
+document.getElementById('caChip').onclick=()=>{ if(!CONTRACT_ADDRESS){ toast('CA — coming soon 👀'); return; }
+  try{ navigator.clipboard.writeText(CONTRACT_ADDRESS); toast('CA copied ✓'); }catch(e){ toast(CONTRACT_ADDRESS); } };
+// wallet chip → small menu (full address + copy + disconnect)
+function toggleWalletMenu(force){ const wm=$('walletMenu'); if(!wm)return;
+  const show=(force!==undefined?force:!wm.classList.contains('show')) && !!walletPubkey;
+  if(show){ const a=$('wmAddr'); if(a)a.textContent=walletPubkey; }
+  wm.classList.toggle('show',show); }
+{const wsd=document.getElementById('walletStat'); if(wsd) wsd.onclick=(e)=>{ e.stopPropagation(); toggleWalletMenu(); };}
+{const wa=document.getElementById('wmAddr'); if(wa) wa.onclick=()=>{ if(!walletPubkey)return;
+  try{ navigator.clipboard.writeText(walletPubkey); toast('Address copied ✓'); }catch(e){} };}
+{const wd=document.getElementById('wmDisconnect'); if(wd) wd.onclick=()=>{ toggleWalletMenu(false); disconnectWallet(); };}
+// close the menu when clicking anywhere outside it (or the chip)
+addEventListener('mousedown',(e)=>{ const wm=$('walletMenu'); if(!wm||!wm.classList.contains('show'))return;
+  if(wm.contains(e.target) || (e.target.closest&&e.target.closest('#walletStat')))return; toggleWalletMenu(false); });
+function k_escape(e){if(e.key==='Escape'){if(typing){chatIn.blur();return true;}if(uiBlocking()){closeAllPanels();return true;}}return false;}
+addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
+let mouse={x:innerWidth/2,y:innerHeight/2,down:false}, moveTo=null;
+cvs.addEventListener('mousemove',e=>{mouse.x=e.clientX;mouse.y=e.clientY;});
+cvs.addEventListener('mousedown',()=>{SFX.resume();lookT=0;if(typing)chatIn.blur();if(uiBlocking())return;
+  if(!canPlay()){promptWallet();return;}                  // spectator: must connect a wallet first
+  mouse.down=true;
+  const m=tileFromMouse();
+  if(merch&&m.x===merch.tx&&m.y===merch.ty){tryMerchant();return;}
+  if(canActAt(m.x,m.y))act(true);                      // clicked a tree/enemy/build-spot in reach → act
+  else moveTo={x:mouse.x/zoom+cam.x,y:mouse.y/zoom+cam.y};});    // clicked the ground → walk there
+cvs.addEventListener('mouseup',()=>mouse.down=false);
+cvs.addEventListener('wheel',e=>{e.preventDefault();zoomBy(e.deltaY<0?1.12:1/1.12);},{passive:false}); // scroll = zoom
+// teleport to the nearest open tile — a guaranteed escape if you ever get wedged in builds
+function openTile(tx,ty){const g=tileAt(tx,ty);return (g===T.GRASS||g===T.SAND||g===T.FLOWER)&&!buildings[key(tx,ty)]&&!(merch&&merch.tx===tx&&merch.ty===ty);}
+function unstuck(){ if(online)send({t:'unstuck'}); moveTo=null;
+  // ALWAYS free the player locally too (don't just rely on the server) — find a nearby open spot
+  // and teleport there; the position then syncs to the server via the normal input stream.
+  const ptx=Math.floor(P.x/TILE),pty=Math.floor(P.y/TILE);
+  for(let r=0;r<=40;r++)for(let dy=-r;dy<=r;dy++)for(let dx=-r;dx<=r;dx++){const tx=ptx+dx,ty=pty+dy;
+    if(openTile(tx,ty)&&openTile(tx+1,ty)&&openTile(tx-1,ty)&&openTile(tx,ty+1)&&openTile(tx,ty-1)){P.x=(tx+0.5)*TILE;P.y=(ty+0.5)*TILE;moveTo=null;toast('Unstuck! 🆘');return;}}
+  const cx=Math.floor(W/2),cy=Math.floor(H/2);P.x=(cx+0.5)*TILE;P.y=(cy+0.5)*TILE;moveTo=null;toast('Unstuck! 🆘');}  // last resort: spawn
+const touch={id:null,bx:0,by:0,dx:0,dy:0};
+cvs.addEventListener('touchstart',e=>{SFX.resume();lookT=0;if(uiBlocking())return;if(!canPlay()){promptWallet();return;}for(const t of e.changedTouches){
+  if(t.clientX<innerWidth*0.5&&touch.id===null){touch.id=t.identifier;touch.dx=t.clientX-JOY.x;touch.dy=t.clientY-JOY.y;}
+  else{mouse.x=t.clientX;mouse.y=t.clientY;const m=tileFromMouse();if(merch&&m.x===merch.tx&&m.y===merch.ty)tryMerchant();else act(true);}
+}},{passive:true});
+cvs.addEventListener('touchmove',e=>{for(const t of e.changedTouches)if(t.identifier===touch.id){touch.dx=t.clientX-JOY.x;touch.dy=t.clientY-JOY.y;}},{passive:true});
+cvs.addEventListener('touchend',e=>{for(const t of e.changedTouches)if(t.identifier===touch.id){touch.id=null;touch.dx=0;touch.dy=0;}},{passive:true});
+let cam={x:0,y:0},zoom=1,lookAt={x:0,y:0},lookT=0,miniDown=false;const ZMIN=0.45,ZMAX=2.0;
+// drag the minimap to pan/peek around the big map; view returns to you after a moment
+function miniLook(cx,cy){const r=mini.getBoundingClientRect();const mx=(cx-r.left)/r.width,my=(cy-r.top)/r.height;
+  lookAt={x:Math.max(0,Math.min(1,mx))*W*TILE,y:Math.max(0,Math.min(1,my))*H*TILE};lookT=1.4;}
+mini.addEventListener('mousedown',e=>{miniDown=true;miniLook(e.clientX,e.clientY);e.preventDefault();});
+addEventListener('mousemove',e=>{if(miniDown)miniLook(e.clientX,e.clientY);});
+addEventListener('mouseup',()=>{if(miniDown)lookT=Math.min(lookT,0.4);miniDown=false;});
+mini.addEventListener('touchstart',e=>{const t=e.touches[0];if(t)miniLook(t.clientX,t.clientY);e.preventDefault();},{passive:false});
+mini.addEventListener('touchmove',e=>{const t=e.touches[0];if(t)miniLook(t.clientX,t.clientY);e.preventDefault();},{passive:false});
+mini.addEventListener('touchend',()=>{lookT=Math.min(lookT,0.4);},{passive:true});
+mini.addEventListener('touchcancel',()=>{lookT=Math.min(lookT,0.4);},{passive:true});
+function zoomBy(f){zoom=Math.max(ZMIN,Math.min(ZMAX,zoom*f));}
+// one-tap land claim: claims the grass tile you're standing on (spends one held Land Deed)
+function claimHere(){
+  const tx=Math.floor(P.x/TILE),ty=Math.floor(P.y/TILE),k=key(tx,ty),gt=tileAt(tx,ty),c=claims[k];
+  if(c&&c.owner===myGuest){                              // already yours → upgrade the house to the next tier
+    const lv=c.level||1, max=HOUSE_TIERS.length;
+    if(lv>=max){toast('🏨 '+houseTierName(lv)+' — already the top tier!');return;}
+    const next=HOUSE_TIERS[lv]||{name:'House',cost:0,reqLv:1};   // tier we'd upgrade INTO (level lv+1)
+    if(P.lv<next.reqLv){toast('🔒 '+next.name+' needs Lv'+next.reqLv+' (you are Lv'+P.lv+')');return;}
+    if(P.coin<next.cost){toast('Need '+next.cost+' 🪙 for '+next.name+' — sell wood/fish 💰');return;}
+    if(online)send({t:'upgradeland',x:tx,y:ty}); else {P.coin-=next.cost;c.level=lv+1;toast('🏠 '+next.name+'!');}
+    return; }
+  if(c){toast('This tile is already claimed');return;}
+  if(myPlots()>=P.deeds){toast(P.deeds>0?'All your houses are placed — buy more 💰':'Buy a House first (Merchant 💰)');return;}
+  if(gt===T.WATER||gt===T.SHALLOW||gt===T.STONE){toast('Stand on grass to claim');return;}
+  if(buildings[k]){toast("Can't claim a built tile");return;}
+  if(inHub(tx,ty)){toast('🛡️ Spawn hub is protected — claim outside the ring');return;}
+  if(online)send({t:'claim',x:tx,y:ty}); else {claims[k]={owner:myGuest,name:myName,level:1};fx(P.x,P.y,'Land claimed 📜','#f0c64a');}
+  toast('Land claimed 📜 — stand on it + tap 🏠 to upgrade your house (→ Hotel)');}
+function updateAudioIcon(){const el=document.getElementById('ibAudio');if(el)el.textContent=SFX.isEnabled()?'🔊':'🔇';}
+function toggleAudio(){const v=!SFX.isEnabled();SFX.setEnabled(v);lsSet('isle_sound',v?'1':'0');if(v)SFX.resume();
+  const cb=document.getElementById('setSound');if(cb)cb.checked=v; updateAudioIcon(); toast(v?'Sound on 🔊':'Sound off 🔇');}
+// one-tap combat: swing at the nearest monster within reach (no tool-switching needed)
+function attackNearest(){
+  let hit=null,best=1e9;for(const [id,s] of slimes){const d=Math.hypot(s.rx-P.x,s.ry-P.y);if(d<TILE*1.6&&d<best){best=d;hit=id;}}
+  if(hit==null){toast('No monster in range — get closer ⚔️');return;}
+  const s=slimes.get(hit);P.swing=0.2;P.dir=Math.abs(s.rx-P.x)>Math.abs(s.ry-P.y)?(s.rx<P.x?1:2):(s.ry<P.y?3:0);
+  SFX.hit();s.flash=0.2;spawnParts(s.rx,s.ry,'#ffffff',5,20);fx(s.rx,s.ry-8,'-'+(14+(P.up.sword||0)*6),'#ffd0d0');
+  if(online){send({t:'attack',id:hit});}
+  else{const E=ENEMY[s.type]||ENEMY.slime;s.hp-=14+(P.up.sword||0)*6;const a=Math.atan2(s.ry-P.y,s.rx-P.x);s.vx=Math.cos(a)*180;s.vy=Math.sin(a)*180;
+    if(s.hp<=0){slimes.delete(hit);P.coin+=E.coin;P.wood+=E.wood||0;P.stone+=E.stone||0;gainXP(E.xp);SFX.kill();SFX.coin();spawnParts(s.rx,s.ry,E.col,12,30);fx(s.rx,s.ry,'+'+E.coin+' 🪙'+(E.wood?' +'+E.wood+' 🪵':'')+(E.stone?' +'+E.stone+' 🪨':''),'#f0c64a');}}}
+function tileFromMouse(){return{x:Math.floor((mouse.x/zoom+cam.x)/TILE),y:Math.floor((mouse.y/zoom+cam.y)/TILE)};}
+function facingTile(){const o=[[0,1],[-1,0],[1,0],[0,-1]][P.dir];return{x:Math.floor(P.x/TILE)+o[0],y:Math.floor(P.y/TILE)+o[1]};}
+
+const floaters=[];function fx(x,y,txt,col){floaters.push({x,y,txt,col,life:1});}
+const parts=[];function spawnParts(x,y,col,n,up){for(let i=0;i<(n||6);i++){const a=Math.random()*7,s=40+Math.random()*70;parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-(up||40),life:0.45+Math.random()*0.3,col,sz:1.5+Math.random()*2.5});}}
+
+// Would the current tool do something at this tile, in reach? (used to decide click = act vs move)
+function canActAt(tx,ty){
+  const cxp=(tx+0.5)*TILE,cyp=(ty+0.5)*TILE; if(Math.hypot(cxp-P.x,cyp-P.y)>TILE*1.9)return false;
+  const t=TOOLS[tool];
+  if(tileAt(tx,ty)===T.WATER||tileAt(tx,ty)===T.SHALLOW)return Date.now()-P.lastFish>=FISH_CD; // click any nearby water to fish (any tool)
+  if(t.id==='axe')return tileAt(tx,ty)===T.FOREST;
+  if(t.id==='pick')return tileAt(tx,ty)===T.STONE&&!mined[key(tx,ty)];
+  if(t.id==='rod'){const w=tileAt(tx,ty);return (w===T.WATER||w===T.SHALLOW)&&(Date.now()-P.lastFish>=FISH_CD);}
+  if(t.id==='sword'){for(const s of slimes.values())if(Math.hypot(s.rx-cxp,s.ry-cyp)<TILE*1.1)return true;return false;}
+  if(t.id==='farm'){const k=key(tx,ty);if(world_claimedByOther(k))return false;if(farms[k])return true;return tileAt(tx,ty)===T.GRASS&&!buildings[k];}
+  if(t.id==='deed'){const k=key(tx,ty),gt=tileAt(tx,ty);return !claims[k]&&gt!==T.WATER&&gt!==T.SHALLOW&&gt!==T.STONE&&myPlots()<P.deeds&&!inHub(tx,ty);}
+  const k=key(tx,ty),gt=tileAt(tx,ty);return !buildings[k]&&!farms[k]&&!world_claimedByOther(k)&&(gt===T.GRASS||gt===T.SAND||gt===T.FLOWER)&&!inHub(tx,ty);
+}
+
+// ===== actions =====
+function act(fromClick){
+  if(uiBlocking()||typingNow())return;
+  if(!canPlay()){promptWallet();return;}                  // spectator: must connect a wallet to act
+  P.swing=0.2;const t=TOOLS[tool];let tx,ty;
+  if(fromClick){const m=tileFromMouse();tx=m.x;ty=m.y;}else{const f=facingTile();tx=f.x;ty=f.y;}
+  const cxp=(tx+0.5)*TILE,cyp=(ty+0.5)*TILE,dist=Math.hypot(cxp-P.x,cyp-P.y);
+  if(dist>TILE*1.9){toast('Too far — move closer');return;}
+  // click nearby water to fish — starts a 5–7s fishing session (any tool)
+  if(tileAt(tx,ty)===T.WATER||tileAt(tx,ty)===T.SHALLOW){ startFishing([tx,ty]); return; }
+  if(nearPond(tx,ty)&&['house','fence','farm','deed'].includes(t.id)){toast("❌ Can't build here — fishing pond! Keep the shore clear 🎣");return;}
+  if(t.id==='axe'){
+    if(tileAt(tx,ty)===T.FOREST){SFX.chop();spawnParts(cxp,cyp,'#c08a4f',7,30);send({t:'edit',kind:'chop',x:tx,y:ty});if(!online){const g=3+(P.up.axe||0)*2;chopped[key(tx,ty)]=true;P.wood+=g;gainXP(8);fx(cxp,cyp,'+'+g+' 🪵','#c08a4f');}}
+    else toast('Aim the axe at a tree 🌳');
+  } else if(t.id==='pick'){
+    if(tileAt(tx,ty)===T.STONE&&!mined[key(tx,ty)]){SFX.mine();spawnParts(cxp,cyp,'#aeb7c0',7,26);send({t:'edit',kind:'mine',x:tx,y:ty});if(!online){const g=2+(P.up.pick||0);mined[key(tx,ty)]=true;P.stone+=g;gainXP(10);fx(cxp,cyp,'+'+g+' 🪨','#c3ccd4');}}
+    else toast('Aim the pick at rock ⛏️');
+  } else if(t.id==='rod'){
+    const w=tileAt(tx,ty);
+    if(w!==T.WATER&&w!==T.SHALLOW){toast('Cast at the water 🎣');}
+    else if(Date.now()-P.lastFish>=FISH_CD){P.lastFish=Date.now();SFX.fish();spawnParts(cxp,cyp-2,'#9fd8ee',6,8);send({t:'fish',x:tx,y:ty});
+      if(!online){P.fish+=1;gainXP(8);fx(cxp,cyp,'+1 🐟','#7fd0e8');}}
+  } else if(t.id==='sword'){
+    let hit=null,best=1e9;for(const [id,s] of slimes){const d=Math.hypot(s.rx-cxp,s.ry-cyp);if(d<TILE*1.1&&d<best){best=d;hit=id;}}
+    if(hit!=null){const s=slimes.get(hit);SFX.hit();s.flash=0.2;spawnParts(s.rx,s.ry,'#ffffff',5,20);fx(s.rx,s.ry-8,'-14','#ffd0d0');
+      if(online){send({t:'attack',id:hit});}
+      else{const E=ENEMY[s.type]||ENEMY.slime;s.hp-=14+(P.up.sword||0)*6;const a=Math.atan2(s.ry-P.y,s.rx-P.x);s.vx=Math.cos(a)*180;s.vy=Math.sin(a)*180;if(s.hp<=0){slimes.delete(hit);P.coin+=E.coin;P.wood+=E.wood||0;P.stone+=E.stone||0;gainXP(E.xp);SFX.kill();SFX.coin();spawnParts(s.rx,s.ry,E.col,12,30);fx(s.rx,s.ry,'+'+E.coin+' 🪙'+(E.wood?' +'+E.wood+' 🪵':'')+(E.stone?' +'+E.stone+' 🪨':''),'#f0c64a');}}}
+    else toast('No slime in range');
+  } else if(t.id==='farm'){
+    const k=key(tx,ty);
+    if(farms[k]){if(farms[k].g>=1){send({t:'edit',kind:'harvest',x:tx,y:ty});if(!online){delete farms[k];P.coin+=4;gainXP(6);SFX.coin();fx(cxp,cyp,'+4 🪙','#f0c64a');}}else toast('Still growing… 🌱');}
+    else if(tileAt(tx,ty)===T.GRASS&&!buildings[k]){if(P.wood>=t.cost){SFX.plant();send({t:'edit',kind:'farm',x:tx,y:ty});if(!online){P.wood-=t.cost;farms[k]={g:0};fx(cxp,cyp,'Planted','#6fd08a');}}else toast('Need '+t.cost+' wood');}
+    else toast("Can't plant here");
+  } else if(t.id==='deed'){
+    const k=key(tx,ty),gt=tileAt(tx,ty);
+    if(claims[k]){toast(claims[k].owner===myGuest?'You already own this plot':'Owned by '+esc(claims[k].name));return;}
+    if(gt===T.WATER||gt===T.SHALLOW||gt===T.STONE){toast("Can't claim water or rock");return;}
+    if(inHub(tx,ty)){toast('🛡️ Spawn hub is protected — claim outside the ring');return;}
+    if(myPlots()>=P.deeds){toast('Need a spare House — buy one from the Merchant 💰');return;}
+    if(online)send({t:'claim',x:tx,y:ty});else{claims[k]={owner:myGuest,name:myName};fx(cxp,cyp,'Land claimed 📜','#f0c64a');}
+  } else {
+    const k=key(tx,ty),gt=tileAt(tx,ty);
+    if(buildings[k]||farms[k]){toast('Tile occupied');return;}
+    if(world_claimedByOther(k)){toast('This land belongs to '+esc(claims[k].name));return;}
+    if(gt!==T.GRASS&&gt!==T.SAND&&gt!==T.FLOWER){toast("Can't build here");return;}
+    if(inHub(tx,ty)){toast('🛡️ Spawn hub is protected — build outside the ring');return;}
+    if(P.wood>=t.cost){SFX.build();send({t:'edit',kind:'build',bt:t.id,x:tx,y:ty});if(!online){P.wood-=t.cost;buildings[k]={type:t.id,solid:t.solid};gainXP(5);fx(cxp,cyp,t.lbl+' built','#6fd08a');}}
+    else toast('Need '+t.cost+' wood');
+  }
+}
+function gainXP(n){P.xp+=n;while(P.xp>=P.xpMax){P.xp-=P.xpMax;P.lv++;P.xpMax=Math.floor(P.xpMax*1.4);P.hpMax+=20;P.hp=P.hpMax;SFX.level();fx(P.x,P.y-26,'LEVEL '+P.lv+'!','#5fb0e8');toast('⬆ Level '+P.lv);}}
+let toastT=0;const toastEl=document.getElementById('toast');
+function toast(m){toastEl.textContent=m;toastEl.classList.add('show');toastT=2;}
+function sys(m){addChat(null,m,true);}
+function addChat(name,msg,system){const log=document.getElementById('chatLog');const d=document.createElement('div');
+  if(system){d.className='sys';d.textContent=msg;}else{d.className='m';d.innerHTML='<b>'+esc(name)+':</b> '+esc(msg);}
+  log.appendChild(d);while(log.children.length>40)log.removeChild(log.firstChild);log.scrollTop=log.scrollHeight;}
+function esc(s){return String(s).replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]));}
+
+// ===== modal panels (shop / inventory / settings) =====
+let shopOpen=false, invOpen=false, settingsOpen=false, leadOpen=false, toolsOpen=false;
+// seasonal leaderboard + airdrop (server-authoritative; client only displays)
+let seasonNo=0, seasonEndsAt=0, seasonRewards=[], myAirdrop=0, mySeasonPts=0, lastLeader=null, verifyRequired=false, myVerified=0;
+const MEDAL=['🥇','🥈','🥉'];
+function fmtCountdown(ms){ms=Math.max(0,ms|0);const s=Math.floor(ms/1000),d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60),ss=s%60;
+  return d>0?(d+'d '+h+'h'):h>0?(h+'h '+m+'m'):m>0?(m+'m '+ss+'s'):(ss+'s');}
+function uiBlocking(){return shopOpen||invOpen||settingsOpen||leadOpen||toolsOpen;}
+function closeAllPanels(){closeShop();closeInv();closeSettings();closeLeaderboard();closeTools();}
+// ===== tool picker (mobile) — pick what to build/use; the toolbox button shows the current tool =====
+function toggleTools(){toolsOpen?closeTools():openTools();}
+function openTools(){closeShop();closeInv();closeSettings();closeLeaderboard();toolsOpen=true;document.getElementById('tools').classList.add('open');renderTools();}
+function closeTools(){toolsOpen=false;const el=document.getElementById('tools');if(el)el.classList.remove('open');}
+function renderTools(){const g=document.getElementById('toolsGrid');if(!g)return;
+  g.innerHTML=TOOLS.map((t,i)=>{const ct=t.cost!=null?(t.cost+' 🪵'):(t.hint||'');
+    return '<div class="tool'+(i===tool?' sel':'')+'" data-i="'+i+'"><span class="ic">'+t.ic+'</span><span class="nm">'+esc(t.lbl)+'</span><span class="ct">'+esc(ct)+'</span></div>';}).join('');
+  [...g.children].forEach(c=>c.onclick=()=>{selTool(+c.dataset.i);closeTools();});}
+// ===== leaderboard =====
+function toggleLeaderboard(){leadOpen?closeLeaderboard():openLeaderboard();}
+function openLeaderboard(){closeShop();closeInv();closeSettings();leadOpen=true;document.getElementById('leaderboard').classList.add('open');
+  document.getElementById('leadShare').style.display = (online&&canPlay()) ? 'flex' : 'none';   // share needs a connected wallet (real id)
+  if(online){ if(lastLeader)renderLeaderboard(lastLeader); else document.getElementById('leadBody').innerHTML='<div class="lr"><span class="nm">Loading…</span></div>'; send({t:'leaderboard'}); }
+  else renderLeaderboard({rows:[{name:myName,lv:P.lv,coin:P.coin,plots:myPlots(),score:P.coin}],season:null});}
+function closeLeaderboard(){leadOpen=false;document.getElementById('leaderboard').classList.remove('open');}
+// brag your standing on X — server-supplied copy variants (season.shareMe[]); a random one each time,
+// with your name/points/rank/title filled in
+function shareMyRank(){
+  const s=(lastLeader&&lastLeader.season)||{}, rank=(s.you&&s.you.rank)||0;
+  const vars = (Array.isArray(s.shareMe)&&s.shareMe.length) ? s.shareMe
+    : ['🏆 {name} is climbing the leaderboard on @plotlandsfun — {pts} pts{rank}! Think you can beat me? 👇 Play free. #Solana #P2E'];
+  const txt = vars[Math.floor(Math.random()*vars.length)]
+    .replace(/\{name\}/g, myName).replace(/\{pts\}/g, (mySeasonPts||0).toLocaleString())
+    .replace(/\{rank\}/g, rank?(' (rank #'+rank+')'):'').replace(/\{title\}/g, s.title||'Season Showdown');
+  window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(txt)+'&url='+encodeURIComponent('https://plotlands.fun/win'),'_blank','noopener');
+}
+// contest banner under the topbar: "Join the $1000 contest — share on X · N playing · ends in Xd".
+// Unverified players are nudged to share (so their points count); verified players see "✓ you're in".
+function updateVerifyBar(){ const el=document.getElementById('verifyBar'), txt=document.getElementById('contestTxt'), btn=document.getElementById('verifyBtn');
+  if(!el||!txt) return;
+  const s=(lastLeader&&lastLeader.season)||{};
+  const show = online && (s.active || verifyRequired);
+  el.classList.toggle('show', !!show);
+  if(!show) return;
+  const head=(s.prize && !(s.title||'').includes(s.prize) ? s.prize+' ' : '')+(s.title||'Season Showdown'); // avoid "$1000 $1000"
+  const ends=s.endsAt?(' · ends in '+fmtCountdown(s.endsAt-Date.now())):'';
+  const racers=s.racers?(' · '+s.racers+' playing'):'';
+  const pts=' · <b>'+(mySeasonPts||0).toLocaleString()+' pts</b>';
+  if(verifyRequired && !myVerified){ txt.innerHTML='🏆 <b>Join the '+esc(head)+'</b> — share on X so your points count'+ends+racers+pts; if(btn)btn.textContent='𝕏 Share & Join'; }
+  else{ txt.innerHTML='🏆 <b>'+esc(head)+'</b>'+ends+racers+pts+(verifyRequired?' · ✓ in':''); if(btn)btn.textContent='𝕏 Share'; }
+}
+function doVerify(){ shareMyRank(); if(verifyRequired && !myVerified && online && canPlay()) send({t:'verify'}); }   // share + mark verified (honor system; X has no callback)
+// m = the whole leaderboard message: { rows:[all-time wealth], season:{no,endsAt,rewards,you,rows,last} }
+function renderLeaderboard(m){const b=document.getElementById('leadBody');if(!b)return;m=m||{};const s=m.season;let h='';
+  if(s){
+    h+='<div class="lseason">🏆 <b>Season '+s.no+'</b> · ends in '+fmtCountdown((s.endsAt||0)-Date.now())+'</div>';
+    if(s.rewards&&s.rewards.length) h+='<div class="lrew">Airdrop 🎖 to top finishers — '+s.rewards.map((r,i)=>(MEDAL[i]||(i+1)+'.')+' '+r).join('  ')+'</div>';
+    const sr=s.rows||[];
+    h+= sr.length ? sr.map((r,i)=>{const me=r.name===P.name;
+        return '<div class="lr'+(me?' me':'')+'"><span class="rk">'+(MEDAL[i]||(i+1))+'</span><span class="nm">'+esc(r.name)+(r.verified?' <span title="Verified" style="color:#6fd08a">✓</span>':'')+'</span>'+
+          '<span class="sc">'+r.pts+'<small> pts · Lv'+r.lv+'</small></span></div>';}).join('')
+      : '<div class="lr"><span class="nm">No racers yet — play to earn points!</span></div>';
+    if(s.you) h+='<div class="lyou">You: '+(s.you.pts||0)+' pts'+(s.you.rank?(' · rank #'+s.you.rank):'')+' · 🎖 '+(s.you.airdrop||0)+' airdrop'+(verifyRequired?(s.you.verified?' · ✓ Verified':' · <span style="color:#ffd75e">⚠ not verified</span>'):'')+'</div>';
+    if(s.last&&s.last.winners&&s.last.winners.length)
+      h+='<div class="lhist">Last season #'+s.last.no+': '+s.last.winners.map((w,i)=>(MEDAL[i]||'')+' '+esc(w.name)).join('  ')+'</div>';
+    h+='<div class="ldiv">All-time wealth</div>';
+  }
+  const rows=m.rows||[];
+  h+= rows.length ? rows.slice(0,8).map((r,i)=>{const me=r.name===P.name;
+      return '<div class="lr'+(me?' me':'')+'"><span class="rk">'+(MEDAL[i]||(i+1))+'</span><span class="nm">'+esc(r.name)+'</span>'+
+        '<span class="sc">'+r.score+'<small> Lv'+r.lv+' · '+(r.plots||0)+'🏝️</small></span></div>';}).join('')
+    : '<div class="lr"><span class="nm">No players yet</span></div>';
+  b.innerHTML=h;}
+// keep the season countdown ticking while the panel is open (re-render from the cached message)
+setInterval(()=>{ updateVerifyBar(); if(leadOpen&&lastLeader&&lastLeader.season) renderLeaderboard(lastLeader); },1000);
+function tryMerchant(){if(!merch)return;const d=Math.hypot(merch.x-P.x,merch.y-P.y);if(d>TILE*2.2){toast('Walk up to the Merchant 💰');return;}openShop();}
+function openShop(){closeInv();closeSettings();shopOpen=true;document.getElementById('shop').classList.add('open');renderShop();}
+function closeShop(){shopOpen=false;document.getElementById('shop').classList.remove('open');}
+document.getElementById('shopX').onclick=closeShop;
+const UPGRADES=[
+  {stat:'sword',ic:'⚔️',b:'Sharper Sword',s:'+6 sword damage',base:30,field:'sword'},
+  {stat:'axe',  ic:'🪓',b:'Sturdy Axe',   s:'+2 wood per chop',base:25,field:'axe'},
+  {stat:'vit',  ic:'❤️',b:'Vitality',     s:'+25 max HP',     base:40,field:'vit'},
+  {stat:'boots',ic:'👢',b:'Swift Boots',  s:'faster movement',base:35,field:'boots'},
+];
+const UPG_MAX=8;
+function renderShop(){const body=document.getElementById('shopBody');
+  const items=[
+    {ic:'🪵',b:'Sell all wood',s:'Turn wood into coins — start here!',price:'+'+(P.wood*2)+'🪙',cost:0,earn:true,act:()=>{if(P.wood<=0){toast('No wood to sell');return;}
+      if(online)send({t:'shop',item:'sellwood'});else{const c=P.wood*2;P.coin+=c;fx(P.x,P.y-20,'+'+c+' 🪙','#f0c64a');P.wood=0;}}},
+    {ic:'🪨',b:'Sell all stone',s:'Mine rock ⛏️ — stone sells for 3🪙 each',price:'+'+(P.stone*3)+'🪙',cost:0,earn:true,act:()=>{if(P.stone<=0){toast('No stone — mine rock with the ⛏️ pick');return;}
+      if(online)send({t:'shop',item:'sellstone'});else{const c=P.stone*3;P.coin+=c;fx(P.x,P.y-20,'+'+c+' 🪙','#f0c64a');P.stone=0;}}},
+    {ic:'🐟',b:'Sell all fish',s:'Fish at water 🎣 — fish sells for 4🪙 each',price:'+'+(P.fish*4)+'🪙',cost:0,earn:true,act:()=>{if(P.fish<=0){toast('No fish — cast the 🎣 rod at water');return;}
+      if(online)send({t:'shop',item:'sellfish'});else{const c=P.fish*4;P.coin+=c;fx(P.x,P.y-20,'+'+c+' 🪙','#f0c64a');P.fish=0;}}},
+    {ic:'🧪',b:'Health Potion',s:'Restore full HP (instant)',price:'15🪙',cost:15,act:()=>{if(P.coin<15){toast('Need 15 coin — sell wood first');return;}if(P.hp>=P.hpMax){toast('Already full HP');return;}
+      if(online)send({t:'shop',item:'potion'});else{P.coin-=15;P.hp=P.hpMax;toast('Healed');}}},
+    {ic:'🏠',b:'House',s:'Owned: '+(P.deeds||0)+' · place on land (🏠/6), then upgrade → 🏨 Hotel',price:'50🪙',cost:50,act:()=>{if(P.coin<50){toast('Need 50 coin — sell wood first');return;}
+      if(online)send({t:'shop',item:'deed'});else{P.coin-=50;P.deeds++;toast('🏠 House bought — press 6, click your land');}}},
+  ];
+  UPGRADES.forEach(u=>{const lv=(P.up&&P.up[u.field])||0,cost=u.base*(lv+1),maxed=lv>=UPG_MAX;
+    items.push({ic:u.ic,b:u.b+' · Lv '+lv,s:u.s+(lv>0?' · owned ✓':''),price:maxed?'MAX':cost+'🪙',cost:maxed?Infinity:cost,maxed,act:()=>{
+      if(maxed){toast('Maxed out');return;} if(P.coin<cost){toast('Need '+cost+' coin — sell wood first');return;}
+      if(online)send({t:'shop',item:'upg',stat:u.stat});
+      else{P.coin-=cost;P.up[u.field]=lv+1;if(u.stat==='vit'){P.hpMax+=25;P.hp+=25;}if(u.stat==='boots')P.spd=BASE_SPD+(lv+1)*18;toast(u.b+' Lv'+(lv+1));}}});});
+  // ===== crafting (a wood/stone sink → a Reinforced Pick; the only way to raise mining yield) =====
+  items.push({ic:'📦',b:'Craft Plank',s:'Refine 3 🪵 → 1 📦 (crafting material)',price:'3🪵',afford:P.wood>=3,act:()=>{
+    if(P.wood<3){toast('Need 3 wood to craft a plank');return;}
+    if(online)send({t:'craft',item:'plank'});else{P.wood-=3;P.plank=(P.plank||0)+1;fx(P.x,P.y-20,'+1 📦','#caa46a');}}});
+  {const pl=P.up.pick||0,ppc=4*(pl+1),psc=6*(pl+1),pmax=pl>=8;
+   items.push({ic:'⛏️',b:'Reinforced Pick · Lv '+pl,s:pmax?('Maxed — +'+pl+' stone/mine'):('+1 stone per mine'),
+     price:pmax?'MAX':ppc+'📦 '+psc+'🪨',maxed:pmax,afford:!pmax&&(P.plank||0)>=ppc&&P.stone>=psc,act:()=>{
+       if(pmax){toast('Pick is maxed');return;} if((P.plank||0)<ppc||P.stone<psc){toast('Need '+ppc+' 📦 + '+psc+' 🪨 — craft planks + mine');return;}
+       if(online)send({t:'craft',item:'pick'});else{P.plank-=ppc;P.stone-=psc;P.up.pick=pl+1;toast('⛏️ Pick Lv'+(pl+1));}}});}
+  body.innerHTML='';items.forEach(it=>{const d=document.createElement('div');
+    const lock=!it.earn&&!it.maxed&&(it.afford!=null?!it.afford:P.coin<it.cost);   // greyed-out = can't afford yet
+    d.className='item'+(it.earn?' earn':lock?' lock':' aff');
+    d.innerHTML='<span class="ic">'+it.ic+'</span><span class="info"><b>'+it.b+'</b><small>'+it.s+'</small></span><span class="price'+(lock?' no':'')+'">'+it.price+'</span>';
+    d.onclick=()=>{it.act();renderShop();syncHUD();};body.appendChild(d);});
+  const n=document.createElement('div');n.className='note';n.textContent='💰 '+P.coin+' · 🪵 '+P.wood+' · 🪨 '+P.stone+' · 🐟 '+P.fish+' · 📦 '+(P.plank||0)+(P.coin<15?' — sell to earn coins!':'')+' · E or ✕ to close';body.appendChild(n);}
+
+// ===== inventory / character panel =====
+function toggleInv(){invOpen?closeInv():openInv();}
+function openInv(){closeShop();closeSettings();invOpen=true;document.getElementById('inv').classList.add('open');renderInv();}
+function closeInv(){invOpen=false;document.getElementById('inv').classList.remove('open');}
+document.getElementById('invX').onclick=closeInv;
+// eat a fish → restore HP + a little XP (server-authoritative; offline mirrors it)
+function eatFish(){ if((P.fish||0)<=0){toast('No fish — catch some at water 🎣');return;}
+  if(online)send({t:'eat'});
+  else{P.fish-=1;P.hp=Math.min(P.hpMax,P.hp+12);gainXP(4);fx(P.x,P.y-20,'+12 HP 🍖','#6fd08a');}
+  syncHUD(); if(invOpen)renderInv(); }
+function renderInv(){const hpPct=Math.round(P.hp/P.hpMax*100), xpPct=Math.round(P.xp/P.xpMax*100);
+  document.getElementById('invBody').innerHTML=
+    '<div class="irow"><b>'+esc(P.name)+'</b><span class="v">Lv '+P.lv+'</span></div>'+
+    '<div class="irow"><b>HP</b><div class="bar"><i style="width:'+hpPct+'%;background:var(--hp)"></i></div><span class="v">'+P.hp+'/'+P.hpMax+'</span></div>'+
+    '<div class="irow"><b>XP</b><div class="bar"><i style="width:'+xpPct+'%;background:var(--xp)"></i></div><span class="v">'+P.xp+'/'+P.xpMax+'</span></div>'+
+    '<div class="sec">Inventory</div>'+
+    '<div class="irow"><b>🪵 Wood</b><span class="v">'+P.wood+'</span></div>'+
+    '<div class="irow"><b>🪨 Stone</b><span class="v">'+P.stone+'</span></div>'+
+    '<div class="irow"><b>🐟 Fish</b><span class="v">'+P.fish+(P.fish>0?' <button id="eatFishBtn" class="eatbtn">🍖 Eat +HP</button>':'')+'</span></div>'+
+    '<div class="irow"><b>📦 Planks</b><span class="v">'+(P.plank||0)+'</span></div>'+
+    '<div class="irow"><b>🪙 Coin</b><span class="v">'+P.coin+'</span></div>'+
+    '<div class="irow"><b>🏠 Houses</b><span class="v">'+P.deeds+'</span></div>'+
+    '<div class="irow"><b>🏝️ Land owned</b><span class="v">'+myPlots()+' / '+P.deeds+'</span></div>'+
+    '<div class="irow" style="color:var(--ok)"><b>💰 Rent income</b><span class="v">+'+myRent()+' /min</span></div>'+
+    '<div class="sec">Upgrades</div>'+
+    '<div class="irow"><b>⚔️ Sword</b><span class="v">Lv '+P.up.sword+'</span></div>'+
+    '<div class="irow"><b>🪓 Axe</b><span class="v">Lv '+P.up.axe+'</span></div>'+
+    '<div class="irow"><b>❤️ Vitality</b><span class="v">Lv '+P.up.vit+'</span></div>'+
+    '<div class="irow"><b>👢 Boots</b><span class="v">Lv '+P.up.boots+'</span></div>'+
+    '<div class="irow"><b>⛏️ Pick</b><span class="v">Lv '+(P.up.pick||0)+'</span></div>'+
+    '<div class="sec">Achievements ('+ACH.filter(achIsDone).length+'/'+ACH.length+')</div>'+
+    ACH.map(a=>{const done=achIsDone(a);
+      return '<div class="irow"'+(done?'':' style="opacity:.5"')+'><b>'+a.ic+' '+esc(a.name)+
+        '<br><span style="font-weight:400;color:var(--txt-dim);font-size:10px">'+esc(a.desc)+'</span></b>'+
+        '<span class="v">'+(done?'✓':'🔒')+'</span></div>';}).join('');
+  const _eb=document.getElementById('eatFishBtn');if(_eb)_eb.onclick=eatFish;}
+
+// ===== settings panel (server URL + sound toggle) =====
+const setSoundEl=document.getElementById('setSound'),setHintEl=document.getElementById('setHint'),setNameEl=document.getElementById('setName');
+setNameEl.addEventListener('focus',()=>typing=true);setNameEl.addEventListener('blur',()=>typing=false);
+setNameEl.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();document.getElementById('setApply').click();}});
+function toggleSettings(){settingsOpen?closeSettings():openSettings();}
+function openSettings(){closeShop();closeInv();settingsOpen=true;document.getElementById('settings').classList.add('open');
+  setNameEl.value=myName;setSoundEl.checked=SFX.isEnabled();setHintEl.textContent='';
+  document.getElementById('setCode').value=myGuest;document.getElementById('setImport').value='';document.getElementById('setImpHint').textContent='';
+  // wallet connected → show it as the account identity; hide the legacy guest recovery code
+  const sw=$('setWallet'),gr=$('guestRecovery');
+  if(walletPubkey){ if(sw)sw.style.display='block'; if(gr)gr.style.display='none'; const wa=$('setWalletAddr'); if(wa)wa.value=walletPubkey; }
+  else { if(sw)sw.style.display='none'; if(gr)gr.style.display='block'; }}
+function closeSettings(){settingsOpen=false;typing=false;document.getElementById('settings').classList.remove('open');}
+document.getElementById('setX').onclick=closeSettings;
+document.getElementById('gear').onclick=()=>{SFX.resume();toggleSettings();};
+// Settings → wallet account (copy address / disconnect)
+{const c=document.getElementById('setWalletCopy'); if(c)c.onclick=()=>{ if(!walletPubkey)return; try{navigator.clipboard.writeText(walletPubkey);toast('Address copied ✓');}catch(e){} };}
+{const d=document.getElementById('setWalletDisc'); if(d)d.onclick=()=>{ closeSettings(); disconnectWallet(); };}
+// quick-action icon bar
+document.getElementById('ibBag').onclick=()=>{SFX.resume();toggleInv();};
+document.getElementById('ibZoomIn').onclick=()=>zoomBy(1.2);
+document.getElementById('ibZoomOut').onclick=()=>zoomBy(1/1.2);
+document.getElementById('ibUnstuck').onclick=()=>{SFX.resume();unstuck();};
+document.getElementById('ibClaim').onclick=()=>{SFX.resume();claimHere();};
+document.getElementById('ibAttack').onclick=()=>{SFX.resume();attackNearest();};
+document.getElementById('ibAudio').onclick=()=>toggleAudio();
+updateAudioIcon();
+const goalsEl=document.getElementById('goals'),chatEl=document.getElementById('chat');
+document.getElementById('goalsHead').onclick=()=>goalsEl.classList.toggle('min');
+function toggleChat(){chatEl.classList.toggle('hidden');if(!chatEl.classList.contains('hidden'))chatIn.focus();}
+document.getElementById('ibChat').onclick=()=>{SFX.resume();dismissStart();if(innerWidth<=760)toggleChat();else chatIn.focus();};
+if(innerWidth<=760){goalsEl.classList.add('min');chatEl.classList.add('hidden');}  // phones start clean
+document.getElementById('ibSet').onclick=()=>{SFX.resume();toggleSettings();};
+document.getElementById('ibLead').onclick=()=>{SFX.resume();toggleLeaderboard();};
+document.getElementById('leadX').onclick=closeLeaderboard;
+document.getElementById('leadShareBtn').onclick=shareMyRank;
+document.getElementById('verifyBtn').onclick=doVerify;
+document.getElementById('ibTools').onclick=()=>{SFX.resume();toggleTools();};
+document.getElementById('toolsX').onclick=closeTools;
+document.getElementById('ibTools').textContent=TOOLS[tool].ic;   // show the starting tool
+document.getElementById('setApply').onclick=()=>{const nm=setNameEl.value.trim().slice(0,14);
+  if(!nm){setHintEl.textContent='Enter a name';return;}
+  if(nm===myName){setHintEl.textContent='Already your name ✓';return;}
+  if(online){setHintEl.textContent='Checking…';send({t:'setname',name:nm});}
+  else{myName=nm;P.name=nm;lsSet('isle_name',nm);setHintEl.textContent='Saved ✓';setTimeout(closeSettings,500);}};
+// account recovery: the guest id IS the credential — copy it to back up, or paste one to restore
+const setImportEl=document.getElementById('setImport'),setImpHintEl=document.getElementById('setImpHint');
+document.getElementById('setCopy').onclick=()=>{const el=document.getElementById('setCode');el.value=myGuest;
+  let done=false; try{ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(myGuest);done=true;} }catch(e){}
+  if(!done){ try{ el.removeAttribute('readonly');el.select();document.execCommand('copy');el.setAttribute('readonly','readonly');done=true; }catch(e){} }
+  toast(done?'Recovery code copied ✓':'Select the code to copy it');};
+function doRestore(){ const code=(setImportEl.value||'').trim();
+  if(!code){ setImpHintEl.textContent='Paste a code first'; return; }
+  if(!/^[A-Za-z0-9_-]{4,64}$/.test(code)){ setImpHintEl.textContent="That doesn't look like a code"; return; }
+  if(code===myGuest){ setImpHintEl.textContent='Already this browser ✓'; return; }
+  if(!confirm("Restore progress from this code? This browser's current progress link will be replaced.")) return;
+  lsSet('isle_guest',code); setImpHintEl.textContent='Restoring…'; setTimeout(()=>location.reload(),250); }
+document.getElementById('setRestore').onclick=doRestore;
+setImportEl.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); doRestore(); } });
+setImportEl.addEventListener('focus',()=>typing=true); setImportEl.addEventListener('blur',()=>typing=false);
+setSoundEl.onchange=()=>{SFX.setEnabled(setSoundEl.checked);lsSet('isle_sound',setSoundEl.checked?'1':'0');if(setSoundEl.checked)SFX.resume();};
+
+// ===== update =====
+let last=performance.now(),sendTimer=0,dayE=1,autoChopCd=0,stallT=0,tutMoved=0,_lastPlot=''; // dayE = sun elevation (-1 night .. 1 noon)
+const DAY_MS=480000;                            // full day/night cycle (8 min)
+// the 🎣 Fish button: casts at the nearest adjacent water (one-tap fishing)
+function nearWaterTile(){const ptx=Math.floor(P.x/TILE),pty=Math.floor(P.y/TILE);let best=null,bd=9;
+  for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const tt=tileAt(ptx+dx,pty+dy);if((tt===T.WATER||tt===T.SHALLOW)&&dx*dx+dy*dy<bd){bd=dx*dx+dy*dy;best=[ptx+dx,pty+dy];}}return best;}
+let fishing=null, autoAtkCd=0, catches=[]; // catches = reel-in fish animations (fly from water to you)
+// start a realistic fishing session: cast the line OUT into the pond, wait 5–7s, then catch
+function startFishing(seed){
+  if(fishing) return;
+  if(!canPlay()){promptWallet();return;}
+  if(Date.now()-P.lastFish<FISH_CD){toast('🎣 Reeling in…');return;}
+  const near=seed||nearWaterTile(); if(!near){toast('Walk up to water to fish 🎣');return;} // adjacent water = server target (in reach)
+  const ptx=Math.floor(P.x/TILE),pty=Math.floor(P.y/TILE);
+  // cast direction: toward the nearest pond's centre so the line reaches open water + the fish
+  let dx=near[0]-ptx,dy=near[1]-pty,pd=1e9;
+  for(const p of PONDS){const d=Math.hypot(ptx-p[0],pty-p[1]);if(d<pd&&d<p[2]+8){pd=d;dx=p[0]-ptx;dy=p[1]-pty;}}
+  const l=Math.hypot(dx,dy)||1;dx/=l;dy/=l;
+  // visual bobber: the furthest contiguous water tile (up to 6) in that direction — lands among the fish
+  let bx=near[0],by=near[1];
+  for(let s=1;s<=6;s++){const nx=Math.round(ptx+dx*s),ny=Math.round(pty+dy*s),tt=tileAt(nx,ny);if(tt===T.WATER||tt===T.SHALLOW){bx=nx;by=ny;}else break;}
+  const dur=10000; // a full 10s: cast → wait → bite → reel → catch
+  fishing={start:Date.now(),endsAt:Date.now()+dur,dur,tx:near[0],ty:near[1],wx:(bx+0.5)*TILE,wy:(by+0.5)*TILE,px:P.x,py:P.y,bited:false};
+  P.dir=Math.abs(fishing.wx-P.x)>Math.abs(fishing.wy-P.y)?(fishing.wx<P.x?1:2):(fishing.wy<P.y?3:0);
+  SFX.fish(); toast('🎣 Casting… wait for the catch!');
+}
+function castFish(){ startFishing(); }
+document.getElementById('fishBtn').onclick=()=>{SFX.resume();castFish();};
+let _waterHint=false;
+function update(dt){
+  dayE=Math.sin((Date.now()%DAY_MS)/DAY_MS*Math.PI*2);
+  // 🎣 Fish button appears whenever you're standing next to water
+  {const fb=$('fishBtn');if(fb){const show=(!!nearWaterTile()||!!fishing)&&canPlay()&&!uiBlocking();
+    fb.classList.toggle('show',show); if(show)fb.textContent=fishing?'🎣 Fishing…':'🎣 Fish';}}
+  // one-time nudge: when you first stand by water, tell you how to fish
+  if(!_waterHint&&online&&canPlay()){const ptx=Math.floor(P.x/TILE),pty=Math.floor(P.y/TILE);
+    for(let dy=-1;dy<=1&&!_waterHint;dy++)for(let dx=-1;dx<=1;dx++){const wt=tileAt(ptx+dx,pty+dy);
+      if(wt===T.WATER||wt===T.SHALLOW){_waterHint=true;toast('🎣 Click the water — or tap the 🎣 Fish button!');break;}}}
+  if(!uiBlocking()&&!typingNow()&&canPlay()){let mx=0,my=0;const _sx=P.x,_sy=P.y;
+    if(keys['w']||keys['arrowup'])my--;if(keys['s']||keys['arrowdown'])my++;
+    if(keys['a']||keys['arrowleft'])mx--;if(keys['d']||keys['arrowright'])mx++;
+    if(!mx&&!my&&touch.id!==null){const l=Math.hypot(touch.dx,touch.dy);if(l>12){mx=touch.dx;my=touch.dy;}}
+    if(mx||my){moveTo=null;lookT=0;const l=Math.hypot(mx,my);mx/=l;my/=l;if(Math.abs(mx)>Math.abs(my))P.dir=mx<0?1:2;else P.dir=my<0?3:0;moveEntity(P,mx*P.spd*dt,my*P.spd*dt);}
+    else if(moveTo){let dx=moveTo.x-P.x,dy=moveTo.y-P.y,d=Math.hypot(dx,dy); // walk toward the clicked point
+      if(d>8){dx/=d;dy/=d;if(Math.abs(dx)>Math.abs(dy))P.dir=dx<0?1:2;else P.dir=dy<0?3:0;const ox=P.x,oy=P.y;moveEntity(P,dx*P.spd*dt,dy*P.spd*dt);if(Math.hypot(P.x-ox,P.y-oy)<0.3)moveTo=null;}
+      else moveTo=null;}
+    tutMoved+=Math.hypot(P.x-_sx,P.y-_sy);   // distance travelled this frame (onboarding "move" step)
+    // auto-unstuck: trying to move but pinned (wedged in builds) for ~1.5s → free yourself
+    if((mx||my||moveTo)&&Math.hypot(P.x-_sx,P.y-_sy)<0.4){stallT+=dt;if(stallT>1.5){stallT=0;unstuck();}}else stallT=0;
+    // while holding the mouse: keep acting if over a target, else keep walking toward the cursor
+    if(mouse.down){const mm=tileFromMouse();if(canActAt(mm.x,mm.y))act(true);else moveTo={x:mouse.x/zoom+cam.x,y:mouse.y/zoom+cam.y};}
+    // auto-chop: a tree you walk next to gets chopped automatically (no clicking needed)
+    autoChopCd-=dt;
+    if(autoChopCd<=0){const ptx=Math.floor(P.x/TILE),pty=Math.floor(P.y/TILE);let best=null,bd=1e9;
+      for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const tx=ptx+dx,ty=pty+dy,k=key(tx,ty);
+        if(tx<0||ty<0||tx>=W||ty>=H)continue;
+        if(map[ty][tx]===T.FOREST&&!chopped[k]){const d=Math.hypot((tx+0.5)*TILE-P.x,(ty+0.5)*TILE-P.y);if(d<=TILE*1.5&&d<bd){bd=d;best={tx,ty,k};}}}
+      if(best){const cxp=(best.tx+0.5)*TILE,cyp=(best.ty+0.5)*TILE;P.swing=0.2;SFX.chop();spawnParts(cxp,cyp,'#c08a4f',6,30);send({t:'edit',kind:'chop',x:best.tx,y:best.ty});
+        if(!online){const g=3+(P.up.axe||0)*2;chopped[best.k]=true;P.wood+=g;gainXP(8);fx(cxp,cyp,'+'+g+' 🪵','#c08a4f');}
+        autoChopCd=0.55;}}}
+  if(P.swing>0)P.swing-=dt;if(P.hurt>0)P.hurt-=dt;
+  // 🎣 fishing session: after 5–7s land the catch; moving reels in the line (cancels)
+  if(fishing){
+    if(Math.hypot(P.x-fishing.px,P.y-fishing.py)>6){ fishing=null; toast('🎣 Reeled in — you moved'); }
+    else { const ft=(Date.now()-fishing.start)/fishing.dur;
+      if(ft>=0.85&&!fishing.bited){ fishing.bited=true; if(SFX.hit)SFX.hit(); spawnParts(fishing.wx,fishing.wy,'#fff',6,16); } // a fish nibbles!
+      if(Date.now()>=fishing.endsAt){
+        send({t:'fish',x:fishing.tx,y:fishing.ty}); if(!online){P.fish+=1;gainXP(8);}
+        SFX.coin();fx(P.x,P.y-30,'+1 🐟','#7fe0ff');spawnParts(P.x,P.y-8,'#7fe0ff',12,16);            // landed!
+        P.lastFish=Date.now(); fishing=null;
+      }}
+  }
+  // ⚔️ auto-retaliate: swing at the nearest monster that gets close enough to threaten you
+  autoAtkCd-=dt;
+  if(autoAtkCd<=0&&canPlay()&&!uiBlocking()&&!typingNow()){let nd=1e9;for(const s of slimes.values()){const d=Math.hypot(s.rx-P.x,s.ry-P.y);if(d<nd)nd=d;}
+    if(nd<TILE*1.5){attackNearest();autoAtkCd=0.45;}}
+  // land-market hint when you step onto a claimed plot (others' for sale → /buy; your own → /sell)
+  {const pk=key(Math.floor(P.x/TILE),Math.floor(P.y/TILE));
+   if(pk!==_lastPlot){_lastPlot=pk;const c=claims[pk];
+     if(online&&c){ if(c.owner===myGuest)toast(houseUpgradeHint(c)+(c.price>0?(' · listed '+c.price+'🪙'):''));
+       else if(c.price>0)toast('💰 For sale: '+c.price+' 🪙 · type /buy to purchase'); }}}
+
+  // send my position to server ~12/s (spectators don't move, so don't spam input)
+  sendTimer-=dt;if(sendTimer<=0&&online&&canPlay()){send({t:'input',x:Math.round(P.x),y:Math.round(P.y),dir:P.dir});sendTimer=0.08;}
+
+  // interpolate remote players + slimes toward server targets
+  const k=Math.min(1,dt*12);
+  for(const r of remote.values()){r.rx+=(r.x-r.rx)*k;r.ry+=(r.y-r.ry)*k;}
+  if(online){for(const s of slimes.values()){s.rx+=(s.x-s.rx)*k;s.ry+=(s.y-s.ry)*k;}}
+  else { // offline enemy sim (per-type speed/aggro)
+    for(const s of slimes.values()){const E=ENEMY[s.type]||ENEMY.slime;s.t+=dt;const d=Math.hypot(P.x-s.x,P.y-s.y);let ax,ay;
+      if(d<TILE*E.aggro&&d>0.1){ax=(P.x-s.x)/d;ay=(P.y-s.y)/d;}else{ax=Math.cos(s.t*0.8);ay=Math.sin(s.t*0.6);}
+      s.vx+=ax*E.accel*dt;s.vy+=ay*E.accel*dt;s.vx*=E.fric;s.vy*=E.fric;moveEntity(s,s.vx*dt,s.vy*dt);s.rx=s.x;s.ry=s.y;}
+    if(slimes.size<9&&Math.random()<0.02*60*dt)spawnLocalSlime();
+  }
+  // enemy contact damage + faint — OFFLINE only; online HP/respawn is server-authoritative
+  if(!online){
+    if(P.hurt<=0){for(const s of slimes.values()){const E=ENEMY[s.type]||ENEMY.slime;if(Math.hypot(P.x-s.rx,P.y-s.ry)<P.r+E.r+2){P.hp-=E.dmg;P.hurt=0.6;SFX.hurt();fx(P.x,P.y-20,'-'+E.dmg,'#ff8080');break;}}}
+    if(P.hp<=0){P.hp=P.hpMax;P.coin=Math.max(0,P.coin-3);toast('You fainted — respawned');const cx=Math.floor(W/2),cy=Math.floor(H/2);P.x=(cx+0.5)*TILE;P.y=(cy+0.5)*TILE;}
+  }
+  // farms grow (visual)
+  for(const kk in farms)if(farms[kk].g<1)farms[kk].g=Math.min(1,farms[kk].g+dt*0.05);
+  for(let i=floaters.length-1;i>=0;i--){const f=floaters[i];f.y-=24*dt;f.life-=dt*0.8;if(f.life<=0)floaters.splice(i,1);}
+  for(let i=parts.length-1;i>=0;i--){const p=parts[i];p.vy+=260*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.life-=dt*1.6;if(p.life<=0)parts.splice(i,1);}
+  for(const s of slimes.values())if(s.flash>0)s.flash-=dt;
+  if(lookT>0)lookT-=dt; const fX=lookT>0?lookAt.x:P.x, fY=lookT>0?lookAt.y:P.y;
+  cam.x=Math.max(0,Math.min(W*TILE-cvs.width/zoom,fX-cvs.width/zoom/2));cam.y=Math.max(0,Math.min(H*TILE-cvs.height/zoom,fY-cvs.height/zoom/2));
+  if(toastT>0){toastT-=dt;if(toastT<=0)toastEl.classList.remove('show');}
+  syncHUD();
+}
+// a BUILDING (not terrain) on a tile — anti-stuck may phase through these, never through water/stone
+function buildAt(tx,ty){return !!buildings[key(tx,ty)]||(merch&&merch.tx===tx&&merch.ty===ty);}
+function terrSolid(px,py){return SOLID.has(tileAt(Math.floor(px/TILE),Math.floor(py/TILE)));} // water/shallow/stone — ALWAYS blocks
+function trappedByBuild(e){const tx=Math.floor(e.x/TILE),ty=Math.floor(e.y/TILE);
+  if(buildAt(tx,ty))return true;                                   // a build landed on your own tile
+  const nb=[[tx-1,ty],[tx+1,ty],[tx,ty-1],[tx,ty+1]];             // boxed on all 4 sides AND a build is one of the walls
+  return nb.every(([x,y])=>isSolid(x,y))&&nb.some(([x,y])=>buildAt(x,y));}
+function moveEntity(e,dx,dy){
+  if(trappedByBuild(e)){                        // escape builds, but TERRAIN still blocks — you can never walk into the sea
+    let nx=e.x+dx; if(!terrSolid(nx-e.r,e.y)&&!terrSolid(nx+e.r,e.y)&&!terrSolid(nx-e.r,e.y-e.r)&&!terrSolid(nx+e.r,e.y+e.r))e.x=nx;
+    let ny=e.y+dy; if(!terrSolid(e.x,ny-e.r)&&!terrSolid(e.x,ny+e.r)&&!terrSolid(e.x-e.r,ny-e.r)&&!terrSolid(e.x+e.r,ny+e.r))e.y=ny;
+  }else{
+    let nx=e.x+dx; if(!sld(nx-e.r,e.y)&&!sld(nx+e.r,e.y)&&!sld(nx-e.r,e.y-e.r)&&!sld(nx+e.r,e.y+e.r))e.x=nx;
+    let ny=e.y+dy; if(!sld(e.x,ny-e.r)&&!sld(e.x,ny+e.r)&&!sld(e.x-e.r,ny-e.r)&&!sld(e.x+e.r,ny+e.r))e.y=ny;
+  }
+  e.x=Math.max(e.r,Math.min(W*TILE-e.r,e.x));   // never leave the world rectangle (no more vanishing into the ocean)
+  e.y=Math.max(e.r,Math.min(H*TILE-e.r,e.y));}
+function sld(px,py){return isSolid(Math.floor(px/TILE),Math.floor(py/TILE));}
+
+// ===== render =====
+const isTouch=('ontouchstart'in window)||navigator.maxTouchPoints>0;
+const JOY={x:80,y:300,r:46};   // FIXED on-screen joystick anchor (never relocates)
+function resize(){cvs.width=innerWidth;cvs.height=innerHeight;ctx.imageSmoothingEnabled=false;JOY.x=Math.round(Math.max(72,innerWidth*0.15));JOY.y=Math.round(innerHeight-135);}
+addEventListener('resize',resize);resize();
+const COL={[T.WATER]:['#2b86a6','#2f8fae'],[T.SHALLOW]:['#46a6c2','#52b1cd'],[T.SAND]:['#e3d29a','#ecdcaa'],
+  [T.GRASS]:['#57a256','#62ad5f','#6fba69','#4f9b4d'],[T.FLOWER]:['#57a256','#62ad5f','#6fba69','#4f9b4d'],[T.STONE]:['#8d9aa4','#9aa7b1'],[T.FOREST]:['#56a055','#62ad60']};
+let anim=0;
+function drawTile(t,sx,sy,tx,ty){const base=(t===T.FOREST||t===T.FLOWER)?T.GRASS:t,c=COL[base],v=seed(tx,ty),dz=zoom>=0.6;
+  if(base===T.GRASS){
+    // meadow: blend several greens by smooth noise (patches, not a per-tile checker)
+    const gi=Math.min(c.length-1,(noise(tx,ty,0.4)*0.7+v*0.3)*c.length|0);
+    ctx.fillStyle=c[gi];ctx.fillRect(sx,sy,TILE,TILE);
+    if(dz){const p=seed(tx+5,ty+9);   // soft patches + tufts (only when zoomed in enough)
+      if(p>0.82){ctx.fillStyle='rgba(30,70,30,.10)';circle(sx+TILE*0.5,sy+TILE*0.5,TILE*0.34);}
+      else if(p<0.16){ctx.fillStyle='rgba(255,255,255,.06)';circle(sx+TILE*0.45,sy+TILE*0.5,TILE*0.3);}
+      if(v>0.7){ctx.fillStyle='rgba(20,60,20,.12)';ctx.fillRect(sx+TILE*0.28,sy+TILE*0.62,3,3);ctx.fillRect(sx+TILE*0.6,sy+TILE*0.4,2,2);}}
+  } else {
+    ctx.fillStyle=c[v>0.5?0:1];ctx.fillRect(sx,sy,TILE,TILE);
+    if(base===T.WATER||base===T.SHALLOW){
+      if(seed(tx+3,ty+1)<0.28){ctx.fillStyle='rgba(0,0,0,.05)';ctx.fillRect(sx,sy,TILE,TILE);}       // deeper patches
+      if(dz){ctx.fillStyle='rgba(255,255,255,.12)';const w=(Math.sin(anim*1.6+tx*0.6+ty*0.4)*0.5+0.5);ctx.fillRect(sx+6,sy+TILE*0.35+w*6,TILE-12,2);}
+    }
+    else if(base===T.SAND){if(dz){ctx.fillStyle='rgba(170,140,80,.18)';if(v>0.55)circle(sx+TILE*0.4,sy+TILE*0.5,2);if(seed(tx+9,ty+2)>0.7)circle(sx+TILE*0.66,sy+TILE*0.66,1.4);}}
+    else if(base===T.STONE){
+      if(dz){ // rocky ground — rounded rocks with light/shadow, not a hard gray box
+        ctx.fillStyle='rgba(0,0,0,.13)';circle(sx+TILE*0.36,sy+TILE*0.58,TILE*0.17);
+        ctx.fillStyle='rgba(255,255,255,.12)';circle(sx+TILE*0.32,sy+TILE*0.52,TILE*0.10);
+        ctx.fillStyle='rgba(0,0,0,.10)';circle(sx+TILE*0.66,sy+TILE*0.40,TILE*0.12);
+        ctx.fillStyle='rgba(255,255,255,.08)';circle(sx+TILE*0.63,sy+TILE*0.36,TILE*0.06);
+      } else { ctx.fillStyle='rgba(0,0,0,.10)';circle(sx+TILE/2,sy+TILE/2,TILE*0.3); }              // simple rock blob at overview
+      if(mined[key(tx,ty)]){ctx.fillStyle='rgba(18,26,34,.45)';circle(sx+TILE/2,sy+TILE*0.55,TILE*0.2);}
+    }
+  }}
+function circle(x,y,r){ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fill();}
+function drawTree(sx,sy,tx,ty){const v=seed(tx|0,ty|0),v2=seed((tx|0)+7,(ty|0)+3);
+  const s=0.9+v*0.24,ox=(v2-0.5)*4,cx=sx+TILE/2+ox,cy=sy+TILE/2-2;
+  ctx.fillStyle='rgba(0,0,0,.12)';ctx.beginPath();ctx.ellipse(cx,sy+TILE-5,TILE*0.24,TILE*0.08,0,0,7);ctx.fill();        // ground shadow
+  ctx.fillStyle='#6b4a2a';ctx.fillRect(cx-3,sy+TILE-16,6,12);                                                          // trunk
+  ctx.fillStyle=v>0.5?'#2f6b34':'#2b6a38';circle(cx,cy,TILE*0.36*s);
+  ctx.fillStyle=v>0.5?'#3a7d40':'#42884a';circle(cx-4*s,cy-5*s,TILE*0.26*s);
+  ctx.fillStyle='rgba(255,255,255,.10)';circle(cx-6*s,cy-8*s,TILE*0.12*s);}
+function drawFlower(sx,sy){const cl=['#e86a8a','#f0c64a','#ffffff'];for(let i=0;i<3;i++){ctx.fillStyle=cl[i];circle(sx+TILE*0.3+i*9,sy+TILE*0.55+(i%2)*6,3);}}
+function drawStump(sx,sy){ctx.fillStyle='#6b4a2a';circle(sx+TILE/2,sy+TILE/2,7);ctx.fillStyle='#8a6440';circle(sx+TILE/2,sy+TILE/2,4);}
+function drawBuilding(b,sx,sy){if(b.type==='house'){ctx.fillStyle='#c9a06a';ctx.fillRect(sx+5,sy+TILE*0.45,TILE-10,TILE*0.5);ctx.fillStyle='#a8472e';ctx.beginPath();ctx.moveTo(sx+2,sy+TILE*0.5);ctx.lineTo(sx+TILE/2,sy+5);ctx.lineTo(sx+TILE-2,sy+TILE*0.5);ctx.closePath();ctx.fill();ctx.fillStyle='#5a3a22';ctx.fillRect(sx+TILE/2-4,sy+TILE*0.62,8,TILE*0.33);ctx.fillStyle='#7fd0e8';ctx.fillRect(sx+9,sy+TILE*0.55,7,7);}else if(b.type==='fence'){ctx.fillStyle='#8a5a30';ctx.fillRect(sx+4,sy+TILE*0.4,TILE-8,5);ctx.fillRect(sx+TILE*0.2,sy+TILE*0.35,5,TILE*0.45);ctx.fillRect(sx+TILE*0.65,sy+TILE*0.35,5,TILE*0.45);}}
+function drawFarm(f,sx,sy){ctx.fillStyle='#7a5230';ctx.fillRect(sx+5,sy+5,TILE-10,TILE-10);ctx.fillStyle='#5f3f24';for(let i=0;i<3;i++)ctx.fillRect(sx+8,sy+9+i*((TILE-18)/3),TILE-16,2);const g=f.g,h=4+g*(TILE*0.4);for(let i=0;i<3;i++){const px=sx+TILE*0.3+i*TILE*0.2;ctx.fillStyle=g>=1?'#f0c64a':'#7fc24a';ctx.fillRect(px,sy+TILE-9-h,3,h);if(g>=1){ctx.fillStyle='#f0c64a';circle(px+1.5,sy+TILE-9-h,3);}}}
+function drawMerch(){const sx=merch.x-cam.x,sy=merch.y-cam.y;ctx.fillStyle='rgba(0,0,0,.2)';ctx.beginPath();ctx.ellipse(sx,sy+14,16,6,0,0,7);ctx.fill();ctx.fillStyle='#7a4a2a';ctx.fillRect(sx-15,sy-4,30,18);ctx.fillStyle='#c0392b';ctx.fillRect(sx-18,sy-20,36,10);ctx.fillStyle='#e8e8e8';for(let i=0;i<4;i++)ctx.fillRect(sx-18+i*9,sy-20,4,10);ctx.fillStyle='#5a3a22';ctx.fillRect(sx-16,sy-20,3,30);ctx.fillRect(sx+13,sy-20,3,30);ctx.fillStyle='#f0c89a';circle(sx,sy-6,5);ctx.font='bold 11px Segoe UI';ctx.textAlign='center';ctx.fillStyle='#000';ctx.fillText('Merchant',sx+1,sy-27);ctx.fillStyle='#f0c64a';ctx.fillText('Merchant',sx,sy-28);const d=Math.hypot(merch.x-P.x,merch.y-P.y);if(d<TILE*2.4&&!shopOpen){ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(sx-14,sy-44,28,14);ctx.fillStyle='#fff';ctx.font='bold 10px Segoe UI';ctx.fillText('[E]',sx,sy-34);}}
+function drawSlime(s){const E=ENEMY[s.type]||ENEMY.slime;const sx=s.rx-cam.x,sy=s.ry-cam.y,r=E.r,rh=r*0.85,bob=Math.sin((s.t||0)+anim*4)*2;
+  ctx.fillStyle='rgba(0,0,0,.2)';ctx.beginPath();ctx.ellipse(sx,sy+rh*0.95,r*0.9,r*0.4,0,0,7);ctx.fill();
+  ctx.fillStyle=E.col;ctx.beginPath();ctx.ellipse(sx,sy+bob,r,rh,0,0,7);ctx.fill();
+  if(s.flash>0){ctx.fillStyle='rgba(255,255,255,'+Math.min(0.8,s.flash*4)+')';ctx.beginPath();ctx.ellipse(sx,sy+bob,r,rh,0,0,7);ctx.fill();}
+  if(s.type==='brute'||s.type==='boss'||s.type==='golem'){ctx.fillStyle=E.col;ctx.beginPath();ctx.moveTo(sx-r*0.5,sy-rh*0.6+bob);ctx.lineTo(sx-r*0.7,sy-rh*1.3+bob);ctx.lineTo(sx-r*0.2,sy-rh*0.7+bob);ctx.closePath();ctx.fill();
+    ctx.beginPath();ctx.moveTo(sx+r*0.5,sy-rh*0.6+bob);ctx.lineTo(sx+r*0.7,sy-rh*1.3+bob);ctx.lineTo(sx+r*0.2,sy-rh*0.7+bob);ctx.closePath();ctx.fill();} // horns
+  if(s.type==='golem'){ctx.fillStyle='rgba(0,0,0,.18)';ctx.fillRect(sx-r*0.5,sy-rh*0.2+bob,r*0.4,r*0.3);ctx.fillRect(sx+r*0.15,sy+bob,r*0.35,r*0.28);} // rocky cracks
+  ctx.fillStyle='rgba(255,255,255,.28)';ctx.beginPath();ctx.ellipse(sx-r*0.3,sy-rh*0.35+bob,r*0.38,rh*0.3,0,0,7);ctx.fill();
+  if(s.type==='sprite'||s.type==='wisp'){ctx.fillStyle='rgba(255,255,255,.55)';circle(sx+r*0.45,sy-rh*0.5+bob,1.6);if(s.type==='wisp')circle(sx-r*0.3,sy-rh*0.1+bob,1.2);} // sparkle
+  if(s.type==='boss'){ctx.fillStyle='#f0c64a';for(let i=-1;i<=1;i++)ctx.fillRect(sx+i*7-1.5,sy-rh*1.35+bob,3,5);} // crown spikes
+  ctx.fillStyle=E.eye;circle(sx-r*0.4,sy+bob,2);circle(sx+r*0.4,sy+bob,2);
+  const max=s.hpMax||E.hp,boss=s.type==='boss';
+  if(s.hp<max||boss){const bw=boss?40:24;ctx.fillStyle='#000';ctx.fillRect(sx-bw/2,sy-rh-12,bw,boss?5:4);ctx.fillStyle=boss?'#e2483c':'#e25c5c';ctx.fillRect(sx-bw/2,sy-rh-12,bw*Math.max(0,s.hp/max),boss?5:4);}
+  if(boss){ctx.font='bold 11px Segoe UI';ctx.textAlign='center';ctx.fillStyle='#000';ctx.fillText('☠ Warlord',sx+1,sy-rh-17);ctx.fillStyle='#ffd54a';ctx.fillText('☠ Warlord',sx,sy-rh-18);ctx.textAlign='left';}}
+function drawAvatar(sx,sy,dir,color,label,hurt){
+  ctx.fillStyle='rgba(0,0,0,.22)';ctx.beginPath();ctx.ellipse(sx,sy+12,12,5,0,0,7);ctx.fill();
+  ctx.fillStyle=hurt?'#e25c5c':color;ctx.fillRect(sx-8,sy-2,16,14);
+  ctx.fillStyle='#f0c89a';ctx.fillRect(sx-7,sy-15,14,14);ctx.fillStyle='#5a3a22';ctx.fillRect(sx-7,sy-15,14,5);
+  ctx.fillStyle='#16202b';if(dir!==3){const ex=dir===1?-5:dir===2?2:-4;ctx.fillRect(sx+ex,sy-8,2,2);ctx.fillRect(sx+ex+5,sy-8,2,2);}
+  ctx.font='bold 11px Segoe UI';ctx.textAlign='center';ctx.fillStyle='#000';ctx.fillText(label,sx+1,sy-21);ctx.fillStyle='#f0c64a';ctx.fillText(label,sx,sy-22);}
+function drawPlayer(){const sx=P.x-cam.x,sy=P.y-cam.y;
+  if(fishing){const t=Math.min(1,(Date.now()-fishing.start)/fishing.dur);
+    // phases: wait (line out) → bite (float jerks) → reel (rod yanks back, fish pulled in)
+    let fwx=fishing.wx,fwy=fishing.wy+Math.sin(anim*3)*2,phase='wait';
+    if(t>=0.85&&t<0.92){phase='bite';fwy=fishing.wy+5+Math.sin(anim*32)*4;}
+    else if(t>=0.92){phase='reel';const r=(t-0.92)/0.08;fwx=fishing.wx+(P.x-fishing.wx)*r;fwy=fishing.wy+(P.y-6-fishing.wy)*r;}
+    const wx=fwx-cam.x,wy=fwy-cam.y;
+    let rtx,rty; if(phase==='reel'){rtx=sx-9;rty=sy-26;} else {const a=Math.atan2(wy-(sy-12),wx-sx);rtx=sx+Math.cos(a)*14;rty=(sy-12)+Math.sin(a)*10;}
+    ctx.strokeStyle='#7a5230';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(sx+2,sy-4);ctx.lineTo(rtx,rty);ctx.stroke();                  // rod (yanks back when reeling)
+    ctx.strokeStyle='rgba(240,240,255,.8)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(rtx,rty);ctx.lineTo(wx,wy);ctx.stroke();         // line
+    ctx.fillStyle='#e2483c';circle(wx,wy,2.8);ctx.fillStyle='#fff';circle(wx,wy-0.8,1.1);                                              // float
+    if(phase==='bite'){ctx.font='bold 13px Segoe UI';ctx.textAlign='center';ctx.fillStyle='#000';ctx.fillText('!',wx+1,wy-8);ctx.fillStyle='#ffcc33';ctx.fillText('!',wx,wy-9);ctx.textAlign='left';}
+    if(phase==='reel'){ctx.save();ctx.translate(wx,wy+4);ctx.rotate(Math.sin(anim*22)*0.4);ctx.fillStyle='#f0c64a';ctx.beginPath();ctx.ellipse(0,0,5,3,0,0,7);ctx.fill();ctx.beginPath();ctx.moveTo(-4,0);ctx.lineTo(-8,-3);ctx.lineTo(-8,3);ctx.closePath();ctx.fill();ctx.fillStyle='#16202b';circle(2,-0.6,0.9);ctx.restore();} // hooked fish flopping
+    const bp=Math.min(1,t/0.85),lbl=phase==='wait'?'🎣 Fishing…':phase==='bite'?'❗ Bite!':'🎣 Reeling…';
+    ctx.fillStyle='rgba(0,0,0,.55)';ctx.fillRect(sx-17,sy-36,34,5);ctx.fillStyle=phase==='wait'?'#7fe0ff':'#ffcc33';ctx.fillRect(sx-17,sy-36,34*(phase==='wait'?bp:1),5);
+    ctx.font='bold 9px Segoe UI';ctx.textAlign='center';ctx.fillStyle='#000';ctx.fillText(lbl,sx+1,sy-39);ctx.fillStyle='#cdeffd';ctx.fillText(lbl,sx,sy-40);ctx.textAlign='left';
+  } else if(P.swing>0){const o=[[0,18],[-16,2],[16,2],[0,-16]][P.dir];ctx.font='17px serif';ctx.textAlign='center';ctx.fillText(TOOLS[tool].ic,sx+o[0],sy+o[1]);}
+  drawAvatar(sx,sy,P.dir,'#3a6ea5','You  Lv '+P.lv,P.hurt>0);}
+// reel-in: a fish arcs up out of the water and flops over to you (the satisfying "caught!" moment)
+function drawCatches(){const now=performance.now();
+  for(let i=catches.length-1;i>=0;i--){const c=catches[i],t=(now-c.start)/560;
+    if(t>=1){fx(c.x1,c.y1-14,'+1 🐟','#7fe0ff');catches.splice(i,1);continue;}
+    const x=c.x0+(c.x1-c.x0)*t, y=c.y0+(c.y1-c.y0)*t-Math.sin(t*Math.PI)*26, sx=x-cam.x,sy=y-cam.y,sz=1+Math.sin(t*Math.PI)*0.5,ang=Math.sin(now*0.025+i)*0.6;
+    ctx.save();ctx.translate(sx,sy);ctx.rotate(ang);
+    ctx.fillStyle='#f0c64a';ctx.beginPath();ctx.ellipse(0,0,5.5*sz,3.3*sz,0,0,7);ctx.fill();
+    ctx.beginPath();ctx.moveTo(-4.5*sz,0);ctx.lineTo(-9*sz,-3.5*sz);ctx.lineTo(-9*sz,3.5*sz);ctx.closePath();ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,.6)';ctx.beginPath();ctx.ellipse(-1*sz,-1*sz,2*sz,1.2*sz,0,0,7);ctx.fill();
+    ctx.fillStyle='#16202b';circle(3*sz,-0.8*sz,1.1*sz);ctx.restore();
+    if(Math.random()<0.35)spawnParts(x,y,'#cdeffd',1,14);}}
+
+function render(){ctx.setTransform(1,0,0,1,0,0);ctx.fillStyle='#1f6f8c';ctx.fillRect(0,0,cvs.width,cvs.height);
+  ctx.setTransform(zoom,0,0,zoom,0,0);const vw=cvs.width/zoom,vh=cvs.height/zoom; // world drawn zoomed
+  const x0=Math.floor(cam.x/TILE),y0=Math.floor(cam.y/TILE),x1=Math.ceil((cam.x+vw)/TILE),y1=Math.ceil((cam.y+vh)/TILE);
+  for(let ty=y0;ty<=y1;ty++)for(let tx=x0;tx<=x1;tx++)drawTile(tileAt(tx,ty),tx*TILE-cam.x,ty*TILE-cam.y,tx,ty);
+  drawPondFish();   // fish swimming in the ponds (on the water, under everything else)
+  // safe-hub ring (no enemies inside) around map center
+  {const hx=(Math.floor(W/2)+0.5)*TILE-cam.x,hy=(Math.floor(H/2)+0.5)*TILE-cam.y;
+   ctx.save();ctx.beginPath();ctx.arc(hx,hy,SAFE_TILES*TILE,0,7);
+   ctx.fillStyle='rgba(120,210,150,.06)';ctx.fill();
+   ctx.setLineDash([10,8]);ctx.lineWidth=3;ctx.strokeStyle='rgba(130,225,165,.5)';ctx.stroke();ctx.restore();}
+  // claimed land: soft tint + a clean region OUTLINE (not a box per tile) + a house per plot.
+  // Labels stay minimal — your own level/name always; others' names only when zoomed in — so the
+  // map reads cleanly instead of a wall of "LvN" text on every roof.
+  const zin=zoom>=1.2;
+  for(let ty=y0;ty<=y1;ty++)for(let tx=x0;tx<=x1;tx++){const c=claims[key(tx,ty)];if(!c)continue;
+    const sx=tx*TILE-cam.x,sy=ty*TILE-cam.y,mine=c.owner===myGuest;
+    ctx.fillStyle=mine?'rgba(240,198,74,.10)':'rgba(168,120,220,.08)';ctx.fillRect(sx,sy,TILE,TILE);
+    // outline only the OUTER edges of a region (sides whose neighbour isn't the same owner)
+    const same=(ax,ay)=>{const n=claims[key(ax,ay)];return !!(n&&n.owner===c.owner);};
+    ctx.strokeStyle=mine?'rgba(240,198,74,.55)':'rgba(178,132,222,.4)';ctx.lineWidth=2;ctx.beginPath();
+    if(!same(tx-1,ty)){ctx.moveTo(sx+1,sy);ctx.lineTo(sx+1,sy+TILE);}
+    if(!same(tx+1,ty)){ctx.moveTo(sx+TILE-1,sy);ctx.lineTo(sx+TILE-1,sy+TILE);}
+    if(!same(tx,ty-1)){ctx.moveTo(sx,sy+1);ctx.lineTo(sx+TILE,sy+1);}
+    if(!same(tx,ty+1)){ctx.moveTo(sx,sy+TILE-1);ctx.lineTo(sx+TILE,sy+TILE-1);}
+    ctx.stroke();
+    // ONE house per estate (contiguous same-owner region), at its top-left anchor — so a big claim
+    // reads as a tidy plot instead of a wall of identical houses stamped on every single tile.
+    if(!same(tx-1,ty)&&!same(tx,ty-1)){const hx2=sx+TILE/2,lv=c.level||1,gw=TILE*(0.44+lv*0.04),bh=TILE*(0.34+lv*0.06),base=sy+TILE*0.86,top=base-bh;
+     ctx.fillStyle='rgba(0,0,0,.18)';ctx.beginPath();ctx.ellipse(hx2,base+1,gw*0.62,TILE*0.07,0,0,7);ctx.fill();
+     ctx.fillStyle=mine?'#d7b257':'#9a72c8';ctx.fillRect(hx2-gw/2,top,gw,bh);
+     ctx.fillStyle=mine?'#b8512f':'#6a3aa0';ctx.beginPath();ctx.moveTo(hx2-gw/2-3,top);ctx.lineTo(hx2,top-TILE*0.24);ctx.lineTo(hx2+gw/2+3,top);ctx.closePath();ctx.fill();
+     ctx.strokeStyle='rgba(0,0,0,.25)';ctx.lineWidth=1;ctx.strokeRect(hx2-gw/2,top,gw,bh);
+     if(lv>=3){ctx.fillStyle='rgba(255,233,168,.92)';const n=Math.min(lv-1,3),rows=lv>=5?2:1,ww=gw*0.13,wh=bh*0.17; // lit windows → higher tiers read as bigger buildings
+       for(let r=0;r<rows;r++){const wy=top+bh*(0.28+r*0.32);for(let ci=0;ci<n;ci++){const wx=hx2-gw*0.28+ci*(gw*0.56/(n-1));ctx.fillRect(wx-ww/2,wy-wh/2,ww,wh);}}}
+     ctx.fillStyle='#4a3018';ctx.fillRect(hx2-TILE*0.05,base-TILE*0.17,TILE*0.10,TILE*0.17);                          // door
+     if(mine){const fy=top-TILE*0.24;ctx.fillStyle='#6b4a2a';ctx.fillRect(hx2-0.7,fy-TILE*0.34,1.4,TILE*0.34);        // YOUR house → a gold flag
+       ctx.fillStyle='#f0c64a';ctx.beginPath();ctx.moveTo(hx2+0.7,fy-TILE*0.34);ctx.lineTo(hx2+TILE*0.22,fy-TILE*0.28);ctx.lineTo(hx2+0.7,fy-TILE*0.22);ctx.closePath();ctx.fill();}
+     if(lv>1&&mine){const nm=houseTierName(lv);ctx.font='bold 9px Segoe UI';ctx.textAlign='center';ctx.fillStyle='#000';ctx.fillText(nm,hx2+1,top-TILE*0.27+1);ctx.fillStyle='#ffe07a';ctx.fillText(nm,hx2,top-TILE*0.27);ctx.textAlign='left';}}
+    if(c.price>0&&zoom>=0.85){const px=sx+TILE/2;ctx.font='bold 9px Segoe UI';ctx.textAlign='center';ctx.fillStyle='#000';ctx.fillText('💰'+c.price,px+1,sy+TILE-2);ctx.fillStyle='#ffe07a';ctx.fillText('💰'+c.price,px,sy+TILE-3);ctx.textAlign='left';}
+    const lc=claims[key(tx-1,ty)],tc=claims[key(tx,ty-1)];
+    if((mine||zin)&&!(lc&&lc.owner===c.owner)&&!(tc&&tc.owner===c.owner)){ctx.font='bold 9px Segoe UI';ctx.textAlign='left';
+      ctx.fillStyle='#000';ctx.fillText(c.name,sx+3,sy+11);ctx.fillStyle=mine?'#f0c64a':'#c9a0e8';ctx.fillText(c.name,sx+2,sy+10);}}
+  const t=TOOLS[tool];if(t.cost!=null||t.id==='farm'||t.id==='deed'){const m=tileFromMouse(),hx=m.x*TILE-cam.x,hy=m.y*TILE-cam.y;ctx.strokeStyle='rgba(240,198,74,.85)';ctx.lineWidth=2;ctx.strokeRect(hx+1,hy+1,TILE-2,TILE-2);}
+  const objs=[];
+  for(let ty=y0;ty<=y1;ty++)for(let tx=x0;tx<=x1;tx++){const k=key(tx,ty),gt=map[ty][tx],sx=tx*TILE-cam.x,sy=ty*TILE-cam.y;
+    if(gt===T.FOREST&&!chopped[k])objs.push({y:ty*TILE+TILE,fn:()=>drawTree(sx,sy,tx,ty)});
+    else if(gt===T.FOREST&&chopped[k])objs.push({y:ty*TILE,fn:()=>drawStump(sx,sy)});
+    else if(gt===T.FLOWER)objs.push({y:ty*TILE,fn:()=>drawFlower(sx,sy)});
+    if(farms[k])objs.push({y:ty*TILE,fn:()=>drawFarm(farms[k],sx,sy)});
+    if(buildings[k])objs.push({y:ty*TILE+TILE,fn:()=>drawBuilding(buildings[k],sx,sy)});}
+  if(merch)objs.push({y:merch.y+10,fn:drawMerch});
+  for(const a of ANGLERS)objs.push({y:a.y,fn:()=>drawAngler(a)});   // anglers fishing at the ponds
+  objs.push({y:P.y,fn:drawPlayer});
+  for(const r of remote.values())objs.push({y:r.ry,fn:()=>drawAvatar(r.rx-cam.x,r.ry-cam.y,r.dir,'#7a5aa8',r.name+' Lv '+r.lv,false)});
+  for(const s of slimes.values())objs.push({y:s.ry,fn:()=>drawSlime(s)});
+  objs.sort((a,b)=>a.y-b.y).forEach(o=>o.fn());
+  drawCatches();   // reel-in fish animations
+  // FISHING PROMPT: a pulsing "🎣 click to fish" over the nearest water when you're standing beside it
+  if(canPlay()){const ptx=Math.floor(P.x/TILE),pty=Math.floor(P.y/TILE);let wt=null;
+    for(let dy=-1;dy<=1&&!wt;dy++)for(let dx=-1;dx<=1;dx++){const tt=tileAt(ptx+dx,pty+dy);if(tt===T.WATER||tt===T.SHALLOW){wt=[ptx+dx,pty+dy];break;}}
+    if(wt){const wx=(wt[0]+0.5)*TILE-cam.x,wy=(wt[1]+0.5)*TILE-cam.y;ctx.globalAlpha=0.65+Math.sin(anim*5)*0.35;
+      ctx.font='16px serif';ctx.textAlign='center';ctx.fillText('🎣',wx,wy-4);
+      ctx.font='bold 9px Segoe UI';ctx.fillStyle='#fff';ctx.fillText('click to fish',wx,wy+11);ctx.globalAlpha=1;ctx.textAlign='left';}}
+  // day/night tint over the world (wall-clock synced, so all players share time of day)
+  const night=Math.max(0,-dayE)*0.5, warm=Math.max(0,1-Math.abs(dayE)*2.4)*0.16;
+  if(moveTo){const mx=moveTo.x-cam.x,my=moveTo.y-cam.y;ctx.strokeStyle='rgba(240,198,74,.85)';ctx.lineWidth=2;ctx.beginPath();ctx.arc(mx,my,9+Math.sin(anim*8)*2,0,7);ctx.stroke();} // walk-to marker (world space)
+  ctx.textAlign='center';ctx.font='bold 13px Segoe UI';
+  for(const p of parts){ctx.globalAlpha=Math.max(0,Math.min(1,p.life*1.8));ctx.fillStyle=p.col;ctx.fillRect(p.x-cam.x-p.sz/2,p.y-cam.y-p.sz/2,p.sz,p.sz);}ctx.globalAlpha=1;
+  for(const f of floaters){ctx.globalAlpha=Math.max(0,f.life);ctx.fillStyle='#000';ctx.fillText(f.txt,f.x-cam.x+1,f.y-cam.y+1);ctx.fillStyle=f.col;ctx.fillText(f.txt,f.x-cam.x,f.y-cam.y);}
+  ctx.globalAlpha=1;ctx.textAlign='left';
+  ctx.setTransform(1,0,0,1,0,0);                              // screen space for full-screen tints + touch HUD
+  if(night>0.003){ctx.fillStyle='rgba(12,18,42,'+night.toFixed(3)+')';ctx.fillRect(0,0,cvs.width,cvs.height);}
+  if(warm>0.003){ctx.fillStyle='rgba(255,150,60,'+warm.toFixed(3)+')';ctx.fillRect(0,0,cvs.width,cvs.height);}
+  if(isTouch){const act=touch.id!==null,l=Math.min(JOY.r,Math.hypot(touch.dx,touch.dy)),a=Math.atan2(touch.dy,touch.dx);
+    ctx.globalAlpha=act?.4:.22;ctx.fillStyle='#000';circle(JOY.x,JOY.y,JOY.r);
+    ctx.globalAlpha=act?.9:.5;ctx.fillStyle='#f0c64a';circle(JOY.x+(act?Math.cos(a)*l:0),JOY.y+(act?Math.sin(a)*l:0),20);ctx.globalAlpha=1;}
+  renderMini();}
+const MC={[T.WATER]:'#2b86a6',[T.SHALLOW]:'#46a6c2',[T.SAND]:'#e3d29a',[T.GRASS]:'#5fa85b',[T.FLOWER]:'#6cb566',[T.STONE]:'#9aa7b1',[T.FOREST]:'#3a7d40'};
+// terrain + buildings are static → render once to an offscreen buffer, refresh occasionally;
+// each frame we just blit it and draw the moving dots (keeps the bigger map smooth)
+const miniBuf=document.createElement('canvas');miniBuf.width=mini.width;miniBuf.height=mini.height;const mbx=miniBuf.getContext('2d');
+let lastMiniCache=0;
+function buildMiniCache(){const s=mini.width/W;
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++){mbx.fillStyle=MC[map[y][x]];mbx.fillRect(x*s,y*s,Math.ceil(s),Math.ceil(s));}
+  mbx.fillStyle='#c9a06a';for(const k in buildings){const p=k.split(',');mbx.fillRect(+p[0]*s,+p[1]*s,Math.ceil(s),Math.ceil(s));}
+  mbx.fillStyle='#f0c64a';for(const k in claims){const p=k.split(',');mbx.fillRect(+p[0]*s,+p[1]*s,Math.ceil(s),Math.ceil(s));}
+  if(merch){mbx.fillStyle='#c0392b';mbx.fillRect(merch.tx*s,merch.ty*s,Math.ceil(s)+1,Math.ceil(s)+1);}}
+function renderMini(){const s=mini.width/W,now=performance.now();
+  if(now-lastMiniCache>1200){lastMiniCache=now;buildMiniCache();}
+  mctx.drawImage(miniBuf,0,0);
+  for(const sl of slimes.values()){const big=sl.type==='boss';mctx.fillStyle=big?'#ff3b2a':'#e25c5c';const r=big?3:1;mctx.fillRect(sl.rx/TILE*s-r,sl.ry/TILE*s-r,s+r*2,s+r*2);}
+  mctx.fillStyle='#7a5aa8';for(const r of remote.values())mctx.fillRect(r.rx/TILE*s-1,r.ry/TILE*s-1,s+1,s+1);
+  // YOU — a clear, larger marker (white-ringed gold dot + a soft pulse) so you can always find yourself
+  const px=P.x/TILE*s, py=P.y/TILE*s, pulse=4.5+Math.sin(now*0.005)*1.5;
+  mctx.strokeStyle='rgba(255,255,255,.6)';mctx.lineWidth=1.5;mctx.beginPath();mctx.arc(px,py,pulse,0,7);mctx.stroke();
+  mctx.fillStyle='#fff';mctx.beginPath();mctx.arc(px,py,3.4,0,7);mctx.fill();
+  mctx.fillStyle='#f0c64a';mctx.beginPath();mctx.arc(px,py,2.1,0,7);mctx.fill();}
+
+const $=id=>document.getElementById(id);
+// ===== goals / objectives — the game's purpose, step by step toward owning land =====
+// Tracked from server-synced stats (P.*), latched by peak value so selling can't undo progress.
+// Endless, escalating goals — there's always a next target (grow richer, stronger, own more land).
+const GOALS=[
+  {ic:'🪵',mk:n=>'Gather '+n+' wood',                val:()=>P.wood,    steps:[5,50,200,1000],    idx:0,peak:0},
+  {ic:'🪙',mk:n=>'Save '+n+' coins',                 val:()=>P.coin,    steps:[20,200,1000,5000], idx:0,peak:0},
+  {ic:'⭐',mk:n=>'Reach Level '+n,                    val:()=>P.lv,      steps:[2,5,10,20],        idx:0,peak:0},
+  {ic:'🏠',mk:n=>'Buy '+n+' House'+(n>1?'s':''), val:()=>P.deeds,   steps:[1,3,10,25],        idx:0,peak:0},
+  {ic:'🏝️',mk:n=>'Claim '+n+' land plot'+(n>1?'s':''),val:()=>myPlots(), steps:[1,5,15,40],        idx:0,peak:0},
+];
+let _goalSig='',_goalsReady=false;
+function updateGoals(){
+  const sig=P.wood+'|'+P.coin+'|'+P.lv+'|'+P.deeds+'|'+myPlots(); if(sig===_goalSig)return; _goalSig=sig; // only rebuild on change
+  const list=$('goalsList'); if(!list)return;
+  let html='',justDone=null;
+  for(const g of GOALS){ g.peak=Math.max(g.peak,g.val()||0);
+    while(g.idx<g.steps.length-1 && g.peak>=g.steps[g.idx]){ g.idx++; if(_goalsReady)justDone=g; } // advance to next tier
+    const target=g.steps[g.idx], maxed=g.idx>=g.steps.length-1 && g.peak>=target;
+    const prog=maxed?'★':(g.peak>=target?'✓':Math.min(g.peak,target)+'/'+target);
+    html+='<div class="g'+(maxed?' done':'')+'"><span class="ic">'+g.ic+'</span><span class="t">'+g.mk(target)+'</span><span class="p">'+prog+'</span></div>'; }
+  list.innerHTML=html;
+  if(justDone){toast('🎯 Goal reached — next tier unlocked!');SFX.coin();}
+  _goalsReady=true;
+}
+// ===== onboarding tutorial — a guided first session (move → chop → sell → buy deed → claim) =====
+// Steps auto-advance off the same server-synced stats the HUD already shows; displayed once per
+// browser (localStorage). The completion reward is granted SERVER-side, once per account.
+let tutDone=lsGet('isle_tutorial_done')==='1', tutStarted=false, tutStep=0, tutBase={wood:0,coin:0,deeds:0,plots:0};
+const TUT=[
+  {ic:'🕹️',txt:'Move! Tap the ground (or use WASD / the joystick) to walk around.',     done:()=>tutMoved>120},
+  {ic:'🪓',txt:'Walk up to a tree 🌳 — you auto-chop it into wood.',                       done:()=>P.wood>tutBase.wood},
+  {ic:'💰',txt:'Find the Merchant 💰 and tap "Sell all wood" to earn coins.',              done:()=>P.coin>tutBase.coin},
+  {ic:'🏠',txt:'Save 50 coins, then buy a House 🏠 from the Merchant.',                done:()=>P.deeds>tutBase.deeds},
+  {ic:'🏠',txt:'Pick the House tool 🏠 and click a grass tile to place your house!',    done:()=>myPlots()>tutBase.plots},
+];
+function renderCoach(){const el=$('coach');if(!el)return;
+  if(tutDone||tutStep>=TUT.length){el.classList.remove('show');return;}
+  const s=TUT[tutStep];
+  el.querySelector('.cstep').textContent='Step '+(tutStep+1)+' of '+TUT.length;
+  el.querySelector('.cic').textContent=s.ic; el.querySelector('.ctxt').textContent=s.txt;
+  el.classList.add('show');}
+function skipTutorial(){tutDone=true;lsSet('isle_tutorial_done','1');renderCoach();toast('Tutorial skipped');}
+function finishTutorial(){tutDone=true;lsSet('isle_tutorial_done','1');renderCoach();toast('🎉 Tutorial complete!');SFX.level();
+  if(online)send({t:'tutdone'});                                 // server grants the reward once per account
+  else{P.coin+=25;fx(P.x,P.y-26,'+25 🪙 Welcome!','#f0c64a');}}    // offline parity (no server account to persist)
+function updateTutorial(){
+  if(tutDone){const el=$('coach');if(el&&el.classList.contains('show'))el.classList.remove('show');return;}
+  if(connecting)return;                                          // wait until online/offline settles + initial stats applied
+  if(!tutStarted){tutBase={wood:P.wood,coin:P.coin,deeds:P.deeds,plots:myPlots()};tutStarted=true;renderCoach();}
+  if(tutStep>=TUT.length)return;
+  if(TUT[tutStep].done()){tutStep++;
+    if(tutStep<TUT.length){SFX.coin();toast('✓ Nice — next step!');renderCoach();}
+    else finishTutorial();}}
+$('coachSkip').onclick=skipTutorial;
+// ===== daily reward — a return hook; the server owns the cooldown + streak (we just show + claim) =====
+let dailyReady=false, dailyStreakNext=1, dailyRewardAmt=0;
+function applyDaily(d){if(!d)return;dailyReady=!!d.ready;dailyStreakNext=d.nextStreak||1;dailyRewardAmt=d.reward||0;renderDaily();}
+function renderDaily(){const el=$('daily');if(!el)return;el.querySelector('.dtxt').textContent='Day '+dailyStreakNext+' · +'+dailyRewardAmt+' 🪙';}
+function updateDailyBanner(){const el=$('daily');if(!el)return;
+  const coachOn=$('coach')&&$('coach').classList.contains('show');   // never overlap the onboarding coach
+  if(online&&dailyReady&&!coachOn)el.classList.add('show');else el.classList.remove('show');}
+$('daily').onclick=()=>{if(online&&dailyReady){dailyReady=false;updateDailyBanner();SFX.coin();send({t:'claimdaily'});}};
+// ===== achievements — named milestones beyond the linear goals; unlock state kept in localStorage =====
+let slewWarlord=false; let achDone=new Set((lsGet('isle_ach')||'').split(',').filter(Boolean)); slewWarlord=achDone.has('slayer');
+const ACH=[
+  {id:'home',  ic:'🏝️',name:'Homesteader',   desc:'Claim your first plot',    done:()=>myPlots()>=1},
+  {id:'baron', ic:'🏘️',name:'Land Baron',     desc:'Own 5 land plots',         done:()=>myPlots()>=5},
+  {id:'tycoon',ic:'💰',name:'Tycoon',          desc:'Hold 1000 coins at once',  done:()=>P.coin>=1000},
+  {id:'vet',   ic:'⭐',name:'Veteran',          desc:'Reach Level 10',           done:()=>P.lv>=10},
+  {id:'slayer',ic:'☠️',name:'Warlord Slayer',  desc:'Defeat the Warlord boss',  done:()=>slewWarlord},
+];
+const achIsDone=a=>achDone.has(a.id)||a.done();   // once unlocked it stays unlocked (latched in the set)
+function updateAchievements(){
+  for(const a of ACH) if(!achDone.has(a.id) && a.done()){
+    achDone.add(a.id); lsSet('isle_ach',[...achDone].join(','));
+    toast('🏆 Achievement: '+a.name+'!'); SFX.level();
+  }
+}
+function syncHUD(){$('sWood').textContent=P.wood;$('sCoin').textContent=P.coin;{const f=$('sFish');if(f)f.textContent=P.fish;}$('sLv').textContent=P.lv;
+  {const pw=$('sPtsWrap'),pb=$('sPts');if(pw&&pb){if(online){pw.style.display='';pb.textContent=(mySeasonPts||0).toLocaleString();}else pw.style.display='none';}} // contest points (online only)
+  {const aw=$('sAirWrap'),ab=$('sAir');if(aw&&ab){if(online){aw.style.display='';ab.textContent=myAirdrop;}else aw.style.display='none';}} // airdrop points (online only)
+  $('sName').textContent=P.name;$('sPlayers').textContent=online?(remote.size+1):1;
+  $('hpBar').style.width=(P.hp/P.hpMax*100)+'%';$('xpBar').style.width=(P.xp/P.xpMax*100)+'%';
+  $('sTime').textContent=dayE>0.35?'☀️':dayE<-0.35?'🌙':(dayE>=0?'🌇':'🌆'); // day / night / dawn / dusk
+  updateGoals(); updateTutorial(); updateDailyBanner(); updateAchievements(); if(invOpen)renderInv();}
+
+function frame(now){let dt=(now-last)/1000;last=now;if(dt>0.05)dt=0.05;anim+=dt;update(dt);render();requestAnimationFrame(frame);}
+$('sName').textContent=myName;P.name=myName;
+handlePhantomCallback();   // if we're returning from the Phantom app, resume the connect/sign flow
+connect();
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
