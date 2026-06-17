@@ -275,7 +275,7 @@
   <button class="wm-btn" id="wmDisconnect">🔌 Disconnect Wallet</button>
 </div>
 <div id="mini" class="panel"><canvas id="miniCanvas" width="148" height="148"></canvas></div>
-<div id="goals" class="panel"><h3 id="goalsHead">🎯 Goals</h3><div id="goalsList"></div></div>
+<div id="goals" class="panel"><h3 id="goalsHead">📜 Quests</h3><div id="goalsList"></div></div>
 <div id="status" class="panel">Connecting…</div>
 <div id="vitals" class="panel">
   <div class="row"><span class="lv">Lv <span id="sLv">1</span></span><span style="flex:1"></span><span id="sName">You</span></div>
@@ -495,10 +495,10 @@ function noise(x,y,s){return seed(Math.floor(x*s),Math.floor(y*s));}
 const buildings={}, farms={}, chopped={}, mined={}, claims={}; // claims["x,y"]={owner,name,level} (owned land); mined["x,y"]=true (rock mined out)
 // House tiers (the server sends the real table in `init`; this default mirrors server.js for offline play).
 // A claim's `level` is its tier index (1-based); upgrading needs the tier's coin cost + player level.
-let HOUSE_TIERS=[{name:'House',cost:0,reqLv:1},{name:'Cottage',cost:200,reqLv:8},{name:'Villa',cost:600,reqLv:16},{name:'Manor',cost:1800,reqLv:26},{name:'Mansion',cost:5000,reqLv:38},{name:'Hotel',cost:15000,reqLv:55}];
+let HOUSE_TIERS=[{name:'House',cost:0,reqLv:1},{name:'Cottage',cost:200,reqLv:8},{name:'Lodge',cost:600,reqLv:16},{name:'Manor',cost:1800,reqLv:26},{name:'Keep',cost:5000,reqLv:38},{name:'Castle',cost:15000,reqLv:55}];
 const houseTierName=lv=>(HOUSE_TIERS[Math.min(Math.max(lv|0,1),HOUSE_TIERS.length)-1]||{name:'House'}).name;
 function houseUpgradeHint(c){const lv=c.level||1,max=HOUSE_TIERS.length;
-  if(lv>=max)return '🏨 '+houseTierName(lv)+' · top tier!';
+  if(lv>=max)return '🏰 '+houseTierName(lv)+' · top tier!';
   const nx=HOUSE_TIERS[lv]||{name:'House',cost:0,reqLv:1};
   return '🏠 '+houseTierName(lv)+' → tap 🏠 for '+nx.name+' (Lv'+nx.reqLv+' · '+nx.cost+'🪙)';}
 // ===== decorative pond life (visual only): fish swimming + an angler at each pond =====
@@ -900,7 +900,7 @@ function claimHere(){
   const tx=Math.floor(P.x/TILE),ty=Math.floor(P.y/TILE),k=key(tx,ty),gt=tileAt(tx,ty),c=claims[k];
   if(c&&c.owner===myGuest){                              // already yours → upgrade the house to the next tier
     const lv=c.level||1, max=HOUSE_TIERS.length;
-    if(lv>=max){toast('🏨 '+houseTierName(lv)+' — already the top tier!');return;}
+    if(lv>=max){toast('🏰 '+houseTierName(lv)+' — already the top tier!');return;}
     const next=HOUSE_TIERS[lv]||{name:'House',cost:0,reqLv:1};   // tier we'd upgrade INTO (level lv+1)
     if(P.lv<next.reqLv){toast('🔒 '+next.name+' needs Lv'+next.reqLv+' (you are Lv'+P.lv+')');return;}
     if(P.coin<next.cost){toast('Need '+next.cost+' 🪙 for '+next.name+' — sell wood/fish 💰');return;}
@@ -912,7 +912,7 @@ function claimHere(){
   if(buildings[k]){toast("Can't claim a built tile");return;}
   if(inHub(tx,ty)){toast('🛡️ Spawn hub is protected — claim outside the ring');return;}
   if(online)send({t:'claim',x:tx,y:ty}); else {claims[k]={owner:myGuest,name:myName,level:1};fx(P.x,P.y,'Land claimed 📜','#f0c64a');}
-  toast('Land claimed 📜 — stand on it + tap 🏠 to upgrade your house (→ Hotel)');}
+  toast('Land claimed 📜 — stand on it + tap 🏠 to upgrade your house (→ Castle)');}
 function updateAudioIcon(){const el=document.getElementById('ibAudio');if(el)el.textContent=SFX.isEnabled()?'🔊':'🔇';}
 function toggleAudio(){const v=!SFX.isEnabled();SFX.setEnabled(v);lsSet('isle_sound',v?'1':'0');if(v)SFX.resume();
   const cb=document.getElementById('setSound');if(cb)cb.checked=v; updateAudioIcon(); toast(v?'Sound on 🔊':'Sound off 🔇');}
@@ -1099,7 +1099,7 @@ function renderShop(){const body=document.getElementById('shopBody');
       if(online)send({t:'shop',item:'sellfish'});else{const c=P.fish*4;P.coin+=c;fx(P.x,P.y-20,'+'+c+' 🪙','#f0c64a');P.fish=0;}}},
     {ic:'🧪',b:'Health Potion',s:'Restore full HP (instant)',price:'15🪙',cost:15,act:()=>{if(P.coin<15){toast('Need 15 coin — sell wood first');return;}if(P.hp>=P.hpMax){toast('Already full HP');return;}
       if(online)send({t:'shop',item:'potion'});else{P.coin-=15;P.hp=P.hpMax;toast('Healed');}}},
-    {ic:'🏠',b:'House',s:'Owned: '+(P.deeds||0)+' · place on land (🏠/6), then upgrade → 🏨 Hotel',price:'50🪙',cost:50,act:()=>{if(P.coin<50){toast('Need 50 coin — sell wood first');return;}
+    {ic:'🏠',b:'House',s:'Owned: '+(P.deeds||0)+' · place on land (🏠/6), then upgrade → 🏰 Castle',price:'50🪙',cost:50,act:()=>{if(P.coin<50){toast('Need 50 coin — sell wood first');return;}
       if(online)send({t:'shop',item:'deed'});else{P.coin-=50;P.deeds++;toast('🏠 House bought — press 6, click your land');}}},
   ];
   UPGRADES.forEach(u=>{const lv=(P.up&&P.up[u.field])||0,cost=u.base*(lv+1),maxed=lv>=UPG_MAX;
@@ -1568,7 +1568,7 @@ function updateGoals(){
     const prog=maxed?'★':(g.peak>=target?'✓':Math.min(g.peak,target)+'/'+target);
     html+='<div class="g'+(maxed?' done':'')+'"><span class="ic">'+g.ic+'</span><span class="t">'+g.mk(target)+'</span><span class="p">'+prog+'</span></div>'; }
   list.innerHTML=html;
-  if(justDone){toast('🎯 Goal reached — next tier unlocked!');SFX.coin();}
+  if(justDone){toast('📜 Quest complete — next tier unlocked!');SFX.coin();}
   _goalsReady=true;
 }
 // ===== onboarding tutorial — a guided first session (move → chop → sell → buy deed → claim) =====
@@ -1588,8 +1588,8 @@ function renderCoach(){const el=$('coach');if(!el)return;
   el.querySelector('.cstep').textContent='Step '+(tutStep+1)+' of '+TUT.length;
   el.querySelector('.cic').textContent=s.ic; el.querySelector('.ctxt').textContent=s.txt;
   el.classList.add('show');}
-function skipTutorial(){tutDone=true;lsSet('isle_tutorial_done','1');renderCoach();toast('Tutorial skipped');}
-function finishTutorial(){tutDone=true;lsSet('isle_tutorial_done','1');renderCoach();toast('🎉 Tutorial complete!');SFX.level();
+function skipTutorial(){tutDone=true;lsSet('isle_tutorial_done','1');renderCoach();toast('Quest skipped');}
+function finishTutorial(){tutDone=true;lsSet('isle_tutorial_done','1');renderCoach();toast('🎉 Starter Quest complete!');SFX.level();
   if(online)send({t:'tutdone'});                                 // server grants the reward once per account
   else{P.coin+=25;fx(P.x,P.y-26,'+25 🪙 Welcome!','#f0c64a');}}    // offline parity (no server account to persist)
 function updateTutorial(){

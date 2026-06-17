@@ -93,10 +93,10 @@ const HOUSE_TIERS = (() => {
   const def = [
     { name:'House',   cost:0,     reqLv:1  },   // Lv1 — the home you get on claim
     { name:'Cottage', cost:200,   reqLv:8  },   // Lv2
-    { name:'Villa',   cost:600,   reqLv:16 },   // Lv3
+    { name:'Lodge',   cost:600,   reqLv:16 },   // Lv3
     { name:'Manor',   cost:1800,  reqLv:26 },   // Lv4
-    { name:'Mansion', cost:5000,  reqLv:38 },   // Lv5
-    { name:'Hotel',   cost:15000, reqLv:55 },   // Lv6 — endgame status symbol
+    { name:'Keep',    cost:5000,  reqLv:38 },   // Lv5
+    { name:'Castle',  cost:15000, reqLv:55 },   // Lv6 — endgame status symbol
   ];
   if(process.env.HOUSE_TIERS_JSON){ try{ const j=JSON.parse(process.env.HOUSE_TIERS_JSON);
     if(Array.isArray(j)&&j.length) return j.map(t=>({name:String(t.name||'House'),cost:Math.max(0,+t.cost||0),reqLv:Math.max(1,+t.reqLv||1)})); }
@@ -684,7 +684,7 @@ function handleUpgradeLand(me,m){
   if(!c || c.owner!==me.guestId) return;                   // must own this tile
   if(!inReach(me,x,y)) return;
   const lv=c.level||1; const at=(x+0.5)*TILE, ay=(y+0.5)*TILE;
-  if(lv>=MAX_HOUSE_LV){ pushSelf(me,{txt:'🏨 '+houseTier(lv).name+' — max tier!',col:'#f0c64a',x:at,y:ay}); return; }
+  if(lv>=MAX_HOUSE_LV){ pushSelf(me,{txt:'🏰 '+houseTier(lv).name+' — max tier!',col:'#f0c64a',x:at,y:ay}); return; }
   const next=HOUSE_TIERS[lv];                              // the tier we'd upgrade INTO (house level lv+1)
   if(me.lv<next.reqLv){ pushSelf(me,{txt:'🔒 '+next.name+' needs Lv'+next.reqLv,col:'#ff8080',x:at,y:ay}); return; }
   if(me.coin<next.cost){ pushSelf(me,{txt:'Need '+next.cost+' 🪙 for '+next.name,col:'#ff8080',x:at,y:ay}); return; }
