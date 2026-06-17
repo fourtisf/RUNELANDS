@@ -1,4 +1,4 @@
-# Islands-Style Solana MMO — Technical Architecture & Build Handoff
+# RUNELANDS — Solana Fantasy Realm MMO — Technical Architecture & Build Handoff
 
 **Untuk:** Michael (implementasi via Claude Code)
 **Dari:** ALFA / Fourtis
@@ -31,7 +31,7 @@ Estimasi realistis solo dev kompeten: **3–4 bulan** sampai versi kasar tapi be
                 ▼                            ▼
 ┌──────────────────────────────┐   ┌─────────────────────────────┐
 │      GAME SERVER (Colyseus)    │   │     SOLANA (Anchor program) │
-│  - Room = 1 pulau/zona         │   │  - Land = NFT / PDA registry│
+│  - Room = 1 realm/zona         │   │  - Land = NFT / PDA registry│
 │  - Authoritative simulation    │   │  - buy_land (bayar USDC)    │
 │  - Tick 10–20 Hz               │   │  - treasury + ownership     │
 │  - Area of Interest (grid)     │   └──────────────┬──────────────┘
@@ -91,7 +91,7 @@ Ini inti MMO. Salah di sini, sisanya percuma.
 - Pemain lain: interpolasi antar snapshot dengan buffer ~100ms biar gerak mulus walau tick jarang.
 
 **3.5 Room = shard**
-- 1 room = 1 pulau/zona, cap **~50–100 pemain**. Penuh → spawn instance room baru. Inilah cara MMO "muat ribuan pemain" tanpa satu server jebol.
+- 1 room = 1 realm/zona, cap **~50–100 pemain**. Penuh → spawn instance room baru. Inilah cara MMO "muat ribuan pemain" tanpa satu server jebol.
 
 > **Milestone Fase 1 = jalan-jalan di peta dan lihat pemain lain gerak real-time dengan smooth.** Jangan lanjut ke combat/building sebelum ini solid.
 
@@ -154,7 +154,7 @@ Kerjakan **berurutan**. Jangan loncat.
 > Prompt CC: "Set up a Phaser 3 + TypeScript + Vite project. Load a tilemap (Tiled JSON), render a top-down map, add a player sprite with WASD movement, camera follow, and collision against a 'walls' layer. Single player, no server yet."
 
 ### Fase 1 — Multiplayer core (3–5 minggu) ⚠️ milestone terberat
-> Prompt CC: "Add a Colyseus server (Node + TypeScript). Create one Room representing an island. Implement server-authoritative movement: client sends input with sequence numbers, server simulates at a 15Hz fixed tick using Colyseus Schema for state. Implement client-side prediction + reconciliation for the local player and interpolation for remote players. Add a spatial-hash grid for area-of-interest filtering."
+> Prompt CC: "Add a Colyseus server (Node + TypeScript). Create one Room representing a realm. Implement server-authoritative movement: client sends input with sequence numbers, server simulates at a 15Hz fixed tick using Colyseus Schema for state. Implement client-side prediction + reconciliation for the local player and interpolation for remote players. Add a spatial-hash grid for area-of-interest filtering."
 >
 > Test wajib: simulasikan 50+ bot client, ukur bandwidth & latency sebelum lanjut.
 

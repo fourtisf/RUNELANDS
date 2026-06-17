@@ -37,7 +37,7 @@ Progress + the shared world persist across restarts (file backend by default).
 ## Go global
 See `DEPLOY.md`. Short version: deploy `server.js` to Railway/Render/Fly → get a
 `wss://...` URL → set `DEFAULT_SERVER` at the top of `isle_online.html` → host the
-HTML statically → share the link. Players worldwide join the same island.
+HTML statically → share the link. Players worldwide join the same realm.
 
 ---
 
@@ -115,7 +115,7 @@ Implemented:
   `localStorage`, reconnects) and a sound on/off switch.
 
 ### 4. Scale — ⏳ load-tested; sharding intentionally deferred
-> CC: "Refactor server.js into room-based sharding: multiple island rooms each capped at
+> CC: "Refactor server.js into room-based sharding: multiple realm rooms each capped at
 > ~80 players, with Redis-backed presence so players can see a room list and join. Add
 > reconnect-into-same-room handling." (See architecture doc §3.5.)
 
@@ -157,7 +157,7 @@ server-authoritative and covered by `npm test` (7 suites).
   are bounded to ~1.4× legit speed). Full server-simulated movement is still the larger Fase 1
   netcode task, but the obvious cheats are closed.
 - One process / one region → distant players get latency, and the world is a single shared
-  island capped at ~60 (→ step #4 sharding for true global scale).
+  realm capped at ~60 (→ step #4 sharding for true global scale).
 - Load-tested with 50 synthetic bots (`npm run loadtest`); still worth a **real multi-device
   test** on actual networks before a public launch.
 - On-chain land is a scaffold only (`solana/`) — unaudited, not deployed. Don't custody real

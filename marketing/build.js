@@ -6,10 +6,12 @@ const path = require('path');
 const { Resvg } = require('@resvg/resvg-js');
 
 const OUT = __dirname;
-const C = { water1:'#2a93b3', water0:'#14323f', grass:'#5fa85b', grass2:'#6cb566', grassD:'#4d8f4a',
-  sand:'#e6d6a0', gold:'#f4cf57', goldD:'#b8902a', panel:'#243443', panel2:'#18222e', line:'#5a7187',
-  txt:'#f3f7fb', dim:'#aebfce', tree1:'#2f6b34', tree2:'#3c8043', tree3:'#49934f', trunk:'#6b4a2a',
-  tent:'#c0392b', body:'#3a6ea5', skin:'#f0c89a', ok:'#7fd99a' };
+// RUNELANDS premium palette — royal purple + gold, deep arcane river/moat, lush realm.
+const C = { water1:'#1f6f90', water0:'#14323f', grass:'#4d9c53', grass2:'#57a95d', grassD:'#459152',
+  sand:'#8c94a9', gold:'#f0c64a', goldD:'#b8902a', goldL:'#ffe9a8', arc:'#ab7bff', arcD:'#7a3df0',
+  panel:'#2d2342', panel2:'#1e1830', bg:'#15111f', line:'#8c94a9', stone:'#b6bdcc',
+  txt:'#f1ecf8', dim:'#b1a4c6', tree1:'#2f6b34', tree2:'#3c8043', tree3:'#49934f', trunk:'#6b4a2a',
+  tent:'#7a3df0', body:'#5a3ea5', skin:'#f0c89a', ok:'#57a95d' };
 const F = "'DejaVu Sans','Liberation Sans',sans-serif";
 
 const tree = (x,y,s=1) => `<g transform="translate(${x} ${y}) scale(${s})">
@@ -32,10 +34,26 @@ const hero = (x,y,s=1) => `<g transform="translate(${x} ${y}) scale(${s})">
   <rect x="-8" y="-18" width="16" height="6" fill="#5a3a22"/>
   <rect x="-4.5" y="-9" width="2.4" height="2.4" fill="#16202b"/><rect x="2.1" y="-9" width="2.4" height="2.4" fill="#16202b"/></g>`;
 
+// CASTLE / KEEP emblem (replaces the old mountain `peak`). Heraldic crenellated keep:
+// twin battlemented towers + a taller central keep with a dark arched gate. Gold faces,
+// lighter-gold highlight on the lit (left) edges, dark base shadow. Same signature as peak.
 const peak = (x,y,s=1,col=C.gold) => `<g transform="translate(${x} ${y}) scale(${s})">
-  <path d="M-34 24 L-10 -22 L6 6 L20 -14 L40 24 Z" fill="${col}"/>
-  <path d="M-10 -22 L-3 -6 L-18 -6 Z" fill="#fff" opacity=".9"/>
-  <path d="M20 -14 L26 -4 L13 -4 Z" fill="#fff" opacity=".75"/></g>`;
+  <ellipse cx="0" cy="26" rx="40" ry="7" fill="#1a1226" opacity=".35"/>
+  <!-- side towers -->
+  <path d="M-38 24 L-38 -6 L-38 -6 L-38 -12 L-32 -12 L-32 -6 L-26 -6 L-26 -12 L-20 -12 L-20 24 Z" fill="${col}"/>
+  <path d="M38 24 L38 -6 L38 -12 L32 -12 L32 -6 L26 -6 L26 -12 L20 -12 L20 24 Z" fill="${col}"/>
+  <!-- central keep (taller) -->
+  <path d="M-16 24 L-16 -20 L-16 -28 L-9 -28 L-9 -20 L-3 -20 L-3 -28 L3 -28 L3 -20 L9 -20 L9 -28 L16 -28 L16 -20 L16 24 Z" fill="${col}"/>
+  <!-- arched gate -->
+  <path d="M-7 24 L-7 4 Q0 -5 7 4 L7 24 Z" fill="#241a36"/>
+  <rect x="-1.4" y="4" width="2.8" height="20" fill="${col}" opacity=".55"/>
+  <!-- lit-edge highlights (left faces) -->
+  <rect x="-38" y="-6" width="3" height="30" fill="${C.goldL}" opacity=".85"/>
+  <rect x="-16" y="-20" width="3" height="44" fill="${C.goldL}" opacity=".85"/>
+  <rect x="20" y="-6" width="3" height="30" fill="${C.goldL}" opacity=".5"/>
+  <!-- merlon top sheen -->
+  <rect x="-16" y="-28" width="7" height="3" fill="${C.goldL}" opacity=".7"/>
+  <rect x="-3" y="-28" width="6" height="3" fill="${C.goldL}" opacity=".7"/></g>`;
 
 // an island scene (grass blob + sand rim + trees + tent + hero + a glowing claimed plot)
 function island(cx, cy, sc){
@@ -67,7 +85,7 @@ const defs = `<defs>
   <filter id="sh" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#000" flood-opacity=".45"/></filter>
 </defs>`;
 
-// wordmark: gold "RUNELANDS" with a dark shadow + the peak mark
+// wordmark: gold "RUNELANDS" with a dark shadow + the castle/keep mark
 const wordmark = (x,y,size) => `
   ${peak(x+size*0.5, y-size*0.05, size/58)}
   <text x="${x+size*1.32}" y="${y}" font-family=${JSON.stringify(F)} font-weight="bold" font-size="${size}" letter-spacing="${size*0.005}">
@@ -97,7 +115,7 @@ const banner = `<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900
     <text x="34" y="0" font-family=${JSON.stringify(F)} font-size="28" fill="${C.txt}">${t}</text></g>`).join('')}
   ${chipRow(78, 690, 42, 22, ['MINE','FISH','CRAFT','CLAIM LAND','TRADE'])}
   ${pill(78, 754, 540, 76, 'PLAY FREE  →  runelands.fun', 34)}
-  <text x="80" y="872" font-family=${JSON.stringify(F)} font-size="22" fill="${C.dim}">Claim your plot of the island — a build · fight · trade MMO with an own-land economy.</text>
+  <text x="80" y="872" font-family=${JSON.stringify(F)} font-size="22" fill="${C.dim}">Claim your corner of the realm — a build · fight · trade MMO with an own-land economy.</text>
 </svg>`;
 
 // ---------- 2) X-HEADER + 3) LOGO: premium versions are defined further below, after the
@@ -106,7 +124,9 @@ const banner = `<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900
 // ===================== PREMIUM KEY ART — 16:9 hero poster (1920x1080) =====================
 // Realizes the master prompt as a true isometric diorama: floating extruded island, sunset
 // rim light, merchant village, hero, glowing land-claim plots, coins, a faint Warlord boss.
-const K = { rockX:'#22150a', rockD:'#3f2a17', treeL:'#6cc05a', treeM:'#469940', treeD:'#2f6f31', red:'#cf4a38' };
+// diorama palette — dark arcane-stone island sides + lush realm greens; `red` is now the
+// royal banner/keep accent (purple) so the merchant pavilion reads as a heraldic tent.
+const K = { rockX:'#1a1428', rockD:'#2b2140', treeL:'#57a95d', treeM:'#3c8043', treeD:'#2f6b34', red:'#7a3df0' };
 
 // isometric world transform (2:1) — one shared grid so props/plots/island stay coherent
 const IZ = { ox:980, oy:360, tw:50, th:25 };
@@ -189,10 +209,10 @@ function islandK(){
   const patches=[[2,2.6,30,13],[5.5,4,34,15],[3.4,5.6,26,11]].map(([gx,gy,rx,ry])=>{const p=iso(gx,gy);
     return `<ellipse cx="${p[0]}" cy="${p[1]}" rx="${rx}" ry="${ry}" fill="#3a7a3b" opacity=".4"/>`;}).join('');
   return `
-    <ellipse cx="${CB[0]-22}" cy="${apex[1]-18}" rx="430" ry="92" fill="#06212e" opacity=".5" filter="url(#soft)"/>
+    <ellipse cx="${CB[0]-22}" cy="${apex[1]-18}" rx="430" ry="92" fill="#0f0b1a" opacity=".55" filter="url(#soft)"/>
     <polygon points="${PTS([Wd,Sd,apex])}" fill="${K.rockX}"/><polygon points="${PTS([Sd,Ed,apex])}" fill="${K.rockD}"/>
     <polygon points="${PTS([WW,SS,Sd,Wd])}" fill="url(#wallL)"/><polygon points="${PTS([SS,EE,Ed,Sd])}" fill="url(#wallR)"/>
-    <polyline points="${PTS([Sd,Ed])}" fill="none" stroke="#c8923f" stroke-width="2" opacity=".5"/>
+    <polyline points="${PTS([Sd,Ed])}" fill="none" stroke="#ab7bff" stroke-width="2" opacity=".4"/>
     <polygon points="${PTS([NN,EE,SS,WW])}" fill="${C.sand}"/>
     <polygon points="${PTS([NN,EE,SS,WW])}" fill="#fff" opacity=".06"/>
     <polygon points="${PTS([gN,gE,gS,gW])}" fill="url(#grassG)"/>
@@ -203,16 +223,16 @@ function islandK(){
 }
 // tiny faint island on the horizon for depth
 const miniIsle=(x,y,s)=>`<g transform="translate(${x} ${y}) scale(${s})" opacity=".5">
-  <ellipse cx="0" cy="40" rx="120" ry="26" fill="#06212e" opacity=".4" filter="url(#soft)"/>
-  <polygon points="0,-30 90,15 0,60 -90,15" fill="${C.sand}"/><polygon points="0,-30 90,15 0,30 -90,15" fill="#6fb35f"/>
-  <polygon points="-90,15 0,60 0,30" fill="#3d2a16"/><polygon points="0,60 90,15 0,30" fill="#5a3c1f"/>
+  <ellipse cx="0" cy="40" rx="120" ry="26" fill="#0f0b1a" opacity=".4" filter="url(#soft)"/>
+  <polygon points="0,-30 90,15 0,60 -90,15" fill="${C.sand}"/><polygon points="0,-30 90,15 0,30 -90,15" fill="#57a95d"/>
+  <polygon points="-90,15 0,60 0,30" fill="#1a1428"/><polygon points="0,60 90,15 0,30" fill="#2b2140"/>
   ${[[-30,6],[20,2],[-4,16]].map(([a,b])=>`<g transform="translate(${a} ${b})">${pine(0.8)}</g>`).join('')}</g>`;
 
-// snow-capped mountain crest + 3D extruded gold wordmark
+// heraldic castle crest medallion (gold-ringed purple badge) + 3D extruded gold wordmark
 const crest=(cx,cy,r)=>`<g filter="url(#ds)">
-  <circle cx="${cx}" cy="${cy}" r="${r}" fill="#1a2733" stroke="url(#goldG)" stroke-width="${r*0.13}"/>
-  <circle cx="${cx}" cy="${cy}" r="${r*0.7}" fill="#16323f"/>
-  ${peak(cx, cy+4, r/68)}</g>`;
+  <circle cx="${cx}" cy="${cy}" r="${r}" fill="#2d2342" stroke="url(#goldG)" stroke-width="${r*0.13}"/>
+  <circle cx="${cx}" cy="${cy}" r="${r*0.7}" fill="#1e1830"/>
+  ${peak(cx, cy+6, r/74)}</g>`;
 const wordmark3d=(cx,y,size)=>{
   let depth=''; for(let i=9;i>=1;i--) depth+=`<text x="${cx+i*0.9}" y="${y+i}" text-anchor="middle" font-family=${JSON.stringify(F)} font-weight="bold" font-size="${size}" letter-spacing="${size*0.01}" fill="#6e4f12">RUNELANDS</text>`;
   return `${depth}
@@ -226,14 +246,14 @@ const ctaBtn=(cx,y,w,h,label)=>{const x=cx-w/2;return `<g filter="url(#ds)">
   <text x="${cx+h*0.42}" y="${y+h*0.64}" text-anchor="middle" font-family=${JSON.stringify(F)} font-weight="bold" font-size="${h*0.4}" fill="#15202b">${label}</text></g>`;};
 
 const kdefs=`<defs>
-  <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#163140"/><stop offset=".46" stop-color="#247e96"/><stop offset="1" stop-color="#0f2c39"/></linearGradient>
-  <radialGradient id="sun" cx="80%" cy="16%" r="60%"><stop offset="0" stop-color="#fff1c2" stop-opacity=".95"/><stop offset="34%" stop-color="#f4b65a" stop-opacity=".5"/><stop offset="100%" stop-color="#f4b65a" stop-opacity="0"/></radialGradient>
-  <linearGradient id="refl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8" stop-opacity="0"/><stop offset=".5" stop-color="#ffdf8c" stop-opacity=".2"/><stop offset="1" stop-color="#ffdf8c" stop-opacity="0"/></linearGradient>
-  <linearGradient id="grassG" gradientUnits="userSpaceOnUse" x1="${EE[0]}" y1="${EE[1]}" x2="${WW[0]}" y2="${WW[1]}"><stop offset="0" stop-color="#86cc72"/><stop offset="1" stop-color="#3c7a3c"/></linearGradient>
-  <linearGradient id="wallR" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b07c33"/><stop offset="1" stop-color="#5c3d1c"/></linearGradient>
-  <linearGradient id="wallL" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5a3c1f"/><stop offset="1" stop-color="#291a0c"/></linearGradient>
-  <linearGradient id="goldG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe79a"/><stop offset=".5" stop-color="#f4cf57"/><stop offset="1" stop-color="#c99a2c"/></linearGradient>
-  <radialGradient id="ctaG" cx="50%" cy="28%" r="85%"><stop offset="0" stop-color="#ffe9a2"/><stop offset=".6" stop-color="#f4cf57"/><stop offset="1" stop-color="#d8a838"/></radialGradient>
+  <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#15111f"/><stop offset=".46" stop-color="#2d2342"/><stop offset="1" stop-color="#1e1830"/></linearGradient>
+  <radialGradient id="sun" cx="80%" cy="16%" r="60%"><stop offset="0" stop-color="#ffe9a8" stop-opacity=".9"/><stop offset="30%" stop-color="#ab7bff" stop-opacity=".42"/><stop offset="100%" stop-color="#7a3df0" stop-opacity="0"/></radialGradient>
+  <linearGradient id="refl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ab7bff" stop-opacity="0"/><stop offset=".5" stop-color="#ffe9a8" stop-opacity=".22"/><stop offset="1" stop-color="#ab7bff" stop-opacity="0"/></linearGradient>
+  <linearGradient id="grassG" gradientUnits="userSpaceOnUse" x1="${EE[0]}" y1="${EE[1]}" x2="${WW[0]}" y2="${WW[1]}"><stop offset="0" stop-color="#57a95d"/><stop offset="1" stop-color="#3c7a3c"/></linearGradient>
+  <linearGradient id="wallR" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a3e6b"/><stop offset="1" stop-color="#1e1830"/></linearGradient>
+  <linearGradient id="wallL" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b2140"/><stop offset="1" stop-color="#120d1c"/></linearGradient>
+  <linearGradient id="goldG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".5" stop-color="#f0c64a"/><stop offset="1" stop-color="#b8902a"/></linearGradient>
+  <radialGradient id="ctaG" cx="50%" cy="28%" r="85%"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".6" stop-color="#f0c64a"/><stop offset="1" stop-color="#b8902a"/></radialGradient>
   <linearGradient id="scrimT" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#06151d" stop-opacity=".62"/><stop offset="1" stop-color="#06151d" stop-opacity="0"/></linearGradient>
   <linearGradient id="scrimB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#06151d" stop-opacity="0"/><stop offset="1" stop-color="#06151d" stop-opacity=".66"/></linearGradient>
   <radialGradient id="vig" cx="50%" cy="44%" r="74%"><stop offset="58%" stop-color="#000" stop-opacity="0"/><stop offset="100%" stop-color="#04121a" stop-opacity=".55"/></radialGradient>
@@ -306,8 +326,8 @@ const logs=s=>`<g transform="scale(${s})">
   <rect x="-15" y="-11" width="42" height="11" rx="5.5" fill="#875d37"/><ellipse cx="-15" cy="-5.5" rx="4" ry="5.5" fill="#d8b277"/><circle cx="-15" cy="-5.5" r="2" fill="#875d37"/></g>`;
 
 const xdefs=`<defs>
-  <linearGradient id="bgDay" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c2e9f3"/><stop offset=".46" stop-color="#7fcadb"/><stop offset="1" stop-color="#3a9cb7"/></linearGradient>
-  <linearGradient id="bgMap" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2c3d4e"/><stop offset="1" stop-color="#121b25"/></linearGradient>
+  <linearGradient id="bgDay" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a2f54"/><stop offset=".46" stop-color="#2d2342"/><stop offset="1" stop-color="#1e1830"/></linearGradient>
+  <linearGradient id="bgMap" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2d2342"/><stop offset="1" stop-color="#15111f"/></linearGradient>
   <linearGradient id="bgNight" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2c1620"/><stop offset=".5" stop-color="#3c1a22"/><stop offset="1" stop-color="#110910"/></linearGradient>
   <linearGradient id="bgEcon" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#312257"/><stop offset=".5" stop-color="#221a44"/><stop offset="1" stop-color="#0f0b22"/></linearGradient>
   <radialGradient id="sunWarm" cx="78%" cy="16%" r="62%"><stop offset="0" stop-color="#fffaea" stop-opacity=".95"/><stop offset="34%" stop-color="#ffe2a0" stop-opacity=".5"/><stop offset="100%" stop-color="#ffe2a0" stop-opacity="0"/></radialGradient>
@@ -315,24 +335,24 @@ const xdefs=`<defs>
   <radialGradient id="redglow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#ff3b2a" stop-opacity=".55"/><stop offset="100%" stop-color="#ff3b2a" stop-opacity="0"/></radialGradient>
   <linearGradient id="scrimL" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#06121a" stop-opacity=".85"/><stop offset=".52" stop-color="#06121a" stop-opacity=".22"/><stop offset="1" stop-color="#06121a" stop-opacity="0"/></linearGradient>
   <linearGradient id="grassG2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#86cc72"/><stop offset="1" stop-color="#3c7a3c"/></linearGradient>
-  <radialGradient id="icSea" cx="50%" cy="38%" r="80%"><stop offset="0" stop-color="#2d3f50"/><stop offset="1" stop-color="#0b121a"/></radialGradient>
+  <radialGradient id="icSea" cx="50%" cy="38%" r="80%"><stop offset="0" stop-color="#2d2342"/><stop offset="1" stop-color="#120d1c"/></radialGradient>
   <linearGradient id="mtnR" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe79a"/><stop offset="1" stop-color="#e3b43c"/></linearGradient>
   <linearGradient id="mtnL" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e0b950"/><stop offset="1" stop-color="#b0842a"/></linearGradient>
   <radialGradient id="icGold" cx="50%" cy="38%" r="82%"><stop offset="0" stop-color="#ffeab0"/><stop offset=".55" stop-color="#f3cc62"/><stop offset="1" stop-color="#d59f33"/></radialGradient>
-  <radialGradient id="icNavy" cx="50%" cy="40%" r="82%"><stop offset="0" stop-color="#243c4e"/><stop offset="1" stop-color="#0b1620"/></radialGradient>
-  <linearGradient id="mtnDeep" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e8bb45"/><stop offset="1" stop-color="#a9781f"/></linearGradient>
+  <radialGradient id="icNavy" cx="50%" cy="40%" r="82%"><stop offset="0" stop-color="#2d2342"/><stop offset="1" stop-color="#120d1c"/></radialGradient>
+  <linearGradient id="mtnDeep" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f0c64a"/><stop offset="1" stop-color="#b8902a"/></linearGradient>
 </defs>`;
 
 const lockup=(x,y)=>`${crest(x+22,y-10,22)}
   <text x="${x+52}" y="${y}" font-family=${JSON.stringify(F)} font-weight="bold" font-size="34" fill="url(#goldG)">RUNELANDS</text>
-  <text x="${x+54}" y="${y+25}" font-family=${JSON.stringify(F)} font-size="21" fill="#bcd0df">runelands.fun · free browser MMO</text>`;
+  <text x="${x+54}" y="${y+25}" font-family=${JSON.stringify(F)} font-size="21" fill="${C.dim}">runelands.fun · free browser MMO</text>`;
 
 function threadBanner(o){
   const tY=246, lh=88;
   const kicker=`<text x="76" y="156" font-family=${JSON.stringify(F)} font-weight="bold" font-size="25" letter-spacing="6" fill="${C.gold}">${o.kicker}</text>`;
   const title=o.lines.map((t,i)=>`<text x="74" y="${tY+i*lh}" font-family=${JSON.stringify(F)} font-weight="bold" font-size="76" fill="${C.txt}">${t}</text>`).join('');
   const sY=tY+(o.lines.length-1)*lh+72;
-  const sub=o.sub.map((t,i)=>`<text x="76" y="${sY+i*40}" font-family=${JSON.stringify(F)} font-size="29" fill="#dbe8f1">${t}</text>`).join('');
+  const sub=o.sub.map((t,i)=>`<text x="76" y="${sY+i*40}" font-family=${JSON.stringify(F)} font-size="29" fill="${C.txt}">${t}</text>`).join('');
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">${kdefs}${xdefs}
   <rect width="1600" height="900" fill="url(#${o.bg})"/>
   ${o.glow||''}
@@ -384,7 +404,7 @@ const sceneEcon = `<ellipse cx="1150" cy="702" rx="320" ry="132" fill="url(#gold
   + spark(1392,250,13) + spark(980,250,10) + spark(1150,470,10) + spark(1292,560,8);
 
 const t1=threadBanner({bg:'bgDay', glow:`<rect width="1600" height="900" fill="url(#sunWarm)"/>`,
-  kicker:'GATHER · CRAFT · BUILD', lines:['BUILD YOUR', `<tspan fill="${C.gold}">ISLAND BASE</tspan>`],
+  kicker:'GATHER · CRAFT · BUILD', lines:['BUILD YOUR', `<tspan fill="${C.gold}">REALM KEEP</tspan>`],
   sub:['Chop trees, farm, and sell wood to the Merchant.','Fight slimes for XP and level up — server-authoritative.'], scene:sceneBuild});
 const t2=threadBanner({bg:'bgMap', glow:`<rect width="1600" height="900" fill="url(#goldGlow)"/>`,
   kicker:'CLAIM · PROTECT · EARN', lines:['CLAIM LAND', `<tspan fill="${C.gold}">THAT PAYS RENT</tspan>`],
@@ -397,7 +417,7 @@ const t4=threadBanner({bg:'bgEcon', glow:`<rect width="1600" height="900" fill="
   sub:['An own-land economy. On-chain land (Solana/USDC) is','on the roadmap. Play free now — no wallet needed.'], scene:sceneEcon});
 
 // ===================== PREMIUM X-HEADER (1500x500) =====================
-// Left: gold mountain crest + 3D wordmark + tagline. Right: the isometric diorama.
+// Left: gold castle crest + 3D wordmark + tagline. Right: the isometric realm diorama.
 // Lower-left is kept clear for the circular profile avatar.
 const header = `<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="500" viewBox="0 0 1500 500">${kdefs}${xdefs}
   <rect width="1500" height="500" fill="url(#sky)"/>
@@ -409,19 +429,19 @@ const header = `<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="500
   ${crest(150,150,54)}
   ${wordmark3d(480,256,92)}
   <text x="480" y="320" text-anchor="middle" font-family=${JSON.stringify(F)} font-weight="bold" font-size="34" fill="${C.txt}">Build · Fight · Trade · <tspan fill="${C.gold}">Own Land</tspan></text>
-  <text x="480" y="360" text-anchor="middle" font-family=${JSON.stringify(F)} font-size="23" fill="#bcd0df">A free browser MMO island — play free, no download · runelands.fun</text>
+  <text x="480" y="360" text-anchor="middle" font-family=${JSON.stringify(F)} font-size="23" fill="${C.dim}">A free browser fantasy realm MMO — play free, no download · runelands.fun</text>
 </svg>`;
 
 // ===================== PREMIUM LOGO / APP ICON (1:1) =====================
-// Gold mountain-peak emblem on a dark badge over a tiny floating claimed island.
-// twin gold peak emblem — deep-gold faces + bronze outline (reads on the gold background)
+// Gold castle/keep emblem on a dark purple badge over a tiny floating claimed island.
+// deep-gold keep emblem — battlemented towers + bronze outline (reads on the gold background)
 const emblem=(x,y,s)=>`<g transform="translate(${x} ${y}) scale(${s})">
-  <ellipse cx="3" cy="27" rx="42" ry="9" fill="#3a2a08" opacity=".2"/>
-  <path d="M-34 24 L-10 -22 L6 6 L20 -14 L40 24 Z" fill="url(#mtnDeep)" stroke="#5e3f12" stroke-width="2.6" stroke-linejoin="round"/>
-  <path d="M-10 -22 L6 6 L-4 24 L-34 24 Z" fill="#5e3f12" opacity=".22"/>
-  <path d="M20 -14 L40 24 L24 24 Z" fill="#5e3f12" opacity=".18"/></g>`;
+  <ellipse cx="0" cy="27" rx="42" ry="9" fill="#1a1226" opacity=".25"/>
+  <path d="M-34 24 L-34 -8 L-34 -14 L-27 -14 L-27 -8 L-20 -8 L-20 24 Z M20 24 L20 -8 L20 -14 L27 -14 L27 -8 L34 -8 L34 24 Z" fill="url(#mtnDeep)" stroke="#5e3f12" stroke-width="2.4" stroke-linejoin="round"/>
+  <path d="M-16 24 L-16 -22 L-9 -22 L-9 -28 L-3 -28 L-3 -22 L3 -22 L3 -28 L9 -28 L9 -22 L16 -22 L16 24 Z" fill="url(#mtnDeep)" stroke="#5e3f12" stroke-width="2.4" stroke-linejoin="round"/>
+  <path d="M-7 24 L-7 2 Q0 -6 7 2 L7 24 Z" fill="#5e3f12"/></g>`;
 
-// icon scene: twin gold peak rising from a small isometric claimed island (no glow, no white)
+// icon scene: gold keep rising from a small isometric claimed island (no glow, no white)
 const iconScene=()=>{const cx=200,cy=250,hw=158,hh=79,D=46,T=58,gi=0.82,
   N=[cx,cy-hh],E=[cx+hw,cy],S=[cx,cy+hh],W=[cx-hw,cy],g=p=>[cx+(p[0]-cx)*gi,cy+(p[1]-cy)*gi],
   [gN,gE,gS,gW]=[g(N),g(E),g(S),g(W)],Wd=[W[0],W[1]+D],Sd=[S[0],S[1]+D],Ed=[E[0],E[1]+D],ap=[cx,S[1]+D+T];
@@ -435,7 +455,7 @@ const iconScene=()=>{const cx=200,cy=250,hw=158,hh=79,D=46,T=58,gi=0.82,
    <g transform="translate(${cx+86} ${cy+20})">${pine(0.8)}</g>
    ${emblem(cx+4, cy-4, 2.0)}`;};
 
-// Logo = the header's gold mountain crest, enlarged as a medallion on a navy field.
+// Logo = the header's gold castle crest, enlarged as a medallion on a deep-purple field.
 const logo = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">${kdefs}${xdefs}
   <rect width="400" height="400" fill="url(#icNavy)"/>
   ${crest(200,202,158)}

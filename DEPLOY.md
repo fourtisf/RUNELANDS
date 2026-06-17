@@ -3,6 +3,13 @@
 Two parts: the **server** (authoritative, owns the shared world) and the **client**
 (`isle_online.html`, what players open).
 
+> **⚠️ RUNELANDS is a SEPARATE deployment from the live Plotlands app.** Run it as its own
+> process on its own domain — don't point it at, or overwrite, the existing Plotlands/"island"
+> service. Suggested: a distinct pm2 app name **`runelands`** (e.g. `pm2 start server.js --name
+> runelands`) and the dedicated domain **runelands.fun**, with its own `DATA_DIR` / database so
+> the two worlds never share state. Pick a port that doesn't collide with the live app
+> (`PORT=…`). Everything below applies to this separate RUNELANDS process.
+
 **Simplest: one process serves both.** The server now also serves the game page over HTTP on
 the same port, and the client auto-connects to whatever host it was served from. So you just
 deploy `server.js`, open `http://your-host:2567/`, and play — no separate static hosting, no
@@ -24,8 +31,8 @@ Any Node host works. Easiest options:
   set start command `npm start`. They give you a public URL.
 - The host gives you `https://yourapp.onrender.com` → your WebSocket URL is
   `wss://yourapp.onrender.com` (note: `wss://`, secure, required from an https page).
-- A plain VPS: `npm install && PORT=2567 node server.js`, put Nginx/Caddy in front
-  for TLS, expose `wss://yourdomain`.
+- A plain VPS: `npm install && PORT=2567 node server.js` (ideally under pm2 as `runelands`),
+  put Nginx/Caddy in front for TLS, expose `wss://runelands.fun`.
 
 ## 3. Point the client at the server
 Edit the top of `isle_online.html`:
@@ -86,7 +93,7 @@ every other player, so per-client bandwidth grows with the player count. That's 
 **When to scale (not before — premature sharding is wasted work):** once a single world
 regularly approaches the cap, or `loadtest` shows the tick rate sagging below ~12/s or
 bandwidth/CPU climbing, move to:
-- **Room sharding** — multiple island rooms each capped ~60–80, spawn a new room when full.
+- **Room sharding** — multiple realm rooms each capped ~60–80, spawn a new room when full.
 - **Area-of-interest** — a spatial-hash grid so a player only receives entities near them
   (kills the O(n²) term).
 - **Redis presence** — cross-room player list + reconnect-into-same-room.
